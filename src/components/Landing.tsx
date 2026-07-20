@@ -474,6 +474,7 @@ function Contact() {
             </form>
           </div>
         </div>
+        </Reveal>
       </div>
     </section>
   );
