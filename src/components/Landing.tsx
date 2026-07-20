@@ -303,35 +303,40 @@ function Method() {
     { i: LineChart, k: "method.5" },
   ] as const;
   return (
-    <section id="method" className="border-t border-border/60 bg-navy py-24 text-white">
-      <div className="mx-auto max-w-7xl px-5 md:px-8">
-        <div className="mx-auto max-w-3xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-lavender/40 bg-lavender/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-lavender-light">
-            {tr("method.kicker")}
+    <section id="method" className="relative overflow-hidden border-t border-border/60 bg-navy py-24 text-white">
+      <div className="pointer-events-none absolute -top-24 start-1/4 h-72 w-72 rounded-full bg-lavender/20 blur-3xl animate-ew-blob" />
+      <div className="pointer-events-none absolute bottom-0 end-10 h-64 w-64 rounded-full bg-lavender-dark/40 blur-3xl animate-ew-float-slow" />
+      <div className="relative mx-auto max-w-7xl px-5 md:px-8">
+        <Reveal variant="up">
+          <div className="mx-auto max-w-3xl text-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-lavender/40 bg-lavender/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-lavender-light">
+              {tr("method.kicker")}
+            </div>
+            <h2 className="mt-4 text-3xl font-black tracking-tight md:text-5xl">
+              {tr("method.title")}
+            </h2>
           </div>
-          <h2 className="mt-4 text-3xl font-black tracking-tight md:text-5xl">
-            {tr("method.title")}
-          </h2>
-        </div>
+        </Reveal>
         <div className="mt-14 grid gap-4 md:grid-cols-5">
           {steps.map(({ i: Icon, k }, idx) => (
-            <div
-              key={k}
-              className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition hover:border-lavender/50 hover:bg-white/[0.06]"
-            >
-              <div className="mb-4 flex items-center justify-between">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-lavender/20 text-lavender-light">
-                  <Icon className="h-5 w-5" />
+            <Reveal key={k} variant="up" delay={idx * 100}>
+              <div
+                className="group h-full rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition hover:-translate-y-1 hover:border-lavender/50 hover:bg-white/[0.06]"
+              >
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-lavender/20 text-lavender-light transition-transform group-hover:scale-110 group-hover:rotate-6">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <span className="text-xs font-bold text-lavender-light/60">0{idx + 1}</span>
                 </div>
-                <span className="text-xs font-bold text-lavender-light/60">0{idx + 1}</span>
+                <h3 className="text-lg font-bold">
+                  {tr(`${k}.t` as keyof typeof import("@/lib/i18n").t)}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-white/60">
+                  {tr(`${k}.b` as keyof typeof import("@/lib/i18n").t)}
+                </p>
               </div>
-              <h3 className="text-lg font-bold">
-                {tr(`${k}.t` as keyof typeof import("@/lib/i18n").t)}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-white/60">
-                {tr(`${k}.b` as keyof typeof import("@/lib/i18n").t)}
-              </p>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>
