@@ -128,30 +128,52 @@ function Hero() {
       />
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/40 via-background/80 to-background" />
       <div className="absolute inset-0 -z-10 bg-grid opacity-40" />
+      {/* Floating gradient blobs */}
+      <div className="pointer-events-none absolute -top-24 -end-24 -z-10 h-96 w-96 rounded-full bg-lavender/30 opacity-60 blur-3xl animate-ew-blob" />
+      <div
+        className="pointer-events-none absolute top-40 -start-24 -z-10 h-80 w-80 rounded-full bg-lavender-dark/25 opacity-60 blur-3xl animate-ew-float-slow"
+        style={{ animationDelay: "-4s" }}
+      />
+      <div
+        className="pointer-events-none absolute bottom-10 end-1/4 -z-10 h-64 w-64 rounded-full bg-pale/60 opacity-70 blur-3xl animate-ew-blob"
+        style={{ animationDelay: "-8s" }}
+      />
+
       <div className="mx-auto max-w-7xl px-5 pb-24 pt-20 md:px-8 md:pt-28">
-        <span className="inline-flex items-center gap-2 rounded-full border border-lavender/40 bg-lavender-light/50 px-3 py-1 text-xs font-medium text-lavender-dark">
-          <span className="h-1.5 w-1.5 rounded-full bg-lavender" />
-          {tr("hero.eyebrow")}
-        </span>
-        <h1 className="mt-6 max-w-5xl text-5xl font-black leading-[1.05] tracking-tight text-navy md:text-7xl">
-          {tr("hero.title.a")} <span className="text-gradient">{tr("hero.title.b")}</span>
-        </h1>
-        <p className="mt-6 max-w-2xl text-lg text-foreground/70 md:text-xl">{tr("hero.sub")}</p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <a
-            href="#services"
-            className="inline-flex items-center gap-2 rounded-full gradient-lavender px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-lavender/30 transition hover:opacity-90"
-          >
-            {tr("hero.cta.primary")}
-            <ArrowUpRight className="h-4 w-4" />
-          </a>
-          <a
-            href="#works"
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-6 py-3 text-sm font-semibold text-foreground transition hover:border-lavender hover:text-lavender-dark"
-          >
-            {tr("hero.cta.secondary")}
-          </a>
-        </div>
+        <Reveal variant="fade" duration={600}>
+          <span className="inline-flex items-center gap-2 rounded-full border border-lavender/40 bg-lavender-light/50 px-3 py-1 text-xs font-medium text-lavender-dark">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-lavender opacity-75 animate-ping" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-lavender" />
+            </span>
+            {tr("hero.eyebrow")}
+          </span>
+        </Reveal>
+        <Reveal variant="up" delay={120} duration={800}>
+          <h1 className="mt-6 max-w-5xl text-5xl font-black leading-[1.05] tracking-tight text-navy md:text-7xl">
+            {tr("hero.title.a")} <span className="text-shimmer">{tr("hero.title.b")}</span>
+          </h1>
+        </Reveal>
+        <Reveal variant="up" delay={240}>
+          <p className="mt-6 max-w-2xl text-lg text-foreground/70 md:text-xl">{tr("hero.sub")}</p>
+        </Reveal>
+        <Reveal variant="up" delay={360}>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a
+              href="#services"
+              className="group inline-flex items-center gap-2 rounded-full gradient-lavender px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-lavender/30 transition hover:opacity-90 hover:shadow-xl hover:shadow-lavender/40 hover:-translate-y-0.5"
+            >
+              {tr("hero.cta.primary")}
+              <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 rtl:group-hover:-translate-x-0.5" />
+            </a>
+            <a
+              href="#works"
+              className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-6 py-3 text-sm font-semibold text-foreground transition hover:border-lavender hover:text-lavender-dark hover:-translate-y-0.5"
+            >
+              {tr("hero.cta.secondary")}
+            </a>
+          </div>
+        </Reveal>
         <div className="mt-16 grid grid-cols-2 gap-6 border-t border-border/60 pt-8 md:grid-cols-4">
           {[
             ["+100", tr("works.title")],
@@ -159,11 +181,22 @@ function Hero() {
             ["5", tr("method.title")],
             ["2026", "Riyadh · KSA"],
           ].map(([n, l], i) => (
-            <div key={i}>
-              <div className="text-3xl font-black text-navy md:text-4xl">{n}</div>
-              <div className="mt-1 text-xs text-muted-foreground">{l}</div>
-            </div>
+            <Reveal key={i} variant="up" delay={500 + i * 120}>
+              <div>
+                <div className="text-3xl font-black text-navy md:text-4xl">{n}</div>
+                <div className="mt-1 text-xs text-muted-foreground">{l}</div>
+              </div>
+            </Reveal>
           ))}
+        </div>
+        <div className="mt-14 flex justify-center">
+          <a
+            href="#about"
+            aria-label="Scroll"
+            className="animate-ew-bounce-slow inline-flex h-10 w-6 items-center justify-center rounded-full border border-lavender/50"
+          >
+            <span className="mt-1 block h-2 w-1 rounded-full bg-lavender" />
+          </a>
         </div>
       </div>
     </section>
