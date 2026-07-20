@@ -265,26 +265,27 @@ function Services() {
         <SectionHead kicker={tr("svc.kicker")} title={tr("svc.title")} />
         <div className="mt-14 grid gap-5 md:grid-cols-2">
           {items.map(({ i: Icon, k }, idx) => (
-            <div
-              key={k}
-              className="group relative overflow-hidden rounded-3xl border border-border bg-background p-8 transition hover:-translate-y-1 hover:border-lavender hover:shadow-2xl hover:shadow-lavender/10"
-            >
-              <div className="absolute -end-16 -top-16 h-40 w-40 rounded-full bg-lavender/10 blur-3xl transition group-hover:bg-lavender/20" />
-              <div className="relative flex items-start gap-5">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl gradient-lavender text-white shadow-lg shadow-lavender/30">
-                  <Icon className="h-6 w-6" />
-                </div>
-                <div>
-                  <div className="text-xs font-semibold text-lavender-dark">0{idx + 1}</div>
-                  <h3 className="mt-1 text-2xl font-bold text-navy">
-                    {tr(`${k}.t` as keyof typeof import("@/lib/i18n").t)}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-foreground/70">
-                    {tr(`${k}.b` as keyof typeof import("@/lib/i18n").t)}
-                  </p>
+            <Reveal key={k} variant={idx % 2 === 0 ? "right" : "left"} delay={idx * 120}>
+              <div
+                className="group relative h-full overflow-hidden rounded-3xl border border-border bg-background p-8 transition hover:-translate-y-1 hover:border-lavender hover:shadow-2xl hover:shadow-lavender/10"
+              >
+                <div className="absolute -end-16 -top-16 h-40 w-40 rounded-full bg-lavender/10 blur-3xl transition group-hover:bg-lavender/25 animate-ew-float-slow" />
+                <div className="relative flex items-start gap-5">
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl gradient-lavender text-white shadow-lg shadow-lavender/30 transition-transform group-hover:-rotate-6 group-hover:scale-110">
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-semibold text-lavender-dark">0{idx + 1}</div>
+                    <h3 className="mt-1 text-2xl font-bold text-navy">
+                      {tr(`${k}.t` as keyof typeof import("@/lib/i18n").t)}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-foreground/70">
+                      {tr(`${k}.b` as keyof typeof import("@/lib/i18n").t)}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>
