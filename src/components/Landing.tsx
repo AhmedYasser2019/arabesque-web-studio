@@ -205,12 +205,14 @@ function Hero() {
 
 function SectionHead({ kicker, title }: { kicker: string; title: string }) {
   return (
-    <div className="mx-auto max-w-3xl text-center">
-      <div className="inline-flex items-center gap-2 rounded-full border border-lavender/30 bg-lavender-light/40 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-lavender-dark">
-        {kicker}
+    <Reveal variant="up">
+      <div className="mx-auto max-w-3xl text-center">
+        <div className="inline-flex items-center gap-2 rounded-full border border-lavender/30 bg-lavender-light/40 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-lavender-dark">
+          {kicker}
+        </div>
+        <h2 className="mt-4 text-3xl font-black tracking-tight text-navy md:text-5xl">{title}</h2>
       </div>
-      <h2 className="mt-4 text-3xl font-black tracking-tight text-navy md:text-5xl">{title}</h2>
-    </div>
+    </Reveal>
   );
 }
 
