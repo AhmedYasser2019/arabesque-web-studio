@@ -417,9 +417,10 @@ function Contact() {
   return (
     <section id="contact" className="py-24">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
+        <Reveal variant="zoom">
         <div className="relative overflow-hidden rounded-[2rem] gradient-lavender p-8 text-white md:p-16">
-          <div className="absolute -end-20 -top-20 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
-          <div className="absolute -start-20 -bottom-20 h-72 w-72 rounded-full bg-navy/30 blur-3xl" />
+          <div className="absolute -end-20 -top-20 h-72 w-72 rounded-full bg-white/10 blur-3xl animate-ew-blob" />
+          <div className="absolute -start-20 -bottom-20 h-72 w-72 rounded-full bg-navy/30 blur-3xl animate-ew-float-slow" />
           <div className="relative grid gap-10 md:grid-cols-2 md:items-center">
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest">
