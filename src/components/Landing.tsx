@@ -222,25 +222,28 @@ function About() {
     <section id="about" className="border-t border-border/60 bg-secondary/40 py-24">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("about.kicker")} title={tr("about.title")} />
-        <p className="mx-auto mt-6 max-w-3xl text-center text-lg text-foreground/70">
-          {tr("about.body")}
-        </p>
+        <Reveal variant="up" delay={120}>
+          <p className="mx-auto mt-6 max-w-3xl text-center text-lg text-foreground/70">
+            {tr("about.body")}
+          </p>
+        </Reveal>
         <div className="mt-14 grid gap-5 md:grid-cols-3">
           {[
             { t: tr("about.vision.t"), b: tr("about.vision.b") },
             { t: tr("about.mission.t"), b: tr("about.mission.b") },
             { t: tr("about.values.t"), b: tr("about.values.b") },
           ].map((x, i) => (
-            <div
-              key={i}
-              className="group rounded-3xl border border-border bg-background p-8 transition hover:border-lavender hover:shadow-xl hover:shadow-lavender/10"
-            >
-              <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl gradient-lavender text-white">
-                <Sparkles className="h-5 w-5" />
+            <Reveal key={i} variant="up" delay={i * 140}>
+              <div
+                className="group h-full rounded-3xl border border-border bg-background p-8 transition hover:-translate-y-1 hover:border-lavender hover:shadow-xl hover:shadow-lavender/10"
+              >
+                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl gradient-lavender text-white transition-transform group-hover:rotate-6 group-hover:scale-110">
+                  <Sparkles className="h-5 w-5" />
+                </div>
+                <h3 className="text-xl font-bold text-navy">{x.t}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-foreground/70">{x.b}</p>
               </div>
-              <h3 className="text-xl font-bold text-navy">{x.t}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-foreground/70">{x.b}</p>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>
