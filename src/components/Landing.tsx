@@ -353,29 +353,30 @@ function Works() {
         <SectionHead kicker={tr("works.kicker")} title={tr("works.title")} />
         <div className="mt-14 grid gap-5 md:grid-cols-2">
           {items.map((k, i) => (
-            <article
-              key={k}
-              className="group relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-lavender-light/40 to-background p-8 transition hover:border-lavender"
-            >
-              <div className="absolute inset-0 opacity-0 transition group-hover:opacity-100">
-                <div className="absolute -bottom-24 -end-24 h-64 w-64 rounded-full gradient-lavender opacity-20 blur-3xl" />
-              </div>
-              <div className="relative">
-                <div className="text-xs font-bold uppercase tracking-widest text-lavender-dark">
-                  Case · 0{i + 1}
+            <Reveal key={k} variant="zoom" delay={i * 120}>
+              <article
+                className="group relative h-full overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-lavender-light/40 to-background p-8 transition hover:-translate-y-1 hover:border-lavender hover:shadow-2xl hover:shadow-lavender/10"
+              >
+                <div className="absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100">
+                  <div className="absolute -bottom-24 -end-24 h-64 w-64 rounded-full gradient-lavender opacity-25 blur-3xl animate-ew-float-slow" />
                 </div>
-                <h3 className="mt-3 text-2xl font-bold text-navy md:text-3xl">
-                  {tr(`${k}.t` as keyof typeof import("@/lib/i18n").t)}
-                </h3>
-                <p className="mt-3 text-sm leading-relaxed text-foreground/70">
-                  {tr(`${k}.b` as keyof typeof import("@/lib/i18n").t)}
-                </p>
-                <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-lavender-dark">
-                  <span>{tr("hero.cta.secondary")}</span>
-                  <ArrowUpRight className="h-4 w-4 transition group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
+                <div className="relative">
+                  <div className="text-xs font-bold uppercase tracking-widest text-lavender-dark">
+                    Case · 0{i + 1}
+                  </div>
+                  <h3 className="mt-3 text-2xl font-bold text-navy md:text-3xl">
+                    {tr(`${k}.t` as keyof typeof import("@/lib/i18n").t)}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-foreground/70">
+                    {tr(`${k}.b` as keyof typeof import("@/lib/i18n").t)}
+                  </p>
+                  <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-lavender-dark">
+                    <span>{tr("hero.cta.secondary")}</span>
+                    <ArrowUpRight className="h-4 w-4 transition group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
+                  </div>
                 </div>
-              </div>
-            </article>
+              </article>
+            </Reveal>
           ))}
         </div>
       </div>
