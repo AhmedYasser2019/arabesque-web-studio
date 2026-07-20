@@ -106,13 +106,20 @@ interface I18nCtx {
 
 const Ctx = createContext<I18nCtx | null>(null);
 
-export function I18nProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>("ar");
+export function I18nProvider({
+  children,
+  initialLang,
+}: {
+  children: ReactNode;
+  initialLang?: Lang;
+}) {
+  const [lang, setLangState] = useState<Lang>(initialLang ?? "ar");
 
   useEffect(() => {
+    if (initialLang) return;
     const saved = (typeof window !== "undefined" && localStorage.getItem("lang")) as Lang | null;
     if (saved === "ar" || saved === "en") setLangState(saved);
-  }, []);
+  }, [initialLang]);
 
   useEffect(() => {
     if (typeof document === "undefined") return;
