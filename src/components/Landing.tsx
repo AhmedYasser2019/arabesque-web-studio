@@ -395,15 +395,17 @@ function Partners() {
     <section id="partners" className="border-t border-border/60 bg-secondary/40 py-24">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("partners.kicker")} title={tr("partners.title")} />
-        <div className="mt-12 flex flex-wrap justify-center gap-3">
-          {names.map((n) => (
-            <div
-              key={n}
-              className="rounded-full border border-border bg-background px-5 py-2.5 text-sm font-semibold text-navy/80 transition hover:border-lavender hover:text-lavender-dark"
-            >
-              {n}
-            </div>
-          ))}
+        <div className="mt-12 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+          <div className="flex w-max gap-3 animate-ew-marquee">
+            {[...names, ...names].map((n, i) => (
+              <div
+                key={`${n}-${i}`}
+                className="shrink-0 rounded-full border border-border bg-background px-5 py-2.5 text-sm font-semibold text-navy/80 transition hover:border-lavender hover:text-lavender-dark hover:-translate-y-0.5"
+              >
+                {n}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
