@@ -21,6 +21,7 @@ import {
   Twitter,
 } from "lucide-react";
 import { I18nProvider, useI18n, type Lang } from "@/lib/i18n";
+import { Reveal } from "@/components/Reveal";
 import heroBg from "@/assets/hero.jpg";
 import wingMark from "@/assets/wing-mark.png";
 
@@ -127,30 +128,52 @@ function Hero() {
       />
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-background/40 via-background/80 to-background" />
       <div className="absolute inset-0 -z-10 bg-grid opacity-40" />
+      {/* Floating gradient blobs */}
+      <div className="pointer-events-none absolute -top-24 -end-24 -z-10 h-96 w-96 rounded-full bg-lavender/30 opacity-60 blur-3xl animate-ew-blob" />
+      <div
+        className="pointer-events-none absolute top-40 -start-24 -z-10 h-80 w-80 rounded-full bg-lavender-dark/25 opacity-60 blur-3xl animate-ew-float-slow"
+        style={{ animationDelay: "-4s" }}
+      />
+      <div
+        className="pointer-events-none absolute bottom-10 end-1/4 -z-10 h-64 w-64 rounded-full bg-pale/60 opacity-70 blur-3xl animate-ew-blob"
+        style={{ animationDelay: "-8s" }}
+      />
+
       <div className="mx-auto max-w-7xl px-5 pb-24 pt-20 md:px-8 md:pt-28">
-        <span className="inline-flex items-center gap-2 rounded-full border border-lavender/40 bg-lavender-light/50 px-3 py-1 text-xs font-medium text-lavender-dark">
-          <span className="h-1.5 w-1.5 rounded-full bg-lavender" />
-          {tr("hero.eyebrow")}
-        </span>
-        <h1 className="mt-6 max-w-5xl text-5xl font-black leading-[1.05] tracking-tight text-navy md:text-7xl">
-          {tr("hero.title.a")} <span className="text-gradient">{tr("hero.title.b")}</span>
-        </h1>
-        <p className="mt-6 max-w-2xl text-lg text-foreground/70 md:text-xl">{tr("hero.sub")}</p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <a
-            href="#services"
-            className="inline-flex items-center gap-2 rounded-full gradient-lavender px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-lavender/30 transition hover:opacity-90"
-          >
-            {tr("hero.cta.primary")}
-            <ArrowUpRight className="h-4 w-4" />
-          </a>
-          <a
-            href="#works"
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-6 py-3 text-sm font-semibold text-foreground transition hover:border-lavender hover:text-lavender-dark"
-          >
-            {tr("hero.cta.secondary")}
-          </a>
-        </div>
+        <Reveal variant="fade" duration={600}>
+          <span className="inline-flex items-center gap-2 rounded-full border border-lavender/40 bg-lavender-light/50 px-3 py-1 text-xs font-medium text-lavender-dark">
+            <span className="relative flex h-1.5 w-1.5">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-lavender opacity-75 animate-ping" />
+              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-lavender" />
+            </span>
+            {tr("hero.eyebrow")}
+          </span>
+        </Reveal>
+        <Reveal variant="up" delay={120} duration={800}>
+          <h1 className="mt-6 max-w-5xl text-5xl font-black leading-[1.05] tracking-tight text-navy md:text-7xl">
+            {tr("hero.title.a")} <span className="text-shimmer">{tr("hero.title.b")}</span>
+          </h1>
+        </Reveal>
+        <Reveal variant="up" delay={240}>
+          <p className="mt-6 max-w-2xl text-lg text-foreground/70 md:text-xl">{tr("hero.sub")}</p>
+        </Reveal>
+        <Reveal variant="up" delay={360}>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a
+              href="#services"
+              className="group inline-flex items-center gap-2 rounded-full gradient-lavender px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-lavender/30 transition hover:opacity-90 hover:shadow-xl hover:shadow-lavender/40 hover:-translate-y-0.5"
+            >
+              {tr("hero.cta.primary")}
+              <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 rtl:group-hover:-translate-x-0.5" />
+            </a>
+            <a
+              href="#works"
+              className="inline-flex items-center gap-2 rounded-full border border-border bg-background/60 px-6 py-3 text-sm font-semibold text-foreground transition hover:border-lavender hover:text-lavender-dark hover:-translate-y-0.5"
+            >
+              {tr("hero.cta.secondary")}
+            </a>
+          </div>
+        </Reveal>
         <div className="mt-16 grid grid-cols-2 gap-6 border-t border-border/60 pt-8 md:grid-cols-4">
           {[
             ["+100", tr("works.title")],
@@ -158,11 +181,22 @@ function Hero() {
             ["5", tr("method.title")],
             ["2026", "Riyadh · KSA"],
           ].map(([n, l], i) => (
-            <div key={i}>
-              <div className="text-3xl font-black text-navy md:text-4xl">{n}</div>
-              <div className="mt-1 text-xs text-muted-foreground">{l}</div>
-            </div>
+            <Reveal key={i} variant="up" delay={500 + i * 120}>
+              <div>
+                <div className="text-3xl font-black text-navy md:text-4xl">{n}</div>
+                <div className="mt-1 text-xs text-muted-foreground">{l}</div>
+              </div>
+            </Reveal>
           ))}
+        </div>
+        <div className="mt-14 flex justify-center">
+          <a
+            href="#about"
+            aria-label="Scroll"
+            className="animate-ew-bounce-slow inline-flex h-10 w-6 items-center justify-center rounded-full border border-lavender/50"
+          >
+            <span className="mt-1 block h-2 w-1 rounded-full bg-lavender" />
+          </a>
         </div>
       </div>
     </section>
@@ -171,12 +205,14 @@ function Hero() {
 
 function SectionHead({ kicker, title }: { kicker: string; title: string }) {
   return (
-    <div className="mx-auto max-w-3xl text-center">
-      <div className="inline-flex items-center gap-2 rounded-full border border-lavender/30 bg-lavender-light/40 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-lavender-dark">
-        {kicker}
+    <Reveal variant="up">
+      <div className="mx-auto max-w-3xl text-center">
+        <div className="inline-flex items-center gap-2 rounded-full border border-lavender/30 bg-lavender-light/40 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-lavender-dark">
+          {kicker}
+        </div>
+        <h2 className="mt-4 text-3xl font-black tracking-tight text-navy md:text-5xl">{title}</h2>
       </div>
-      <h2 className="mt-4 text-3xl font-black tracking-tight text-navy md:text-5xl">{title}</h2>
-    </div>
+    </Reveal>
   );
 }
 
@@ -186,25 +222,28 @@ function About() {
     <section id="about" className="border-t border-border/60 bg-secondary/40 py-24">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("about.kicker")} title={tr("about.title")} />
-        <p className="mx-auto mt-6 max-w-3xl text-center text-lg text-foreground/70">
-          {tr("about.body")}
-        </p>
+        <Reveal variant="up" delay={120}>
+          <p className="mx-auto mt-6 max-w-3xl text-center text-lg text-foreground/70">
+            {tr("about.body")}
+          </p>
+        </Reveal>
         <div className="mt-14 grid gap-5 md:grid-cols-3">
           {[
             { t: tr("about.vision.t"), b: tr("about.vision.b") },
             { t: tr("about.mission.t"), b: tr("about.mission.b") },
             { t: tr("about.values.t"), b: tr("about.values.b") },
           ].map((x, i) => (
-            <div
-              key={i}
-              className="group rounded-3xl border border-border bg-background p-8 transition hover:border-lavender hover:shadow-xl hover:shadow-lavender/10"
-            >
-              <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl gradient-lavender text-white">
-                <Sparkles className="h-5 w-5" />
+            <Reveal key={i} variant="up" delay={i * 140}>
+              <div
+                className="group h-full rounded-3xl border border-border bg-background p-8 transition hover:-translate-y-1 hover:border-lavender hover:shadow-xl hover:shadow-lavender/10"
+              >
+                <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl gradient-lavender text-white transition-transform group-hover:rotate-6 group-hover:scale-110">
+                  <Sparkles className="h-5 w-5" />
+                </div>
+                <h3 className="text-xl font-bold text-navy">{x.t}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-foreground/70">{x.b}</p>
               </div>
-              <h3 className="text-xl font-bold text-navy">{x.t}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-foreground/70">{x.b}</p>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -226,26 +265,27 @@ function Services() {
         <SectionHead kicker={tr("svc.kicker")} title={tr("svc.title")} />
         <div className="mt-14 grid gap-5 md:grid-cols-2">
           {items.map(({ i: Icon, k }, idx) => (
-            <div
-              key={k}
-              className="group relative overflow-hidden rounded-3xl border border-border bg-background p-8 transition hover:-translate-y-1 hover:border-lavender hover:shadow-2xl hover:shadow-lavender/10"
-            >
-              <div className="absolute -end-16 -top-16 h-40 w-40 rounded-full bg-lavender/10 blur-3xl transition group-hover:bg-lavender/20" />
-              <div className="relative flex items-start gap-5">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl gradient-lavender text-white shadow-lg shadow-lavender/30">
-                  <Icon className="h-6 w-6" />
-                </div>
-                <div>
-                  <div className="text-xs font-semibold text-lavender-dark">0{idx + 1}</div>
-                  <h3 className="mt-1 text-2xl font-bold text-navy">
-                    {tr(`${k}.t` as keyof typeof import("@/lib/i18n").t)}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-foreground/70">
-                    {tr(`${k}.b` as keyof typeof import("@/lib/i18n").t)}
-                  </p>
+            <Reveal key={k} variant={idx % 2 === 0 ? "right" : "left"} delay={idx * 120}>
+              <div
+                className="group relative h-full overflow-hidden rounded-3xl border border-border bg-background p-8 transition hover:-translate-y-1 hover:border-lavender hover:shadow-2xl hover:shadow-lavender/10"
+              >
+                <div className="absolute -end-16 -top-16 h-40 w-40 rounded-full bg-lavender/10 blur-3xl transition group-hover:bg-lavender/25 animate-ew-float-slow" />
+                <div className="relative flex items-start gap-5">
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl gradient-lavender text-white shadow-lg shadow-lavender/30 transition-transform group-hover:-rotate-6 group-hover:scale-110">
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <div className="text-xs font-semibold text-lavender-dark">0{idx + 1}</div>
+                    <h3 className="mt-1 text-2xl font-bold text-navy">
+                      {tr(`${k}.t` as keyof typeof import("@/lib/i18n").t)}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-foreground/70">
+                      {tr(`${k}.b` as keyof typeof import("@/lib/i18n").t)}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -263,35 +303,40 @@ function Method() {
     { i: LineChart, k: "method.5" },
   ] as const;
   return (
-    <section id="method" className="border-t border-border/60 bg-navy py-24 text-white">
-      <div className="mx-auto max-w-7xl px-5 md:px-8">
-        <div className="mx-auto max-w-3xl text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-lavender/40 bg-lavender/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-lavender-light">
-            {tr("method.kicker")}
+    <section id="method" className="relative overflow-hidden border-t border-border/60 bg-navy py-24 text-white">
+      <div className="pointer-events-none absolute -top-24 start-1/4 h-72 w-72 rounded-full bg-lavender/20 blur-3xl animate-ew-blob" />
+      <div className="pointer-events-none absolute bottom-0 end-10 h-64 w-64 rounded-full bg-lavender-dark/40 blur-3xl animate-ew-float-slow" />
+      <div className="relative mx-auto max-w-7xl px-5 md:px-8">
+        <Reveal variant="up">
+          <div className="mx-auto max-w-3xl text-center">
+            <div className="inline-flex items-center gap-2 rounded-full border border-lavender/40 bg-lavender/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-lavender-light">
+              {tr("method.kicker")}
+            </div>
+            <h2 className="mt-4 text-3xl font-black tracking-tight md:text-5xl">
+              {tr("method.title")}
+            </h2>
           </div>
-          <h2 className="mt-4 text-3xl font-black tracking-tight md:text-5xl">
-            {tr("method.title")}
-          </h2>
-        </div>
+        </Reveal>
         <div className="mt-14 grid gap-4 md:grid-cols-5">
           {steps.map(({ i: Icon, k }, idx) => (
-            <div
-              key={k}
-              className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition hover:border-lavender/50 hover:bg-white/[0.06]"
-            >
-              <div className="mb-4 flex items-center justify-between">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-lavender/20 text-lavender-light">
-                  <Icon className="h-5 w-5" />
+            <Reveal key={k} variant="up" delay={idx * 100}>
+              <div
+                className="group h-full rounded-2xl border border-white/10 bg-white/[0.03] p-6 transition hover:-translate-y-1 hover:border-lavender/50 hover:bg-white/[0.06]"
+              >
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-lavender/20 text-lavender-light transition-transform group-hover:scale-110 group-hover:rotate-6">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <span className="text-xs font-bold text-lavender-light/60">0{idx + 1}</span>
                 </div>
-                <span className="text-xs font-bold text-lavender-light/60">0{idx + 1}</span>
+                <h3 className="text-lg font-bold">
+                  {tr(`${k}.t` as keyof typeof import("@/lib/i18n").t)}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-white/60">
+                  {tr(`${k}.b` as keyof typeof import("@/lib/i18n").t)}
+                </p>
               </div>
-              <h3 className="text-lg font-bold">
-                {tr(`${k}.t` as keyof typeof import("@/lib/i18n").t)}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-white/60">
-                {tr(`${k}.b` as keyof typeof import("@/lib/i18n").t)}
-              </p>
-            </div>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -308,29 +353,30 @@ function Works() {
         <SectionHead kicker={tr("works.kicker")} title={tr("works.title")} />
         <div className="mt-14 grid gap-5 md:grid-cols-2">
           {items.map((k, i) => (
-            <article
-              key={k}
-              className="group relative overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-lavender-light/40 to-background p-8 transition hover:border-lavender"
-            >
-              <div className="absolute inset-0 opacity-0 transition group-hover:opacity-100">
-                <div className="absolute -bottom-24 -end-24 h-64 w-64 rounded-full gradient-lavender opacity-20 blur-3xl" />
-              </div>
-              <div className="relative">
-                <div className="text-xs font-bold uppercase tracking-widest text-lavender-dark">
-                  Case · 0{i + 1}
+            <Reveal key={k} variant="zoom" delay={i * 120}>
+              <article
+                className="group relative h-full overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-lavender-light/40 to-background p-8 transition hover:-translate-y-1 hover:border-lavender hover:shadow-2xl hover:shadow-lavender/10"
+              >
+                <div className="absolute inset-0 opacity-0 transition duration-500 group-hover:opacity-100">
+                  <div className="absolute -bottom-24 -end-24 h-64 w-64 rounded-full gradient-lavender opacity-25 blur-3xl animate-ew-float-slow" />
                 </div>
-                <h3 className="mt-3 text-2xl font-bold text-navy md:text-3xl">
-                  {tr(`${k}.t` as keyof typeof import("@/lib/i18n").t)}
-                </h3>
-                <p className="mt-3 text-sm leading-relaxed text-foreground/70">
-                  {tr(`${k}.b` as keyof typeof import("@/lib/i18n").t)}
-                </p>
-                <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-lavender-dark">
-                  <span>{tr("hero.cta.secondary")}</span>
-                  <ArrowUpRight className="h-4 w-4 transition group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
+                <div className="relative">
+                  <div className="text-xs font-bold uppercase tracking-widest text-lavender-dark">
+                    Case · 0{i + 1}
+                  </div>
+                  <h3 className="mt-3 text-2xl font-bold text-navy md:text-3xl">
+                    {tr(`${k}.t` as keyof typeof import("@/lib/i18n").t)}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-foreground/70">
+                    {tr(`${k}.b` as keyof typeof import("@/lib/i18n").t)}
+                  </p>
+                  <div className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-lavender-dark">
+                    <span>{tr("hero.cta.secondary")}</span>
+                    <ArrowUpRight className="h-4 w-4 transition group-hover:translate-x-1 rtl:group-hover:-translate-x-1" />
+                  </div>
                 </div>
-              </div>
-            </article>
+              </article>
+            </Reveal>
           ))}
         </div>
       </div>
@@ -349,15 +395,17 @@ function Partners() {
     <section id="partners" className="border-t border-border/60 bg-secondary/40 py-24">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("partners.kicker")} title={tr("partners.title")} />
-        <div className="mt-12 flex flex-wrap justify-center gap-3">
-          {names.map((n) => (
-            <div
-              key={n}
-              className="rounded-full border border-border bg-background px-5 py-2.5 text-sm font-semibold text-navy/80 transition hover:border-lavender hover:text-lavender-dark"
-            >
-              {n}
-            </div>
-          ))}
+        <div className="mt-12 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+          <div className="flex w-max gap-3 animate-ew-marquee">
+            {[...names, ...names].map((n, i) => (
+              <div
+                key={`${n}-${i}`}
+                className="shrink-0 rounded-full border border-border bg-background px-5 py-2.5 text-sm font-semibold text-navy/80 transition hover:border-lavender hover:text-lavender-dark hover:-translate-y-0.5"
+              >
+                {n}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -369,9 +417,10 @@ function Contact() {
   return (
     <section id="contact" className="py-24">
       <div className="mx-auto max-w-6xl px-5 md:px-8">
+        <Reveal variant="zoom">
         <div className="relative overflow-hidden rounded-[2rem] gradient-lavender p-8 text-white md:p-16">
-          <div className="absolute -end-20 -top-20 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
-          <div className="absolute -start-20 -bottom-20 h-72 w-72 rounded-full bg-navy/30 blur-3xl" />
+          <div className="absolute -end-20 -top-20 h-72 w-72 rounded-full bg-white/10 blur-3xl animate-ew-blob" />
+          <div className="absolute -start-20 -bottom-20 h-72 w-72 rounded-full bg-navy/30 blur-3xl animate-ew-float-slow" />
           <div className="relative grid gap-10 md:grid-cols-2 md:items-center">
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest">
@@ -425,6 +474,7 @@ function Contact() {
             </form>
           </div>
         </div>
+        </Reveal>
       </div>
     </section>
   );

@@ -111,3 +111,67 @@
     linear-gradient(to bottom, color-mix(in oklch, var(--lavender) 10%, transparent) 1px, transparent 1px);
   background-size: 48px 48px;
 }
+
+/* ============ Motion / animations ============ */
+@keyframes ew-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+@keyframes ew-float-slow {
+  0%, 100% { transform: translate3d(0,0,0) scale(1); }
+  50% { transform: translate3d(20px,-30px,0) scale(1.08); }
+}
+@keyframes ew-blob {
+  0%, 100% { transform: translate3d(0,0,0) scale(1); border-radius: 50% 40% 60% 50% / 50% 60% 40% 50%; }
+  33% { transform: translate3d(30px,-20px,0) scale(1.05); border-radius: 60% 50% 40% 60% / 40% 50% 60% 50%; }
+  66% { transform: translate3d(-20px,20px,0) scale(0.97); border-radius: 40% 60% 50% 40% / 60% 40% 50% 60%; }
+}
+@keyframes ew-shimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+@keyframes ew-marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+@keyframes ew-bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+@keyframes ew-pulse-ring {
+  0% { transform: scale(0.9); opacity: 0.6; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+
+@utility animate-ew-float { animation: ew-float 6s ease-in-out infinite; }
+@utility animate-ew-float-slow { animation: ew-float-slow 14s ease-in-out infinite; }
+@utility animate-ew-blob { animation: ew-blob 18s ease-in-out infinite; }
+@utility animate-ew-marquee { animation: ew-marquee 40s linear infinite; }
+@utility animate-ew-bounce-slow { animation: ew-bounce-slow 2.4s ease-in-out infinite; }
+@utility animate-ew-pulse-ring { animation: ew-pulse-ring 2s ease-out infinite; }
+
+@utility text-shimmer {
+  background-image: linear-gradient(
+    90deg,
+    var(--lavender-dark) 0%,
+    var(--lavender) 35%,
+    #ffffff 50%,
+    var(--lavender) 65%,
+    var(--lavender-dark) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: ew-shimmer 6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
