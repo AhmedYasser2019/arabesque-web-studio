@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { I18nProvider, useI18n, type Lang } from "@/lib/i18n";
 import heroBg from "@/assets/hero.jpg";
+import wingMark from "@/assets/wing-mark.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -60,21 +61,8 @@ function LangSwitch() {
   );
 }
 
-function WingMark({ className = "h-8 w-8" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 64 64" className={className} aria-hidden>
-      <defs>
-        <linearGradient id="wg" x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0%" stopColor="var(--lavender-dark)" />
-          <stop offset="100%" stopColor="var(--lavender)" />
-        </linearGradient>
-      </defs>
-      <path
-        fill="url(#wg)"
-        d="M32 6 L38 22 Q44 20 52 14 Q46 30 40 30 L36 30 L44 46 Q34 42 32 34 Q30 42 20 46 L28 30 L24 30 Q18 30 12 14 Q20 20 26 22 Z"
-      />
-    </svg>
-  );
+function WingMark({ className = "h-9 w-9" }: { className?: string }) {
+  return <img src={wingMark} alt="Elite Wing" className={`${className} object-contain`} />;
 }
 
 function Header() {
