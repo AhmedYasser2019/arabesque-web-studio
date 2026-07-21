@@ -266,7 +266,7 @@ function Hero() {
                   {"raw" in s && s.raw ? (
                     <span>{s.end}</span>
                   ) : (
-                    <CountUp end={s.end} prefix={s.prefix ?? ""} />
+                    <CountUp end={s.end} prefix={"prefix" in s ? s.prefix : ""} />
                   )}
                 </div>
                 <div className="mt-1 text-xs text-muted-foreground">{s.label}</div>
