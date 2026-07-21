@@ -560,26 +560,59 @@ function Contact() {
 
 function Footer() {
   const { tr } = useI18n();
+  const socials = [
+    { Icon: Instagram, label: "Instagram", href: "#" },
+    { Icon: Linkedin, label: "LinkedIn", href: "#" },
+    { Icon: Twitter, label: "Twitter", href: "#" },
+  ];
   return (
-    <footer className="border-t border-border/60 bg-background py-12">
-      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-5 md:flex-row md:px-8">
-        <div className="flex items-center gap-3">
-          <WingMark className="h-7 w-7" />
-          <div className="text-sm">
-            <div className="font-bold text-navy">ELITE WING · إيليت وينغ</div>
-            <div className="text-xs text-muted-foreground">{tr("footer.tagline")}</div>
-          </div>
-        </div>
-        <div className="flex items-center gap-4 text-muted-foreground">
-          <a href="#" aria-label="Instagram" className="hover:text-lavender-dark"><Instagram className="h-4 w-4" /></a>
-          <a href="#" aria-label="LinkedIn" className="hover:text-lavender-dark"><Linkedin className="h-4 w-4" /></a>
-          <a href="#" aria-label="Twitter" className="hover:text-lavender-dark"><Twitter className="h-4 w-4" /></a>
-        </div>
-        <div className="text-xs text-muted-foreground">{tr("footer.rights")}</div>
+    <footer className="relative overflow-hidden border-t border-border/60 bg-background py-14">
+      {/* Ambient glow */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute -top-24 left-1/2 h-64 w-[70%] -translate-x-1/2 rounded-full bg-lavender/25 blur-3xl animate-ew-float-slow" />
+        <div className="absolute bottom-0 left-10 h-40 w-40 rounded-full bg-lavender-dark/20 blur-3xl animate-ew-blob" />
+        <div className="absolute bottom-0 right-10 h-40 w-40 rounded-full bg-lavender/20 blur-3xl animate-ew-float" />
       </div>
+
+      {/* Top hairline shimmer */}
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lavender to-transparent opacity-70" />
+
+      <Reveal variant="up">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-5 md:flex-row md:px-8">
+          <div className="group flex items-center gap-3">
+            <div className="relative">
+              <span className="absolute inset-0 rounded-full bg-lavender/40 blur-md opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+              <WingMark className="relative h-8 w-8 transition-transform duration-500 group-hover:-translate-y-0.5 group-hover:scale-110" />
+            </div>
+            <div className="text-sm">
+              <div className="font-bold text-navy">ELITE WING · إيليت وينغ</div>
+              <div className="text-xs text-muted-foreground">{tr("footer.tagline")}</div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {socials.map(({ Icon, label, href }, i) => (
+              <a
+                key={label}
+                href={href}
+                aria-label={label}
+                style={{ animationDelay: `${i * 120}ms` }}
+                className="group relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-background/70 text-muted-foreground transition-all duration-300 hover:-translate-y-1 hover:border-lavender hover:text-lavender-dark hover:shadow-[0_10px_30px_-10px_var(--lavender)]"
+              >
+                <span aria-hidden className="pointer-events-none absolute inset-0 rounded-full bg-lavender/25 opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-100" />
+                <span aria-hidden className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-lavender/0 transition group-hover:ring-lavender/40 group-hover:animate-ew-pulse-ring" />
+                <Icon className="relative h-4 w-4 transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6" />
+              </a>
+            ))}
+          </div>
+
+          <div className="text-xs text-muted-foreground">{tr("footer.rights")}</div>
+        </div>
+      </Reveal>
     </footer>
   );
 }
+
 
 export function Landing({ lang }: { lang?: Lang }) {
   return (
