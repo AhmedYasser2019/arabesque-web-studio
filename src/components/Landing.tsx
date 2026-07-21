@@ -255,10 +255,10 @@ function Hero() {
         </Reveal>
         <div className="mt-16 grid grid-cols-2 gap-6 border-t border-border/60 pt-8 md:grid-cols-4">
           {([
-            { end: 100, prefix: "+", label: tr("works.title") },
-            { end: 50, prefix: "+", label: tr("partners.kicker") },
-            { end: 5, label: tr("method.title") },
-            { end: 2026, label: "Riyadh · KSA", raw: true },
+            { end: 100, prefix: "+", label: tr("stats.projects") },
+            { end: 50, prefix: "+", label: tr("stats.partners") },
+            { end: 5, label: tr("stats.pillars") },
+            { end: 2026, label: tr("stats.location"), raw: true },
           ] as const).map((s, i) => (
             <Reveal key={i} variant="up" delay={500 + i * 120}>
               <div>
