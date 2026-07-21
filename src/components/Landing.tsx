@@ -255,10 +255,10 @@ function Hero() {
         </Reveal>
         <div className="mt-16 grid grid-cols-2 gap-6 border-t border-border/60 pt-8 md:grid-cols-4">
           {([
-            { end: 100, prefix: "+", label: tr("works.title") },
-            { end: 50, prefix: "+", label: tr("partners.kicker") },
-            { end: 5, label: tr("method.title") },
-            { end: 2026, label: "Riyadh · KSA", raw: true },
+            { end: 100, prefix: "+", label: tr("stats.projects") },
+            { end: 50, prefix: "+", label: tr("stats.partners") },
+            { end: 5, label: tr("stats.pillars") },
+            { end: 2026, label: tr("stats.location"), raw: true },
           ] as const).map((s, i) => (
             <Reveal key={i} variant="up" delay={500 + i * 120}>
               <div>
@@ -447,7 +447,7 @@ function Works() {
                 </div>
                 <div className="relative">
                   <div className="text-xs font-bold uppercase tracking-widest text-lavender-dark">
-                    Case · 0{i + 1}
+                    {tr("works.case")} · 0{i + 1}
                   </div>
                   <h3 className="mt-3 text-2xl font-bold text-navy md:text-3xl">
                     {tr(`${k}.t` as keyof typeof import("@/lib/i18n").t)}
@@ -537,20 +537,21 @@ function Contact() {
               <div className="grid gap-3">
                 <input
                   className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm placeholder-white/60 outline-none focus:border-white"
-                  placeholder={tr("nav.about")}
+                  placeholder={tr("contact.form.name")}
                   required
                 />
                 <input
                   type="email"
                   className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm placeholder-white/60 outline-none focus:border-white"
-                  placeholder={tr("contact.email")}
+                  placeholder={tr("contact.form.email")}
                   required
                 />
                 <textarea
                   rows={4}
                   className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm placeholder-white/60 outline-none focus:border-white"
-                  placeholder={tr("contact.title")}
+                  placeholder={tr("contact.form.message")}
                 />
+
                 <button className="mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-lavender-dark transition hover:bg-white/90">
                   {tr("contact.cta")}
                   <ArrowUpRight className="h-4 w-4" />
