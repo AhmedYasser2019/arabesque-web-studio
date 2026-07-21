@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { I18nProvider, useI18n, type Lang } from "@/lib/i18n";
 import { Reveal } from "@/components/Reveal";
+import { CountUp } from "@/components/CountUp";
 import heroBg from "@/assets/hero.jpg";
 import wingMark from "@/assets/wing-mark.png";
 
