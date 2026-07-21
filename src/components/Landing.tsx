@@ -48,6 +48,7 @@ function WingMark({ className = "h-9 w-9" }: { className?: string }) {
 function Header() {
   const { tr } = useI18n();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const links = [
     { href: "#about", key: "nav.about" as const },
     { href: "#services", key: "nav.services" as const },
@@ -56,13 +57,59 @@ function Header() {
     { href: "#partners", key: "nav.partners" as const },
     { href: "#contact", key: "nav.contact" as const },
   ];
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    if (open) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = prev;
+      };
+    }
+  }, [open]);
+
   return (
-    <header className="sticky top-0 z-50 glass border-b border-border/50">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 md:px-8">
-        <a href="#top" className="flex items-center gap-2.5">
-          <WingMark />
-          <div className="leading-tight">
-            <div className="text-sm font-bold tracking-widest text-navy">ELITE WING</div>
+    <header
+      className={`sticky top-0 z-50 transition-all duration-500 ${
+        scrolled
+          ? "glass border-b border-border/60 shadow-lg shadow-lavender/5"
+          : "border-b border-transparent bg-background/0 backdrop-blur-0"
+      }`}
+    >
+      <div
+        className={`mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 md:px-8 transition-all duration-500 ${
+          scrolled ? "py-2.5" : "py-4"
+        }`}
+      >
+        <a href="#top" className="group flex items-center gap-2.5">
+          <span
+            className={`inline-flex items-center justify-center transition-all duration-500 ${
+              scrolled ? "scale-90" : "scale-100"
+            } group-hover:rotate-6`}
+          >
+            <WingMark
+              className={`transition-all duration-500 ${scrolled ? "h-8 w-8" : "h-9 w-9"}`}
+            />
+          </span>
+          <div
+            className={`leading-tight transition-all duration-500 ${
+              scrolled ? "opacity-90" : "opacity-100"
+            }`}
+          >
+            <div
+              className={`font-bold tracking-widest text-navy transition-all duration-500 ${
+                scrolled ? "text-[13px]" : "text-sm"
+              }`}
+            >
+              ELITE WING
+            </div>
             <div className="text-[11px] text-lavender-dark">إيليت وينغ</div>
           </div>
         </a>
@@ -71,9 +118,10 @@ function Header() {
             <a
               key={l.href}
               href={l.href}
-              className="text-sm text-foreground/70 transition hover:text-lavender-dark"
+              className="group relative text-sm text-foreground/70 transition-colors duration-300 hover:text-lavender-dark"
             >
               {tr(l.key)}
+              <span className="pointer-events-none absolute -bottom-1 left-0 h-0.5 w-full origin-center scale-x-0 rounded-full gradient-lavender transition-transform duration-300 ease-out group-hover:scale-x-100" />
             </a>
           ))}
         </nav>
@@ -81,35 +129,65 @@ function Header() {
           <LangSwitch />
           <a
             href="#contact"
-            className="hidden rounded-full gradient-lavender px-4 py-2 text-xs font-semibold text-white transition hover:opacity-90 md:inline-flex"
+            className="group hidden items-center gap-1.5 overflow-hidden rounded-full gradient-lavender px-4 py-2 text-xs font-semibold text-white shadow-md shadow-lavender/30 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-lavender/40 md:inline-flex"
           >
-            {tr("nav.cta")}
+            <span>{tr("nav.cta")}</span>
+            <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 rtl:group-hover:-translate-x-0.5" />
           </a>
           <button
-            className="md:hidden rounded-md border border-border p-2"
+            className="relative md:hidden rounded-md border border-border p-2 transition hover:border-lavender"
             onClick={() => setOpen((v) => !v)}
             aria-label="Menu"
+            aria-expanded={open}
           >
-            {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+            <Menu
+              className={`h-4 w-4 transition-all duration-300 ${
+                open ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100"
+              }`}
+            />
+            <X
+              className={`absolute inset-0 m-auto h-4 w-4 transition-all duration-300 ${
+                open ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0"
+              }`}
+            />
           </button>
         </div>
       </div>
-      {open && (
-        <div className="md:hidden border-t border-border/60 bg-background/95 px-5 py-4">
-          <nav className="flex flex-col gap-3">
-            {links.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
-                onClick={() => setOpen(false)}
-                className="text-sm text-foreground/80"
-              >
-                {tr(l.key)}
-              </a>
-            ))}
-          </nav>
-        </div>
-      )}
+
+      {/* Mobile menu */}
+      <div
+        className={`md:hidden overflow-hidden border-t border-border/60 bg-background/95 backdrop-blur-md transition-[max-height,opacity] duration-500 ease-out ${
+          open ? "max-h-[70vh] opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
+        <nav className="flex flex-col gap-1 px-5 py-4">
+          {links.map((l, i) => (
+            <a
+              key={l.href}
+              href={l.href}
+              onClick={() => setOpen(false)}
+              className={`group flex items-center justify-between rounded-xl border border-transparent px-3 py-3 text-sm text-foreground/80 transition-all duration-300 hover:border-lavender/40 hover:bg-lavender-light/40 hover:text-lavender-dark ${
+                open ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
+              }`}
+              style={{ transitionDelay: open ? `${80 + i * 60}ms` : "0ms" }}
+            >
+              <span>{tr(l.key)}</span>
+              <ArrowUpRight className="h-4 w-4 opacity-0 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100 rtl:group-hover:-translate-x-0.5" />
+            </a>
+          ))}
+          <a
+            href="#contact"
+            onClick={() => setOpen(false)}
+            className={`mt-2 inline-flex items-center justify-center gap-1.5 rounded-full gradient-lavender px-4 py-2.5 text-xs font-semibold text-white shadow-md shadow-lavender/30 transition-all duration-300 ${
+              open ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"
+            }`}
+            style={{ transitionDelay: open ? `${80 + links.length * 60}ms` : "0ms" }}
+          >
+            {tr("nav.cta")}
+            <ArrowUpRight className="h-3.5 w-3.5" />
+          </a>
+        </nav>
+      </div>
     </header>
   );
 }
