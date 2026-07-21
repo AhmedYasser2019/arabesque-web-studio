@@ -91,8 +91,20 @@ export const t: Dict = {
   "contact.location": { ar: "الموقع", en: "Location" },
   "contact.location.v": { ar: "الرياض، المملكة العربية السعودية", en: "Riyadh, Saudi Arabia" },
   "contact.cta": { ar: "أرسل رسالة", en: "Send a message" },
+  "contact.form.name": { ar: "الاسم", en: "Name" },
+  "contact.form.email": { ar: "البريد الإلكتروني", en: "Email address" },
+  "contact.form.message": { ar: "أخبرنا عن مشروعك", en: "Tell us about your project" },
 
-  // footer
+  // stats
+  "stats.projects": { ar: "مشروع منجز", en: "Projects delivered" },
+  "stats.partners": { ar: "شريك ناجح", en: "Trusted partners" },
+  "stats.pillars": { ar: "ركائز منهجية", en: "Method pillars" },
+  "stats.location": { ar: "الرياض · المملكة", en: "Riyadh · KSA" },
+
+  // works
+  "works.case": { ar: "مشروع", en: "Case" },
+
+
   "footer.tagline": { ar: "من الخيال إلى الواقع… نحن جناحك.", en: "From imagination to reality — we are your wing." },
   "footer.rights": { ar: "© 2026 إيليت وينغ. جميع الحقوق محفوظة.", en: "© 2026 Elite Wing. All rights reserved." },
 };
