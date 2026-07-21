@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { I18nProvider, useI18n, type Lang } from "@/lib/i18n";
 import { Reveal } from "@/components/Reveal";
+import { CountUp } from "@/components/CountUp";
 import heroBg from "@/assets/hero.jpg";
 import wingMark from "@/assets/wing-mark.png";
 
@@ -253,16 +254,22 @@ function Hero() {
           </div>
         </Reveal>
         <div className="mt-16 grid grid-cols-2 gap-6 border-t border-border/60 pt-8 md:grid-cols-4">
-          {[
-            ["+100", tr("works.title")],
-            ["+50", tr("partners.kicker")],
-            ["5", tr("method.title")],
-            ["2026", "Riyadh · KSA"],
-          ].map(([n, l], i) => (
+          {([
+            { end: 100, prefix: "+", label: tr("works.title") },
+            { end: 50, prefix: "+", label: tr("partners.kicker") },
+            { end: 5, label: tr("method.title") },
+            { end: 2026, label: "Riyadh · KSA", raw: true },
+          ] as const).map((s, i) => (
             <Reveal key={i} variant="up" delay={500 + i * 120}>
               <div>
-                <div className="text-3xl font-black text-navy md:text-4xl">{n}</div>
-                <div className="mt-1 text-xs text-muted-foreground">{l}</div>
+                <div className="text-3xl font-black text-navy md:text-4xl">
+                  {"raw" in s && s.raw ? (
+                    <span>{s.end}</span>
+                  ) : (
+                    <CountUp end={s.end} prefix={"prefix" in s ? s.prefix : ""} />
+                  )}
+                </div>
+                <div className="mt-1 text-xs text-muted-foreground">{s.label}</div>
               </div>
             </Reveal>
           ))}
