@@ -577,7 +577,7 @@ function Footer() {
       {/* Top hairline shimmer */}
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lavender to-transparent opacity-70" />
 
-      <Reveal direction="up">
+      <Reveal variant="up">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-6 px-5 md:flex-row md:px-8">
           <div className="group flex items-center gap-3">
             <div className="relative">
