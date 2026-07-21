@@ -537,20 +537,21 @@ function Contact() {
               <div className="grid gap-3">
                 <input
                   className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm placeholder-white/60 outline-none focus:border-white"
-                  placeholder={tr("nav.about")}
+                  placeholder={tr("contact.form.name")}
                   required
                 />
                 <input
                   type="email"
                   className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm placeholder-white/60 outline-none focus:border-white"
-                  placeholder={tr("contact.email")}
+                  placeholder={tr("contact.form.email")}
                   required
                 />
                 <textarea
                   rows={4}
                   className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm placeholder-white/60 outline-none focus:border-white"
-                  placeholder={tr("contact.title")}
+                  placeholder={tr("contact.form.message")}
                 />
+
                 <button className="mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-lavender-dark transition hover:bg-white/90">
                   {tr("contact.cta")}
                   <ArrowUpRight className="h-4 w-4" />
