@@ -447,7 +447,7 @@ function Works() {
                 </div>
                 <div className="relative">
                   <div className="text-xs font-bold uppercase tracking-widest text-lavender-dark">
-                    Case · 0{i + 1}
+                    {tr("works.case")} · 0{i + 1}
                   </div>
                   <h3 className="mt-3 text-2xl font-bold text-navy md:text-3xl">
                     {tr(`${k}.t` as keyof typeof import("@/lib/i18n").t)}
