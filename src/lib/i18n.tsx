@@ -100,6 +100,43 @@ export const t: Dict = {
   "stats.partners": { ar: "شريك ناجح", en: "Trusted partners" },
   "stats.pillars": { ar: "ركائز منهجية", en: "Method pillars" },
   "stats.location": { ar: "الرياض · المملكة", en: "Riyadh · KSA" },
+  "stats.events": { ar: "فعالية مكتملة", en: "Events delivered" },
+  "stats.clients": { ar: "عميل سعيد", en: "Happy clients" },
+  "stats.cities": { ar: "مدينة حول المملكة", en: "Cities across KSA" },
+  "stats.years": { ar: "سنوات من الخبرة", en: "Years of experience" },
+
+  // upcoming events
+  "up.kicker": { ar: "الفعاليات القادمة", en: "Upcoming Events" },
+  "up.title": { ar: "اكتشف مجموعة من الفعاليات المميزة", en: "Discover a curated set of standout events" },
+  "up.cta": { ar: "تفاصيل أكثر", en: "Learn more" },
+  "up.all": { ar: "عرض جميع الفعاليات", en: "View all events" },
+  "up.1.t": { ar: "منتدى الابتكار في الأعمال", en: "Business Innovation Forum" },
+  "up.1.b": { ar: "الرياض · فندق الموسوبيل", en: "Riyadh · Mövenpick Hotel" },
+  "up.2.t": { ar: "قمة التحول الرقمي", en: "Digital Transformation Summit" },
+  "up.2.b": { ar: "الرياض · مركز الملك عبدالله المالي", en: "Riyadh · KAFD" },
+  "up.3.t": { ar: "ملتقى الاستثمار السعودي", en: "Saudi Investment Meetup" },
+  "up.3.b": { ar: "الرياض · فندق ريتز كارلتون", en: "Riyadh · Ritz Carlton" },
+
+  // gallery
+  "gal.kicker": { ar: "لحظات من نجاحاتنا", en: "Moments of Success" },
+  "gal.title": { ar: "من فعالياتنا السابقة", en: "From our past events" },
+  "gal.more": { ar: "عرض المزيد من الأعمال", en: "See more work" },
+
+  // testimonials
+  "test.kicker": { ar: "ماذا يقول عملاؤنا", en: "Testimonials" },
+  "test.title": { ar: "شهادات تصنع الفرق", en: "Words from our partners" },
+  "test.1.q": { ar: "كانت تجربتنا مع إيليت وينغ استثنائية بكل المقاييس، فريق محترف ينظم باهتمام وبالتفاصيل بفوق توقعاتنا.", en: "Working with Elite Wing was exceptional — a professional team with obsessive attention to detail." },
+  "test.1.n": { ar: "أ. محمد العتيبي", en: "Mohammed Al‑Otaibi" },
+  "test.1.r": { ar: "الرئيس التنفيذي · شركة التقنية المتقدمة", en: "CEO · Advanced Tech Co." },
+  "test.2.q": { ar: "أدارت الفريق حدثاً دولياً ضخماً بسلاسة تامة وصورة لائقة بمكانة المملكة.", en: "They delivered a large international event with total ease and a presentation worthy of the Kingdom." },
+  "test.2.n": { ar: "د. سارة الحربي", en: "Dr. Sara Al‑Harbi" },
+  "test.2.r": { ar: "مدير التسويق · مجموعة الرياض", en: "Marketing Director · Riyadh Group" },
+
+  // newsletter
+  "news.title": { ar: "اشترك ليصلك كل جديد", en: "Stay in the loop" },
+  "news.sub": { ar: "انضم إلى قائمتنا لتصلك أخبار الفعاليات والعروض الحصرية.", en: "Join our list for event news and exclusive offers." },
+  "news.placeholder": { ar: "بريدك الإلكتروني", en: "Your email" },
+  "news.cta": { ar: "اشترك الآن", en: "Subscribe" },
 
   // works
   "works.case": { ar: "مشروع", en: "Case" },
