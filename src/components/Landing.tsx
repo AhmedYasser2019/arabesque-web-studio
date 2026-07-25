@@ -57,7 +57,7 @@ const UPCOMING = [
 const GALLERY: { img: string; video: string }[] = [
   {
     img: "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=1200&q=80",
-    video: "https://videos.pexels.com/video-files/2022395/2022395-hd_1920_1080_30fps.mp4",
+    video: "https://videos.pexels.com/video-files/1536321/1536321-hd_1920_1080_30fps.mp4",
   },
   {
     img: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80",
