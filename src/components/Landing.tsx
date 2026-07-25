@@ -31,32 +31,54 @@ import { Reveal } from "@/components/Reveal";
 import { CountUp } from "@/components/CountUp";
 import wingMark from "@/assets/wing-mark.png";
 
-/* ---------------- Free stock media (Unsplash) ---------------- */
-const HERO_CITY =
-  "https://images.unsplash.com/photo-1586724237569-f3d0c1dee8c6?auto=format&fit=crop&w=1920&q=80"; // Riyadh skyline at dusk
+/* ---------------- Free stock media (Unsplash photos + Pexels videos) ---------------- */
+// Hero looping background — concert stage lights, free CC0 (Pexels 3209828)
+const HERO_VIDEO =
+  "https://videos.pexels.com/video-files/3209828/3209828-hd_1920_1080_25fps.mp4";
+const HERO_POSTER =
+  "https://images.unsplash.com/photo-1493804714600-6edb1cd93080?auto=format&fit=crop&w=1920&q=80";
 
 const UPCOMING = [
   {
     date: { d: "24", m: { ar: "يونيو", en: "Jun" }, y: "2026" },
-    img: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1200&q=80",
+    img: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1200&q=80",
   },
   {
     date: { d: "15", m: { ar: "يوليو", en: "Jul" }, y: "2026" },
-    img: "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=1200&q=80",
+    img: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&w=1200&q=80",
   },
   {
     date: { d: "05", m: { ar: "أغسطس", en: "Aug" }, y: "2026" },
-    img: "https://images.unsplash.com/photo-1591115765373-5207764f72e7?auto=format&fit=crop&w=1200&q=80",
+    img: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80",
   },
 ];
 
-const GALLERY = [
-  "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1560439514-4e9645039924?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1526948128573-703ee1aeb6fa?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1200&q=80",
+// Each gallery card has a poster image + a free stock video (Pexels).
+const GALLERY: { img: string; video: string }[] = [
+  {
+    img: "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=1200&q=80",
+    video: "https://videos.pexels.com/video-files/2022395/2022395-hd_1920_1080_30fps.mp4",
+  },
+  {
+    img: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80",
+    video: "https://videos.pexels.com/video-files/2795750/2795750-hd_1920_1080_25fps.mp4",
+  },
+  {
+    img: "https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&w=1200&q=80",
+    video: "https://videos.pexels.com/video-files/1739010/1739010-hd_1920_1080_30fps.mp4",
+  },
+  {
+    img: "https://images.unsplash.com/photo-1560439514-4e9645039924?auto=format&fit=crop&w=1200&q=80",
+    video: "https://videos.pexels.com/video-files/2022396/2022396-hd_1920_1080_30fps.mp4",
+  },
+  {
+    img: "https://images.unsplash.com/photo-1526948128573-703ee1aeb6fa?auto=format&fit=crop&w=1200&q=80",
+    video: "https://videos.pexels.com/video-files/3018669/3018669-hd_1920_1080_24fps.mp4",
+  },
+  {
+    img: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1200&q=80",
+    video: "https://videos.pexels.com/video-files/1721294/1721294-hd_1920_1080_25fps.mp4",
+  },
 ];
 
 /* ---------------- Header ---------------- */
@@ -192,13 +214,24 @@ function Hero() {
   const { tr } = useI18n();
   return (
     <section id="top" className="relative overflow-hidden">
-      {/* City backdrop */}
+      {/* City / concert lights backdrop — looping video with poster fallback */}
+      <video
+        className="absolute inset-0 -z-10 h-full w-full object-cover"
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="metadata"
+        poster={HERO_POSTER}
+        aria-hidden
+      >
+        <source src={HERO_VIDEO} type="video/mp4" />
+      </video>
       <div
         className="absolute inset-0 -z-10"
         style={{
-          backgroundImage: `linear-gradient(180deg, color-mix(in oklch, var(--background) 40%, transparent) 0%, color-mix(in oklch, var(--background) 85%, transparent) 65%, var(--background) 100%), url(${HERO_CITY})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          background:
+            "linear-gradient(180deg, color-mix(in oklch, var(--background) 40%, transparent) 0%, color-mix(in oklch, var(--background) 85%, transparent) 65%, var(--background) 100%)",
         }}
       />
       <div className="absolute inset-0 -z-10 bg-grid opacity-30" />
@@ -435,17 +468,22 @@ function Services() {
 /* ---------------- Gallery (past events) ---------------- */
 function Gallery() {
   const { tr } = useI18n();
+  const [active, setActive] = useState<number | null>(null);
   return (
     <section id="gallery" className="border-t border-white/5 py-24">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("gal.kicker")} title={tr("gal.title")} />
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {GALLERY.map((src, i) => (
+          {GALLERY.map((item, i) => (
             <Reveal key={i} variant="zoom" delay={i * 80}>
-              <div className="group relative overflow-hidden rounded-3xl card-surface">
+              <button
+                type="button"
+                onClick={() => setActive(i)}
+                className="group relative block w-full overflow-hidden rounded-3xl card-surface text-start"
+              >
                 <div className="aspect-[4/3] overflow-hidden">
                   <img
-                    src={src}
+                    src={item.img}
                     alt=""
                     loading="lazy"
                     className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-110"
@@ -461,14 +499,15 @@ function Gallery() {
                       {tr(`works.${((i % 4) + 1)}.t` as keyof typeof import("@/lib/i18n").t)}
                     </div>
                   </div>
-                  <button
+                  <span
                     aria-label="Play"
-                    className="flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-lavender-dark shadow-lg transition group-hover:scale-110"
+                    className="relative flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-lavender-dark shadow-lg transition group-hover:scale-110"
                   >
-                    <Play className="h-4 w-4 fill-current" />
-                  </button>
+                    <span className="absolute inset-0 rounded-full bg-white/50 animate-ew-pulse-ring" />
+                    <Play className="relative h-4 w-4 fill-current" />
+                  </span>
                 </div>
-              </div>
+              </button>
             </Reveal>
           ))}
         </div>
@@ -482,6 +521,36 @@ function Gallery() {
           </a>
         </div>
       </div>
+      {active !== null && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setActive(null)}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-background/90 p-4 backdrop-blur-lg"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-5xl overflow-hidden rounded-3xl border border-white/10 bg-black shadow-2xl"
+          >
+            <button
+              onClick={() => setActive(null)}
+              aria-label="Close"
+              className="absolute end-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-lavender-dark shadow-lg transition hover:scale-110"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <video
+              key={GALLERY[active].video}
+              src={GALLERY[active].video}
+              poster={GALLERY[active].img}
+              className="h-full w-full"
+              controls
+              autoPlay
+              playsInline
+            />
+          </div>
+        </div>
+      )}
     </section>
   );
 }
