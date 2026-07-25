@@ -38,26 +38,37 @@ const HERO_VIDEO =
 const HERO_POSTER =
   "https://images.unsplash.com/photo-1493804714600-6edb1cd93080?auto=format&fit=crop&w=1920&q=80";
 
+// Stills pulled from Elite Wing's own portfolio deck (project-data/), not stock.
 const UPCOMING = [
   {
     date: { d: "24", m: { ar: "يونيو", en: "Jun" }, y: "2026" },
-    img: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1200&q=80",
+    img: "/media/events/up-1.jpg",
   },
   {
     date: { d: "15", m: { ar: "يوليو", en: "Jul" }, y: "2026" },
-    img: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&w=1200&q=80",
+    img: "/media/events/up-2.jpg",
   },
   {
     date: { d: "05", m: { ar: "أغسطس", en: "Aug" }, y: "2026" },
-    img: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80",
+    img: "/media/events/up-3.jpg",
   },
 ];
 
 /* ---------------- Client work reel ----------------
  * Assets live in public/media as <slug>.jpg (poster), <slug>.loop.mp4 (muted
- * hover preview) and <slug>.mp4 (full film for the lightbox). Point MEDIA at a
- * CDN origin to serve them from somewhere other than the app. */
+ * hover preview) and <slug>.mp4 (full film for the lightbox).
+ *
+ * Posters + hover loops are small (~6 MB all together) and always ship with the
+ * app. The full films are ~112 MB, which Cloudflare's free plan does not allow
+ * us to serve, so their origin is switchable:
+ *
+ *   unset            -> /media, i.e. the local files (dev, and a VPS later)
+ *   VITE_MEDIA_URL   -> that origin, e.g. https://cdn.example.com/media
+ *
+ * Set it in the Cloudflare Pages project's environment variables. Nothing else
+ * changes — posters and loops stay local either way. */
 const MEDIA = "/media";
+const FILMS = (import.meta.env.VITE_MEDIA_URL || MEDIA).replace(/\/+$/, "");
 
 const CATS = ["corporate", "conf", "doc", "health", "reel"] as const;
 type Cat = (typeof CATS)[number];
@@ -661,7 +672,7 @@ function Gallery() {
             {/* object-contain + capped height keeps portrait films (9:16) inside
                 the viewport instead of pushing the close button off-screen */}
             <video
-              src={`${MEDIA}/${open}.mp4`}
+              src={`${FILMS}/${open}.mp4`}
               poster={`${MEDIA}/${open}.jpg`}
               className="max-h-[85vh] w-full object-contain"
               controls

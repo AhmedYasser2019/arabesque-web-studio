@@ -11,6 +11,8 @@ import { chromium } from "playwright";
 import assert from "node:assert";
 
 const BASE = process.env.BASE_URL ?? "http://localhost:8081";
+// Full films may live off-origin (see VITE_MEDIA_URL). Posters and loops never do.
+const FILMS = (process.env.VITE_MEDIA_URL || `${BASE}/media`).replace(/\/+$/, "");
 
 // keep in sync with REEL/CATS in src/components/Landing.tsx
 const EXPECTED = [7, 4, 3, 2, 2];
@@ -48,15 +50,22 @@ const check = async (name, fn) => {
 
 // 1. every poster, hover loop and full film resolves
 const missing = [];
+const head = async (url) => {
+  try {
+    const r = await fetch(url, { method: "HEAD" });
+    if (!r.ok) missing.push(`${url} -> ${r.status}`);
+  } catch (e) {
+    missing.push(`${url} -> ${e.message}`);
+  }
+};
 await Promise.all(
-  SLUGS.flatMap((slug) =>
-    [`${slug}.jpg`, `${slug}.loop.mp4`, `${slug}.mp4`].map(async (file) => {
-      const r = await fetch(`${BASE}/media/${file}`, { method: "HEAD" });
-      if (!r.ok) missing.push(`${file} -> ${r.status}`);
-    }),
-  ),
+  SLUGS.flatMap((slug) => [
+    head(`${BASE}/media/${slug}.jpg`),
+    head(`${BASE}/media/${slug}.loop.mp4`),
+    head(`${FILMS}/${slug}.mp4`),
+  ]),
 );
-await check(`all ${SLUGS.length * 3} media assets resolve`, () =>
+await check(`all ${SLUGS.length * 3} media assets resolve (films via ${FILMS})`, () =>
   assert.deepEqual(missing, [], `missing: ${missing.join(", ")}`),
 );
 
