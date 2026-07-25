@@ -468,17 +468,22 @@ function Services() {
 /* ---------------- Gallery (past events) ---------------- */
 function Gallery() {
   const { tr } = useI18n();
+  const [active, setActive] = useState<number | null>(null);
   return (
     <section id="gallery" className="border-t border-white/5 py-24">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("gal.kicker")} title={tr("gal.title")} />
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {GALLERY.map((src, i) => (
+          {GALLERY.map((item, i) => (
             <Reveal key={i} variant="zoom" delay={i * 80}>
-              <div className="group relative overflow-hidden rounded-3xl card-surface">
+              <button
+                type="button"
+                onClick={() => setActive(i)}
+                className="group relative block w-full overflow-hidden rounded-3xl card-surface text-start"
+              >
                 <div className="aspect-[4/3] overflow-hidden">
                   <img
-                    src={src}
+                    src={item.img}
                     alt=""
                     loading="lazy"
                     className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-110"
@@ -494,15 +499,52 @@ function Gallery() {
                       {tr(`works.${((i % 4) + 1)}.t` as keyof typeof import("@/lib/i18n").t)}
                     </div>
                   </div>
-                  <button
+                  <span
                     aria-label="Play"
-                    className="flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-lavender-dark shadow-lg transition group-hover:scale-110"
+                    className="relative flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-lavender-dark shadow-lg transition group-hover:scale-110"
                   >
-                    <Play className="h-4 w-4 fill-current" />
-                  </button>
+                    <span className="absolute inset-0 rounded-full bg-white/50 animate-ew-pulse-ring" />
+                    <Play className="relative h-4 w-4 fill-current" />
+                  </span>
                 </div>
-              </div>
+              </button>
             </Reveal>
+          ))}
+        </div>
+      </div>
+      {active !== null && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setActive(null)}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-background/90 p-4 backdrop-blur-lg"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative w-full max-w-5xl overflow-hidden rounded-3xl border border-white/10 bg-black shadow-2xl"
+          >
+            <button
+              onClick={() => setActive(null)}
+              aria-label="Close"
+              className="absolute end-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-lavender-dark shadow-lg transition hover:scale-110"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <video
+              key={GALLERY[active].video}
+              src={GALLERY[active].video}
+              poster={GALLERY[active].img}
+              className="h-full w-full"
+              controls
+              autoPlay
+              playsInline
+            />
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
           ))}
         </div>
         <div className="mt-10 text-center">
