@@ -50,7 +50,7 @@ export function CountUp({
           }
         });
       },
-      { threshold: 0.3 }
+      { threshold: 0.3 },
     );
     io.observe(el);
     return () => io.disconnect();

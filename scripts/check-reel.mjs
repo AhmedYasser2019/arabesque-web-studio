@@ -58,14 +58,17 @@ const head = async (url) => {
     missing.push(`${url} -> ${e.message}`);
   }
 };
-await Promise.all(
-  SLUGS.flatMap((slug) => [
+await Promise.all([
+  ...SLUGS.flatMap((slug) => [
     head(`${BASE}/media/${slug}.jpg`),
     head(`${BASE}/media/${slug}.loop.mp4`),
     head(`${FILMS}/${slug}.mp4`),
   ]),
-);
-await check(`all ${SLUGS.length * 3} media assets resolve (films via ${FILMS})`, () =>
+  head(`${BASE}/media/hero.mp4`),
+  head(`${BASE}/media/hero.jpg`),
+  ...[1, 2, 3].map((n) => head(`${BASE}/media/events/up-${n}.jpg`)),
+]);
+await check(`all ${SLUGS.length * 3 + 5} media assets resolve (films via ${FILMS})`, () =>
   assert.deepEqual(missing, [], `missing: ${missing.join(", ")}`),
 );
 
@@ -74,6 +77,34 @@ const browser = await chromium.launch();
 for (const lang of ["en", "ar"]) {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await page.goto(`${BASE}/${lang}`, { waitUntil: "networkidle" });
+  // 0. hero showreel autoplays muted, and opens the full film with sound
+  const heroVid = await page.evaluate(() => {
+    const v = document.querySelector("#top video");
+    return v && { file: v.currentSrc.split("/").pop(), paused: v.paused, muted: v.muted };
+  });
+  await check(`${lang}: hero showreel autoplays muted`, () => {
+    assert.ok(heroVid, "no hero video");
+    assert.equal(heroVid.file, "hero.mp4");
+    assert.equal(heroVid.paused, false, "hero video is paused");
+    assert.equal(heroVid.muted, true, "hero video must stay muted to autoplay");
+  });
+
+  await page.locator("#top button[aria-label]").first().click();
+  await page.waitForTimeout(1800);
+  const heroModal = await page.evaluate(() => {
+    const v = document.querySelector('[role="dialog"] video');
+    return v && { file: v.currentSrc.split("/").pop(), muted: v.muted };
+  });
+  await check(`${lang}: hero play opens the full film with sound`, () => {
+    assert.ok(heroModal, "hero modal did not open");
+    assert.equal(heroModal.file, "elite-wing.mp4");
+    assert.equal(heroModal.muted, false, "lightbox should not be muted");
+  });
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(500);
+  const closed = (await page.locator('[role="dialog"]').count()) === 0;
+  await check(`${lang}: Escape closes the lightbox`, () => assert.ok(closed));
+
   const sec = page.locator("#gallery");
   await sec.scrollIntoViewIfNeeded();
   const rail = sec.locator("div.snap-x");

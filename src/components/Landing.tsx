@@ -31,12 +31,8 @@ import { Reveal } from "@/components/Reveal";
 import { CountUp } from "@/components/CountUp";
 import wingMark from "@/assets/wing-mark.png";
 
-/* ---------------- Free stock media (Unsplash photos + Pexels videos) ---------------- */
-// Hero looping background — concert stage lights, free CC0 (Pexels 3209828)
-const HERO_VIDEO =
-  "https://videos.pexels.com/video-files/3209828/3209828-hd_1920_1080_25fps.mp4";
-const HERO_POSTER =
-  "https://images.unsplash.com/photo-1493804714600-6edb1cd93080?auto=format&fit=crop&w=1920&q=80";
+/* ---------------- Media ----------------
+ * All of it is Elite Wing's own material now — no stock left on the page. */
 
 // Stills pulled from Elite Wing's own portfolio deck (project-data/), not stock.
 const UPCOMING = [
@@ -119,11 +115,15 @@ function WingMark({ className = "h-9 w-9" }: { className?: string }) {
 function BrandLockup({ compact = false }: { compact?: boolean }) {
   return (
     <a href="#top" className="group flex items-center gap-2.5">
-      <span className={`transition-all duration-500 ${compact ? "scale-90" : "scale-100"} group-hover:rotate-6`}>
+      <span
+        className={`transition-all duration-500 ${compact ? "scale-90" : "scale-100"} group-hover:rotate-6`}
+      >
         <WingMark className={compact ? "h-8 w-8" : "h-10 w-10"} />
       </span>
       <div className="leading-tight">
-        <div className={`font-bold tracking-[0.18em] text-white ${compact ? "text-[12px]" : "text-[13px]"}`}>
+        <div
+          className={`font-bold tracking-[0.18em] text-white ${compact ? "text-[12px]" : "text-[13px]"}`}
+        >
           ELITE WING
         </div>
         <div className="text-[10px] text-lavender-light/80 tracking-widest">إيليت وينغ</div>
@@ -164,10 +164,14 @@ function Header() {
   return (
     <header
       className={`sticky top-0 z-50 transition-all duration-500 ${
-        scrolled ? "glass border-b border-white/10 shadow-2xl shadow-lavender-dark/10" : "border-b border-transparent"
+        scrolled
+          ? "glass border-b border-white/10 shadow-2xl shadow-lavender-dark/10"
+          : "border-b border-transparent"
       }`}
     >
-      <div className={`mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 md:px-8 ${scrolled ? "py-2.5" : "py-4"} transition-all duration-500`}>
+      <div
+        className={`mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 md:px-8 ${scrolled ? "py-2.5" : "py-4"} transition-all duration-500`}
+      >
         <BrandLockup compact={scrolled} />
         <nav className="hidden items-center gap-7 lg:flex">
           {links.map((l) => (
@@ -196,14 +200,20 @@ function Header() {
             aria-label="Menu"
             aria-expanded={open}
           >
-            <Menu className={`h-4 w-4 transition-all duration-300 ${open ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100"}`} />
-            <X className={`absolute inset-0 m-auto h-4 w-4 transition-all duration-300 ${open ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0"}`} />
+            <Menu
+              className={`h-4 w-4 transition-all duration-300 ${open ? "rotate-90 scale-0 opacity-0" : "rotate-0 scale-100 opacity-100"}`}
+            />
+            <X
+              className={`absolute inset-0 m-auto h-4 w-4 transition-all duration-300 ${open ? "rotate-0 scale-100 opacity-100" : "-rotate-90 scale-0 opacity-0"}`}
+            />
           </button>
         </div>
       </div>
 
       {/* Mobile menu */}
-      <div className={`lg:hidden overflow-hidden border-t border-white/10 bg-background/95 backdrop-blur-md transition-[max-height,opacity] duration-500 ease-out ${open ? "max-h-[70vh] opacity-100" : "max-h-0 opacity-0"}`}>
+      <div
+        className={`lg:hidden overflow-hidden border-t border-white/10 bg-background/95 backdrop-blur-md transition-[max-height,opacity] duration-500 ease-out ${open ? "max-h-[70vh] opacity-100" : "max-h-0 opacity-0"}`}
+      >
         <nav className="flex flex-col gap-1 px-5 py-4">
           {links.map((l, i) => (
             <a
@@ -223,24 +233,61 @@ function Header() {
   );
 }
 
+/* Full-film lightbox, shared by the hero and the work reel. */
+function FilmModal({ slug, onClose }: { slug: string | null; onClose: () => void }) {
+  useEffect(() => {
+    if (!slug) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [slug, onClose]);
+
+  if (!slug) return null;
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      onClick={onClose}
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-background/90 p-4 backdrop-blur-lg"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-5xl overflow-hidden rounded-3xl border border-white/10 bg-black shadow-2xl"
+      >
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          className="absolute end-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-lavender-dark shadow-lg transition hover:scale-110"
+        >
+          <X className="h-5 w-5" />
+        </button>
+        {/* object-contain + capped height keeps portrait films (9:16) inside
+            the viewport instead of pushing the close button off-screen */}
+        <video
+          src={`${FILMS}/${slug}.mp4`}
+          poster={`${MEDIA}/${slug}.jpg`}
+          className="max-h-[85vh] w-full object-contain"
+          controls
+          autoPlay
+          playsInline
+        />
+      </div>
+    </div>
+  );
+}
+
 /* ---------------- Hero ---------------- */
+// The agency's own showreel — no burned-in captions, so it reads as a visual
+// beside the headline rather than competing with it.
+const HERO_FILM = "elite-wing";
+
 function Hero() {
   const { tr } = useI18n();
+  const [reel, setReel] = useState<string | null>(null);
   return (
     <section id="top" className="relative overflow-hidden">
-      {/* City / concert lights backdrop — looping video with poster fallback */}
-      <video
-        className="absolute inset-0 -z-10 h-full w-full object-cover"
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="metadata"
-        poster={HERO_POSTER}
-        aria-hidden
-      >
-        <source src={HERO_VIDEO} type="video/mp4" />
-      </video>
+      {/* Backdrop is gradient + grid only — the one moving image in the hero is
+          the showreel beside the headline, so nothing competes with it. */}
       <div
         className="absolute inset-0 -z-10"
         style={{
@@ -254,7 +301,12 @@ function Hero() {
       <div className="pointer-events-none absolute end-[6%] top-[8%] -z-10 hidden md:block">
         <div className="relative">
           <div className="absolute inset-0 rounded-full bg-lavender/40 blur-[80px] animate-ew-glow" />
-          <img src={wingMark} alt="" aria-hidden className="relative h-[420px] w-[420px] opacity-90 mix-blend-screen animate-ew-float" />
+          <img
+            src={wingMark}
+            alt=""
+            aria-hidden
+            className="relative h-[420px] w-[420px] opacity-90 mix-blend-screen animate-ew-float"
+          />
         </div>
       </div>
 
@@ -297,20 +349,57 @@ function Hero() {
             </Reveal>
           </div>
 
-          {/* Right column spacer for wing */}
-          <div className="hidden md:block" />
+          {/* Showreel — autoplays muted on loop, click for the full film with sound */}
+          <Reveal variant="zoom" delay={300} duration={900}>
+            <button
+              type="button"
+              onClick={() => setReel(HERO_FILM)}
+              aria-label={tr("hero.reel.play")}
+              className="group relative block w-full overflow-hidden rounded-3xl border border-lavender/25 bg-black shadow-2xl shadow-lavender/20 transition-transform duration-500 ease-out hover:scale-[1.02] focus-visible:scale-[1.02]"
+            >
+              <div className="pointer-events-none absolute -inset-8 -z-10 rounded-full bg-lavender/25 blur-3xl animate-ew-glow" />
+              <video
+                className="aspect-video w-full object-cover"
+                src={`${MEDIA}/hero.mp4`}
+                poster={`${MEDIA}/hero.jpg`}
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="metadata"
+                aria-hidden
+              />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-lavender-dark/70 via-transparent to-transparent transition-opacity duration-500 group-hover:opacity-60" />
+              <span
+                aria-hidden
+                className="pointer-events-none absolute inset-0 flex items-center justify-center"
+              >
+                <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-white/95 text-lavender-dark shadow-2xl transition-transform duration-500 ease-out group-hover:scale-110">
+                  <span className="absolute inset-0 rounded-full bg-white/50 animate-ew-pulse-ring" />
+                  <Play className="relative h-6 w-6 fill-current ps-0.5" />
+                </span>
+              </span>
+              <span className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center gap-2 p-5 text-start">
+                <span className="text-xs font-semibold uppercase tracking-widest text-lavender-light">
+                  {tr("hero.reel.label")}
+                </span>
+              </span>
+            </button>
+          </Reveal>
         </div>
 
         {/* Stats bar */}
         <Reveal variant="up" delay={500}>
           <div className="mt-16 rounded-3xl card-surface p-6 md:p-8">
             <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-              {([
-                { icon: Users, end: 250, suffix: "+", label: tr("stats.clients") },
-                { icon: Calendar, end: 450, suffix: "+", label: tr("stats.events") },
-                { icon: MapPin, end: 15, suffix: "+", label: tr("stats.cities") },
-                { icon: Award, end: 10, suffix: "+", label: tr("stats.years") },
-              ] as const).map(({ icon: Icon, end, suffix, label }, i) => (
+              {(
+                [
+                  { icon: Users, end: 250, suffix: "+", label: tr("stats.clients") },
+                  { icon: Calendar, end: 450, suffix: "+", label: tr("stats.events") },
+                  { icon: MapPin, end: 15, suffix: "+", label: tr("stats.cities") },
+                  { icon: Award, end: 10, suffix: "+", label: tr("stats.years") },
+                ] as const
+              ).map(({ icon: Icon, end, suffix, label }, i) => (
                 <div key={i} className="flex items-center gap-4">
                   <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-lavender/15 text-lavender-light ring-1 ring-lavender/30">
                     <Icon className="h-5 w-5" />
@@ -327,12 +416,22 @@ function Hero() {
           </div>
         </Reveal>
       </div>
+
+      <FilmModal slug={reel} onClose={() => setReel(null)} />
     </section>
   );
 }
 
 /* ---------------- Section head ---------------- */
-function SectionHead({ kicker, title, subtitle }: { kicker: string; title: string; subtitle?: string }) {
+function SectionHead({
+  kicker,
+  title,
+  subtitle,
+}: {
+  kicker: string;
+  title: string;
+  subtitle?: string;
+}) {
   return (
     <Reveal variant="up">
       <div className="mx-auto max-w-3xl text-center">
@@ -416,7 +515,9 @@ function About() {
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("about.kicker")} title={tr("about.title")} />
         <Reveal variant="up" delay={120}>
-          <p className="mx-auto mt-6 max-w-3xl text-center text-lg text-white/70">{tr("about.body")}</p>
+          <p className="mx-auto mt-6 max-w-3xl text-center text-lg text-white/70">
+            {tr("about.body")}
+          </p>
         </Reveal>
         <div className="mt-14 grid gap-5 md:grid-cols-3">
           {[
@@ -651,37 +752,7 @@ function Gallery() {
         </div>
       </div>
 
-      {open && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          onClick={() => setOpen(null)}
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-background/90 p-4 backdrop-blur-lg"
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-5xl overflow-hidden rounded-3xl border border-white/10 bg-black shadow-2xl"
-          >
-            <button
-              onClick={() => setOpen(null)}
-              aria-label="Close"
-              className="absolute end-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-lavender-dark shadow-lg transition hover:scale-110"
-            >
-              <X className="h-5 w-5" />
-            </button>
-            {/* object-contain + capped height keeps portrait films (9:16) inside
-                the viewport instead of pushing the close button off-screen */}
-            <video
-              src={`${FILMS}/${open}.mp4`}
-              poster={`${MEDIA}/${open}.jpg`}
-              className="max-h-[85vh] w-full object-contain"
-              controls
-              autoPlay
-              playsInline
-            />
-          </div>
-        </div>
-      )}
+      <FilmModal slug={open} onClose={() => setOpen(null)} />
     </section>
   );
 }
@@ -803,13 +874,22 @@ function Contact() {
                 <div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest">
                   {tr("contact.kicker")}
                 </div>
-                <h2 className="mt-4 text-3xl font-black leading-tight md:text-5xl">{tr("contact.title")}</h2>
+                <h2 className="mt-4 text-3xl font-black leading-tight md:text-5xl">
+                  {tr("contact.title")}
+                </h2>
                 <p className="mt-4 max-w-md text-white/85">{tr("contact.sub")}</p>
                 <div className="mt-8 space-y-3 text-sm">
-                  <a href="mailto:info@elitewing.sa" className="flex items-center gap-3 text-white/90 hover:text-white">
+                  <a
+                    href="mailto:info@elitewing.sa"
+                    className="flex items-center gap-3 text-white/90 hover:text-white"
+                  >
                     <Mail className="h-4 w-4" /> info@elitewing.sa
                   </a>
-                  <a href="tel:+966111234567" className="flex items-center gap-3 text-white/90 hover:text-white" dir="ltr">
+                  <a
+                    href="tel:+966111234567"
+                    className="flex items-center gap-3 text-white/90 hover:text-white"
+                    dir="ltr"
+                  >
                     <Phone className="h-4 w-4" /> +966 11 123 4567
                   </a>
                   <div className="flex items-center gap-3 text-white/90">
@@ -868,14 +948,19 @@ function Footer() {
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute -top-24 left-1/2 h-64 w-[70%] -translate-x-1/2 rounded-full bg-lavender/20 blur-3xl animate-ew-float-slow" />
       </div>
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lavender to-transparent opacity-70" />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-lavender to-transparent opacity-70"
+      />
 
       <Reveal variant="up">
         <div className="mx-auto max-w-7xl px-5 md:px-8">
           <div className="grid gap-10 md:grid-cols-4">
             <div>
               <BrandLockup />
-              <p className="mt-4 max-w-xs text-xs leading-relaxed text-white/60">{tr("footer.tagline")}</p>
+              <p className="mt-4 max-w-xs text-xs leading-relaxed text-white/60">
+                {tr("footer.tagline")}
+              </p>
               <div className="mt-5 flex items-center gap-2">
                 {socials.map(({ Icon, label, href }) => (
                   <a
@@ -884,7 +969,10 @@ function Footer() {
                     aria-label={label}
                     className="group relative inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/70 transition-all duration-300 hover:-translate-y-1 hover:border-lavender hover:text-white"
                   >
-                    <span aria-hidden className="pointer-events-none absolute inset-0 rounded-full bg-lavender/25 opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-100" />
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 rounded-full bg-lavender/25 opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-100"
+                    />
                     <Icon className="relative h-4 w-4" />
                   </a>
                 ))}
@@ -894,29 +982,68 @@ function Footer() {
             <div>
               <div className="mb-3 text-sm font-bold text-white">{tr("nav.services")}</div>
               <ul className="space-y-2 text-sm text-white/60">
-                <li><a href="#services" className="hover:text-lavender-light">{tr("svc.1.t")}</a></li>
-                <li><a href="#services" className="hover:text-lavender-light">{tr("svc.2.t")}</a></li>
-                <li><a href="#services" className="hover:text-lavender-light">{tr("svc.3.t")}</a></li>
-                <li><a href="#services" className="hover:text-lavender-light">{tr("svc.4.t")}</a></li>
+                <li>
+                  <a href="#services" className="hover:text-lavender-light">
+                    {tr("svc.1.t")}
+                  </a>
+                </li>
+                <li>
+                  <a href="#services" className="hover:text-lavender-light">
+                    {tr("svc.2.t")}
+                  </a>
+                </li>
+                <li>
+                  <a href="#services" className="hover:text-lavender-light">
+                    {tr("svc.3.t")}
+                  </a>
+                </li>
+                <li>
+                  <a href="#services" className="hover:text-lavender-light">
+                    {tr("svc.4.t")}
+                  </a>
+                </li>
               </ul>
             </div>
 
             <div>
               <div className="mb-3 text-sm font-bold text-white">{tr("nav.home")}</div>
               <ul className="space-y-2 text-sm text-white/60">
-                <li><a href="#about" className="hover:text-lavender-light">{tr("nav.about")}</a></li>
-                <li><a href="#events" className="hover:text-lavender-light">{tr("up.kicker")}</a></li>
-                <li><a href="#gallery" className="hover:text-lavender-light">{tr("gal.kicker")}</a></li>
-                <li><a href="#contact" className="hover:text-lavender-light">{tr("nav.contact")}</a></li>
+                <li>
+                  <a href="#about" className="hover:text-lavender-light">
+                    {tr("nav.about")}
+                  </a>
+                </li>
+                <li>
+                  <a href="#events" className="hover:text-lavender-light">
+                    {tr("up.kicker")}
+                  </a>
+                </li>
+                <li>
+                  <a href="#gallery" className="hover:text-lavender-light">
+                    {tr("gal.kicker")}
+                  </a>
+                </li>
+                <li>
+                  <a href="#contact" className="hover:text-lavender-light">
+                    {tr("nav.contact")}
+                  </a>
+                </li>
               </ul>
             </div>
 
             <div>
               <div className="mb-3 text-sm font-bold text-white">{tr("nav.contact")}</div>
               <ul className="space-y-2 text-sm text-white/60">
-                <li className="flex items-center gap-2"><Phone className="h-3.5 w-3.5 text-lavender" /> <span dir="ltr">+966 11 123 4567</span></li>
-                <li className="flex items-center gap-2"><Mail className="h-3.5 w-3.5 text-lavender" /> info@elitewing.sa</li>
-                <li className="flex items-center gap-2"><MapPin className="h-3.5 w-3.5 text-lavender" /> {tr("contact.location.v")}</li>
+                <li className="flex items-center gap-2">
+                  <Phone className="h-3.5 w-3.5 text-lavender" />{" "}
+                  <span dir="ltr">+966 11 123 4567</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <Mail className="h-3.5 w-3.5 text-lavender" /> info@elitewing.sa
+                </li>
+                <li className="flex items-center gap-2">
+                  <MapPin className="h-3.5 w-3.5 text-lavender" /> {tr("contact.location.v")}
+                </li>
               </ul>
             </div>
           </div>

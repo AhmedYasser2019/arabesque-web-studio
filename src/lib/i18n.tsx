@@ -16,7 +16,10 @@ export const t: Dict = {
   "nav.cta": { ar: "ابدأ مشروعك", en: "Start a project" },
 
   // hero
-  "hero.eyebrow": { ar: "وكالة تسويقية إبداعية · الرياض", en: "Creative marketing agency · Riyadh" },
+  "hero.eyebrow": {
+    ar: "وكالة تسويقية إبداعية · الرياض",
+    en: "Creative marketing agency · Riyadh",
+  },
   "hero.title.a": { ar: "نحلّق بأعمالك", en: "We elevate your brand" },
   "hero.title.b": { ar: "نحو القمة", en: "toward the summit" },
   "hero.sub": {
@@ -24,68 +27,136 @@ export const t: Dict = {
     en: "Integrated creative solutions in marketing, media, and events — elite in craft, measurable in impact.",
   },
   "hero.cta.primary": { ar: "استكشف خدماتنا", en: "Explore services" },
+  "hero.reel.label": { ar: "ريل إيليت وينغ", en: "Elite Wing Showreel" },
+  "hero.reel.play": { ar: "تشغيل ريل الأعمال", en: "Play the showreel" },
   "hero.cta.secondary": { ar: "شاهد أعمالنا", en: "See our work" },
 
   // about
   "about.kicker": { ar: "من نحن", en: "About" },
-  "about.title": { ar: "نُعيد حضور الهوية المؤسسية بأثرٍ يُصنع.", en: "Restoring corporate identity as an instrument of impact." },
+  "about.title": {
+    ar: "نُعيد حضور الهوية المؤسسية بأثرٍ يُصنع.",
+    en: "Restoring corporate identity as an instrument of impact.",
+  },
   "about.body": {
     ar: "في سوقٍ مليء بالمشاريع التسويقية المتشابهة، جئنا لنُحوّل الهوية المؤسسية إلى أداة تفاعلية ذكية تصنع الفرق. نجمع بين الفكرة والتنفيذ بأعلى معايير الجودة، ونعمل شركاء حقيقيين لعملائنا في المملكة وخارجها.",
     en: "In a market crowded with look-alike campaigns, we turn brand identity into an intelligent, interactive instrument. We fuse idea and execution at the highest standard, standing as true partners for clients inside and beyond the Kingdom.",
   },
   "about.vision.t": { ar: "رؤيتنا", en: "Vision" },
-  "about.vision.b": { ar: "أن نكون الخيار الأول والشريك الوطني الرائد في حلول التسويق المتكاملة.", en: "To be the first choice and leading national partner for integrated marketing solutions." },
+  "about.vision.b": {
+    ar: "أن نكون الخيار الأول والشريك الوطني الرائد في حلول التسويق المتكاملة.",
+    en: "To be the first choice and leading national partner for integrated marketing solutions.",
+  },
   "about.mission.t": { ar: "رسالتنا", en: "Mission" },
-  "about.mission.b": { ar: "صناعة تجارب تسويقية استثنائية تجمع الإبداع والابتكار بمعايير عالية.", en: "Crafting exceptional marketing experiences that blend creativity and innovation at the highest standard." },
+  "about.mission.b": {
+    ar: "صناعة تجارب تسويقية استثنائية تجمع الإبداع والابتكار بمعايير عالية.",
+    en: "Crafting exceptional marketing experiences that blend creativity and innovation at the highest standard.",
+  },
   "about.values.t": { ar: "قيمنا", en: "Values" },
-  "about.values.b": { ar: "الإنجاز · التميّز · الشفافية · رضا العميل · الالتزام", en: "Achievement · Excellence · Transparency · Client focus · Commitment" },
+  "about.values.b": {
+    ar: "الإنجاز · التميّز · الشفافية · رضا العميل · الالتزام",
+    en: "Achievement · Excellence · Transparency · Client focus · Commitment",
+  },
 
   // services
   "svc.kicker": { ar: "خدماتنا", en: "Services" },
-  "svc.title": { ar: "حلول متكاملة لعلامة تجارية تُحلّق.", en: "End-to-end solutions for a brand that takes flight." },
+  "svc.title": {
+    ar: "حلول متكاملة لعلامة تجارية تُحلّق.",
+    en: "End-to-end solutions for a brand that takes flight.",
+  },
   "svc.1.t": { ar: "الإدارة والاستشارات", en: "Management & Consulting" },
-  "svc.1.b": { ar: "استشارات إدارية، أدلة إجرائية، استراتيجيات إعلامية وتسويقية، وتقارير رصد وتحليل تجربة العميل.", en: "Management consulting, procedural playbooks, media & marketing strategy, monitoring reports and CX analysis." },
+  "svc.1.b": {
+    ar: "استشارات إدارية، أدلة إجرائية، استراتيجيات إعلامية وتسويقية، وتقارير رصد وتحليل تجربة العميل.",
+    en: "Management consulting, procedural playbooks, media & marketing strategy, monitoring reports and CX analysis.",
+  },
   "svc.2.t": { ar: "التنظيم والفعاليات", en: "Events & Organization" },
-  "svc.2.b": { ar: "تغطية إعلامية، توثيق المناسبات، تنظيم المعارض والمؤتمرات، وإدارة الحشود الكبرى.", en: "Media coverage, event documentation, exhibitions & conferences, and large-scale crowd management." },
+  "svc.2.b": {
+    ar: "تغطية إعلامية، توثيق المناسبات، تنظيم المعارض والمؤتمرات، وإدارة الحشود الكبرى.",
+    en: "Media coverage, event documentation, exhibitions & conferences, and large-scale crowd management.",
+  },
   "svc.3.t": { ar: "وسائل التواصل الاجتماعي", en: "Social Media" },
-  "svc.3.b": { ar: "حملات إعلانية، تأسيس وتطوير الهوية، إدارة الحسابات، وإنتاج محتوى إعلامي بجودة عالية.", en: "Advertising campaigns, brand identity build-out, account management, and premium content production." },
+  "svc.3.b": {
+    ar: "حملات إعلانية، تأسيس وتطوير الهوية، إدارة الحسابات، وإنتاج محتوى إعلامي بجودة عالية.",
+    en: "Advertising campaigns, brand identity build-out, account management, and premium content production.",
+  },
   "svc.4.t": { ar: "الإنتاج البصري", en: "Visual Production" },
-  "svc.4.b": { ar: "أكثر من 100 فيديو تسويقي وتقارير مرئية — من كتابة السيناريو إلى المونتاج والمعالجة.", en: "100+ marketing films and visual reports — scriptwriting through edit and post." },
+  "svc.4.b": {
+    ar: "أكثر من 100 فيديو تسويقي وتقارير مرئية — من كتابة السيناريو إلى المونتاج والمعالجة.",
+    en: "100+ marketing films and visual reports — scriptwriting through edit and post.",
+  },
 
   // method
   "method.kicker": { ar: "منهجيتنا", en: "Methodology" },
   "method.title": { ar: "خمس ركائز. أثرٌ حقيقي.", en: "Five pillars. Real impact." },
   "method.1.t": { ar: "الاستماع والتحليل", en: "Listen & Analyze" },
-  "method.1.b": { ar: "نفهم هوية العميل، جمهوره، وأهدافه.", en: "We understand identity, audience, and goals." },
+  "method.1.b": {
+    ar: "نفهم هوية العميل، جمهوره، وأهدافه.",
+    en: "We understand identity, audience, and goals.",
+  },
   "method.2.t": { ar: "التخطيط الذكي", en: "Smart Planning" },
-  "method.2.b": { ar: "خارطة إعلامية متوازنة بين الرؤية والإمكانات.", en: "A media map balancing vision and resources." },
+  "method.2.b": {
+    ar: "خارطة إعلامية متوازنة بين الرؤية والإمكانات.",
+    en: "A media map balancing vision and resources.",
+  },
   "method.3.t": { ar: "النقل المعرفي", en: "Knowledge Transfer" },
-  "method.3.b": { ar: "نُشرك العميل لضمان استدامة الحضور.", en: "We involve clients for lasting presence." },
+  "method.3.b": {
+    ar: "نُشرك العميل لضمان استدامة الحضور.",
+    en: "We involve clients for lasting presence.",
+  },
   "method.4.t": { ar: "التنفيذ الإبداعي", en: "Creative Execution" },
-  "method.4.b": { ar: "محتوى يعكس القيم ويجذب الانتباه.", en: "Content that reflects values and captures attention." },
+  "method.4.b": {
+    ar: "محتوى يعكس القيم ويجذب الانتباه.",
+    en: "Content that reflects values and captures attention.",
+  },
   "method.5.t": { ar: "المتابعة والتطوير", en: "Measure & Evolve" },
-  "method.5.b": { ar: "نتابع الأداء ونطوّر بناءً على نتائج واقعية.", en: "We track performance and iterate on real data." },
+  "method.5.b": {
+    ar: "نتابع الأداء ونطوّر بناءً على نتائج واقعية.",
+    en: "We track performance and iterate on real data.",
+  },
 
   // works
   "works.kicker": { ar: "أبرز أعمالنا", en: "Selected Work" },
-  "works.title": { ar: "إنتاجات ومشاريع تصنع الأثر.", en: "Productions and projects that make an impact." },
+  "works.title": {
+    ar: "إنتاجات ومشاريع تصنع الأثر.",
+    en: "Productions and projects that make an impact.",
+  },
   "works.1.t": { ar: "التعاونية — فيلم تسويقي متكامل", en: "Tawuniya — end-to-end marketing film" },
-  "works.1.b": { ar: "سيناريو، تصوير، مونتاج ومعالجة كاملة.", en: "Script, cinematography, edit, and full post." },
+  "works.1.b": {
+    ar: "سيناريو، تصوير، مونتاج ومعالجة كاملة.",
+    en: "Script, cinematography, edit, and full post.",
+  },
   "works.2.t": { ar: "خيوط التاريخ — سلسلة وثائقية", en: "Khoyoot Al-Tarekh — documentary series" },
-  "works.2.b": { ar: "بحث تاريخي، إنتاج، وهوية بصرية كاملة.", en: "Historical research, production, and full brand identity." },
+  "works.2.b": {
+    ar: "بحث تاريخي، إنتاج، وهوية بصرية كاملة.",
+    en: "Historical research, production, and full brand identity.",
+  },
   "works.3.t": { ar: "المؤتمر الدولي للسلامة والصحة المهنية", en: "GOSH International Conference" },
-  "works.3.b": { ar: "تغطية إعلامية كاملة لفعالية دولية كبرى.", en: "Full media coverage of a major international event." },
+  "works.3.b": {
+    ar: "تغطية إعلامية كاملة لفعالية دولية كبرى.",
+    en: "Full media coverage of a major international event.",
+  },
   "works.4.t": { ar: "بطولات ومناسبات كبرى", en: "Championships & major events" },
-  "works.4.b": { ar: "برومو، تقارير، وتغطية شاملة لورش وفعاليات.", en: "Promos, reports, and full coverage of workshops and events." },
+  "works.4.b": {
+    ar: "برومو، تقارير، وتغطية شاملة لورش وفعاليات.",
+    en: "Promos, reports, and full coverage of workshops and events.",
+  },
 
   // partners
   "partners.kicker": { ar: "شركاء النجاح", en: "Trusted by" },
-  "partners.title": { ar: "شراكات مبنية على الثقة والأثر.", en: "Partnerships built on trust and impact." },
+  "partners.title": {
+    ar: "شراكات مبنية على الثقة والأثر.",
+    en: "Partnerships built on trust and impact.",
+  },
 
   // contact
   "contact.kicker": { ar: "تواصل معنا", en: "Contact" },
-  "contact.title": { ar: "نحلّق معك بإبداعٍ يُحدث الأثر.", en: "Let's fly your brand higher — together." },
-  "contact.sub": { ar: "أخبرنا عن مشروعك، وسنعود إليك خلال يوم عمل.", en: "Tell us about your project and we'll reply within one business day." },
+  "contact.title": {
+    ar: "نحلّق معك بإبداعٍ يُحدث الأثر.",
+    en: "Let's fly your brand higher — together.",
+  },
+  "contact.sub": {
+    ar: "أخبرنا عن مشروعك، وسنعود إليك خلال يوم عمل.",
+    en: "Tell us about your project and we'll reply within one business day.",
+  },
   "contact.email": { ar: "البريد", en: "Email" },
   "contact.phone": { ar: "الهاتف", en: "Phone" },
   "contact.location": { ar: "الموقع", en: "Location" },
@@ -107,7 +178,10 @@ export const t: Dict = {
 
   // upcoming events
   "up.kicker": { ar: "الفعاليات القادمة", en: "Upcoming Events" },
-  "up.title": { ar: "اكتشف مجموعة من الفعاليات المميزة", en: "Discover a curated set of standout events" },
+  "up.title": {
+    ar: "اكتشف مجموعة من الفعاليات المميزة",
+    en: "Discover a curated set of standout events",
+  },
   "up.cta": { ar: "تفاصيل أكثر", en: "Learn more" },
   "up.all": { ar: "عرض جميع الفعاليات", en: "View all events" },
   "up.1.t": { ar: "منتدى الابتكار في الأعمال", en: "Business Innovation Forum" },
@@ -133,7 +207,10 @@ export const t: Dict = {
 
   // work reel — titles
   "reel.tawuniya": { ar: "التعاونية — الفيلم المؤسسي", en: "Tawuniya — Corporate Film" },
-  "reel.alrajhi": { ar: "التعاونية × مصرف الراجحي — يوم صحي", en: "Tawuniya × Al Rajhi Bank — Health Day" },
+  "reel.alrajhi": {
+    ar: "التعاونية × مصرف الراجحي — يوم صحي",
+    en: "Tawuniya × Al Rajhi Bank — Health Day",
+  },
   "reel.riyad-bank": {
     ar: "التعاونية × بنك الرياض — يوم صحي",
     en: "Tawuniya × Riyad Bank — Health Day",
@@ -166,25 +243,39 @@ export const t: Dict = {
   // testimonials
   "test.kicker": { ar: "ماذا يقول عملاؤنا", en: "Testimonials" },
   "test.title": { ar: "شهادات تصنع الفرق", en: "Words from our partners" },
-  "test.1.q": { ar: "كانت تجربتنا مع إيليت وينغ استثنائية بكل المقاييس، فريق محترف ينظم باهتمام وبالتفاصيل بفوق توقعاتنا.", en: "Working with Elite Wing was exceptional — a professional team with obsessive attention to detail." },
+  "test.1.q": {
+    ar: "كانت تجربتنا مع إيليت وينغ استثنائية بكل المقاييس، فريق محترف ينظم باهتمام وبالتفاصيل بفوق توقعاتنا.",
+    en: "Working with Elite Wing was exceptional — a professional team with obsessive attention to detail.",
+  },
   "test.1.n": { ar: "أ. محمد العتيبي", en: "Mohammed Al‑Otaibi" },
   "test.1.r": { ar: "الرئيس التنفيذي · شركة التقنية المتقدمة", en: "CEO · Advanced Tech Co." },
-  "test.2.q": { ar: "أدارت الفريق حدثاً دولياً ضخماً بسلاسة تامة وصورة لائقة بمكانة المملكة.", en: "They delivered a large international event with total ease and a presentation worthy of the Kingdom." },
+  "test.2.q": {
+    ar: "أدارت الفريق حدثاً دولياً ضخماً بسلاسة تامة وصورة لائقة بمكانة المملكة.",
+    en: "They delivered a large international event with total ease and a presentation worthy of the Kingdom.",
+  },
   "test.2.n": { ar: "د. سارة الحربي", en: "Dr. Sara Al‑Harbi" },
   "test.2.r": { ar: "مدير التسويق · مجموعة الرياض", en: "Marketing Director · Riyadh Group" },
 
   // newsletter
   "news.title": { ar: "اشترك ليصلك كل جديد", en: "Stay in the loop" },
-  "news.sub": { ar: "انضم إلى قائمتنا لتصلك أخبار الفعاليات والعروض الحصرية.", en: "Join our list for event news and exclusive offers." },
+  "news.sub": {
+    ar: "انضم إلى قائمتنا لتصلك أخبار الفعاليات والعروض الحصرية.",
+    en: "Join our list for event news and exclusive offers.",
+  },
   "news.placeholder": { ar: "بريدك الإلكتروني", en: "Your email" },
   "news.cta": { ar: "اشترك الآن", en: "Subscribe" },
 
   // works
   "works.case": { ar: "مشروع", en: "Case" },
 
-
-  "footer.tagline": { ar: "من الخيال إلى الواقع… نحن جناحك.", en: "From imagination to reality — we are your wing." },
-  "footer.rights": { ar: "© 2026 إيليت وينغ. جميع الحقوق محفوظة.", en: "© 2026 Elite Wing. All rights reserved." },
+  "footer.tagline": {
+    ar: "من الخيال إلى الواقع… نحن جناحك.",
+    en: "From imagination to reality — we are your wing.",
+  },
+  "footer.rights": {
+    ar: "© 2026 إيليت وينغ. جميع الحقوق محفوظة.",
+    en: "© 2026 Elite Wing. All rights reserved.",
+  },
 };
 
 interface I18nCtx {
