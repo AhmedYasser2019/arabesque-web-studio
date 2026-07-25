@@ -31,32 +31,54 @@ import { Reveal } from "@/components/Reveal";
 import { CountUp } from "@/components/CountUp";
 import wingMark from "@/assets/wing-mark.png";
 
-/* ---------------- Free stock media (Unsplash) ---------------- */
-const HERO_CITY =
-  "https://images.unsplash.com/photo-1586724237569-f3d0c1dee8c6?auto=format&fit=crop&w=1920&q=80"; // Riyadh skyline at dusk
+/* ---------------- Free stock media (Unsplash photos + Pexels videos) ---------------- */
+// Hero looping background — concert stage lights, free CC0 (Pexels 3209828)
+const HERO_VIDEO =
+  "https://videos.pexels.com/video-files/3209828/3209828-hd_1920_1080_25fps.mp4";
+const HERO_POSTER =
+  "https://images.unsplash.com/photo-1493804714600-6edb1cd93080?auto=format&fit=crop&w=1920&q=80";
 
 const UPCOMING = [
   {
     date: { d: "24", m: { ar: "يونيو", en: "Jun" }, y: "2026" },
-    img: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1200&q=80",
+    img: "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=1200&q=80",
   },
   {
     date: { d: "15", m: { ar: "يوليو", en: "Jul" }, y: "2026" },
-    img: "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=1200&q=80",
+    img: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&w=1200&q=80",
   },
   {
     date: { d: "05", m: { ar: "أغسطس", en: "Aug" }, y: "2026" },
-    img: "https://images.unsplash.com/photo-1591115765373-5207764f72e7?auto=format&fit=crop&w=1200&q=80",
+    img: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80",
   },
 ];
 
-const GALLERY = [
-  "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1560439514-4e9645039924?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1526948128573-703ee1aeb6fa?auto=format&fit=crop&w=1200&q=80",
-  "https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1200&q=80",
+// Each gallery card has a poster image + a free stock video (Pexels).
+const GALLERY: { img: string; video: string }[] = [
+  {
+    img: "https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?auto=format&fit=crop&w=1200&q=80",
+    video: "https://videos.pexels.com/video-files/2022395/2022395-hd_1920_1080_30fps.mp4",
+  },
+  {
+    img: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80",
+    video: "https://videos.pexels.com/video-files/2795750/2795750-hd_1920_1080_25fps.mp4",
+  },
+  {
+    img: "https://images.unsplash.com/photo-1517502884422-41eaead166d4?auto=format&fit=crop&w=1200&q=80",
+    video: "https://videos.pexels.com/video-files/1739010/1739010-hd_1920_1080_30fps.mp4",
+  },
+  {
+    img: "https://images.unsplash.com/photo-1560439514-4e9645039924?auto=format&fit=crop&w=1200&q=80",
+    video: "https://videos.pexels.com/video-files/2022396/2022396-hd_1920_1080_30fps.mp4",
+  },
+  {
+    img: "https://images.unsplash.com/photo-1526948128573-703ee1aeb6fa?auto=format&fit=crop&w=1200&q=80",
+    video: "https://videos.pexels.com/video-files/3018669/3018669-hd_1920_1080_24fps.mp4",
+  },
+  {
+    img: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&w=1200&q=80",
+    video: "https://videos.pexels.com/video-files/1721294/1721294-hd_1920_1080_25fps.mp4",
+  },
 ];
 
 /* ---------------- Header ---------------- */
