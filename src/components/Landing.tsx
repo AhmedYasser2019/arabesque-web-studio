@@ -214,13 +214,24 @@ function Hero() {
   const { tr } = useI18n();
   return (
     <section id="top" className="relative overflow-hidden">
-      {/* City backdrop */}
+      {/* City / concert lights backdrop — looping video with poster fallback */}
+      <video
+        className="absolute inset-0 -z-10 h-full w-full object-cover"
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="metadata"
+        poster={HERO_POSTER}
+        aria-hidden
+      >
+        <source src={HERO_VIDEO} type="video/mp4" />
+      </video>
       <div
         className="absolute inset-0 -z-10"
         style={{
-          backgroundImage: `linear-gradient(180deg, color-mix(in oklch, var(--background) 40%, transparent) 0%, color-mix(in oklch, var(--background) 85%, transparent) 65%, var(--background) 100%), url(${HERO_CITY})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          background:
+            "linear-gradient(180deg, color-mix(in oklch, var(--background) 40%, transparent) 0%, color-mix(in oklch, var(--background) 85%, transparent) 65%, var(--background) 100%)",
         }}
       />
       <div className="absolute inset-0 -z-10 bg-grid opacity-30" />
