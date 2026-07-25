@@ -511,6 +511,15 @@ function Gallery() {
             </Reveal>
           ))}
         </div>
+        <div className="mt-10 text-center">
+          <a
+            href="#contact"
+            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition hover:border-lavender hover:-translate-y-0.5"
+          >
+            {tr("gal.more")}
+            <ArrowUpRight className="h-4 w-4" />
+          </a>
+        </div>
       </div>
       {active !== null && (
         <div
