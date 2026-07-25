@@ -122,6 +122,47 @@ export const t: Dict = {
   "gal.title": { ar: "من فعالياتنا السابقة", en: "From our past events" },
   "gal.more": { ar: "عرض المزيد من الأعمال", en: "See more work" },
 
+  // work reel — categories
+  "cat.corporate": { ar: "الفعاليات المؤسسية", en: "Corporate Activations" },
+  "cat.conf": { ar: "المؤتمرات والبطولات", en: "Conferences & Championships" },
+  "cat.doc": { ar: "أفلام وثائقية وتراث", en: "Documentary & Heritage" },
+  "cat.health": { ar: "الرعاية الصحية والافتتاحات", en: "Healthcare & Openings" },
+  "cat.reel": { ar: "ريل إيليت وينغ", en: "Elite Wing Reel" },
+  "reel.prev": { ar: "السابق", en: "Previous" },
+  "reel.next": { ar: "التالي", en: "Next" },
+
+  // work reel — titles
+  "reel.tawuniya": { ar: "التعاونية — الفيلم المؤسسي", en: "Tawuniya — Corporate Film" },
+  "reel.alrajhi": { ar: "التعاونية × مصرف الراجحي — يوم صحي", en: "Tawuniya × Al Rajhi Bank — Health Day" },
+  "reel.riyad-bank": {
+    ar: "التعاونية × بنك الرياض — يوم صحي",
+    en: "Tawuniya × Riyad Bank — Health Day",
+  },
+  "reel.anb": { ar: "التعاونية × البنك العربي الوطني", en: "Tawuniya × Arab National Bank" },
+  "reel.mobily": { ar: "التعاونية × موبايلي", en: "Tawuniya × Mobily" },
+  "reel.stc": { ar: "التعاونية × stc", en: "Tawuniya × stc" },
+  "reel.real-estate-registry": {
+    ar: "التعاونية × السجل العقاري",
+    en: "Tawuniya × Real Estate Registry",
+  },
+  "reel.gosh7": { ar: "مؤتمر GOSH السابع", en: "GOSH 7 Conference" },
+  "reel.workshop-mena": { ar: "ورشة عمل مينا", en: "Meena Workshop" },
+  "reel.r7": { ar: "فايتاليتي ران — التعاونية", en: "Tawuniya Vitality Run" },
+  "reel.padel": { ar: "بطولة سرك للبادل", en: "SIRC Padel Championship" },
+  "reel.khoyoot-altarekh": {
+    ar: "خيوط التاريخ — سلسلة وثائقية",
+    en: "Khoyoot Al-Tarekh — Documentary",
+  },
+  "reel.majlis-turathi": { ar: "مجلس تراثي — برومو", en: "Heritage Majlis — Promo" },
+  "reel.amanat-riyadh": {
+    ar: "أمانة الرياض — تصريف السيول",
+    en: "Riyadh Municipality — Flood Drainage",
+  },
+  "reel.first-final": { ar: "مينا — منشآت الرعاية الصحية", en: "Meena — Healthcare Facilities" },
+  "reel.promo2": { ar: "مركز CRC — افتتاح صحة المرأة", en: "CRC — Women's Health Opening" },
+  "reel.e-w": { ar: "إيليت وينغ — الفيلم التعريفي", en: "Elite Wing — Brand Film" },
+  "reel.elite-wing": { ar: "إيليت وينغ — ريل الأعمال", en: "Elite Wing — Showreel" },
+
   // testimonials
   "test.kicker": { ar: "ماذا يقول عملاؤنا", en: "Testimonials" },
   "test.title": { ar: "شهادات تصنع الفرق", en: "Words from our partners" },
