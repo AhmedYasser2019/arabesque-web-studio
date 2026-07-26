@@ -27,8 +27,7 @@ export const t: Dict = {
     en: "Integrated creative solutions in marketing, media, and events — elite in craft, measurable in impact.",
   },
   "hero.cta.primary": { ar: "استكشف خدماتنا", en: "Explore services" },
-  "hero.reel.label": { ar: "ريل إيليت وينغ", en: "Elite Wing Showreel" },
-  "hero.reel.play": { ar: "تشغيل ريل الأعمال", en: "Play the showreel" },
+  "hero.slide": { ar: "شريحة", en: "Slide" },
   "hero.cta.secondary": { ar: "شاهد أعمالنا", en: "See our work" },
 
   // about
@@ -145,6 +144,10 @@ export const t: Dict = {
   "partners.title": {
     ar: "شراكات مبنية على الثقة والأثر.",
     en: "Partnerships built on trust and impact.",
+  },
+  "partners.body": {
+    ar: "نعتزّ في إيليت وينغ بالشراكات التي نبنيها مع عملائنا، والتي تقوم على الثقة المتبادلة والسعي المستمر لتحقيق التميّز. فنجاح شركائنا هو امتداد لنجاحنا، ولذلك نحرص دائمًا على تقديم حلول تسويقية وتطويرية مبتكرة تواكب طموحاتهم وتدعم نمو أعمالهم. نؤمن بأن الشراكة الحقيقية لا تقتصر على تقديم خدمة فحسب، بل تقوم على فهم عميق لاحتياجات شركائنا والعمل معهم كفريق واحد لصناعة نتائج ملموسة وأثر مستدام.",
+    en: "At Elite Wing we take pride in the partnerships we build with our clients — grounded in mutual trust and a constant pursuit of excellence. Our partners' success is an extension of our own, which is why we consistently deliver inventive marketing and development solutions that match their ambition and support their growth. Real partnership, we believe, is not simply providing a service: it is understanding our partners deeply and working alongside them as one team to create tangible results and lasting impact.",
   },
 
   // contact

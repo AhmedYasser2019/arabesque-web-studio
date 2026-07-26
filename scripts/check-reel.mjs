@@ -16,6 +16,19 @@ const FILMS = (process.env.VITE_MEDIA_URL || `${BASE}/media`).replace(/\/+$/, ""
 
 // keep in sync with REEL/CATS in src/components/Landing.tsx
 const EXPECTED = [7, 4, 3, 2, 2];
+const PARTNERS = [
+  "tawuniya",
+  "stc",
+  "saudia",
+  "nupco",
+  "sirc",
+  "meena",
+  "qfmc",
+  "chefz",
+  "r7",
+  "waterburger",
+  "khoyoot",
+];
 const SLUGS = [
   "tawuniya",
   "alrajhi",
@@ -64,12 +77,13 @@ await Promise.all([
     head(`${BASE}/media/${slug}.loop.mp4`),
     head(`${FILMS}/${slug}.mp4`),
   ]),
-  head(`${BASE}/media/hero.mp4`),
-  head(`${BASE}/media/hero.jpg`),
+  ...[1, 2, 3].map((n) => head(`${BASE}/media/hero/${n}.jpg`)),
   ...[1, 2, 3].map((n) => head(`${BASE}/media/events/up-${n}.jpg`)),
+  ...PARTNERS.map((p) => head(`${BASE}/media/partners/${p}.png`)),
 ]);
-await check(`all ${SLUGS.length * 3 + 5} media assets resolve (films via ${FILMS})`, () =>
-  assert.deepEqual(missing, [], `missing: ${missing.join(", ")}`),
+await check(
+  `all ${SLUGS.length * 3 + 6 + PARTNERS.length} media assets resolve (films via ${FILMS})`,
+  () => assert.deepEqual(missing, [], `missing: ${missing.join(", ")}`),
 );
 
 const browser = await chromium.launch();
@@ -77,33 +91,55 @@ const browser = await chromium.launch();
 for (const lang of ["en", "ar"]) {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await page.goto(`${BASE}/${lang}`, { waitUntil: "networkidle" });
-  // 0. hero showreel autoplays muted, and opens the full film with sound
-  const heroVid = await page.evaluate(() => {
-    const v = document.querySelector("#top video");
-    return v && { file: v.currentSrc.split("/").pop(), paused: v.paused, muted: v.muted };
-  });
-  await check(`${lang}: hero showreel autoplays muted`, () => {
-    assert.ok(heroVid, "no hero video");
-    assert.equal(heroVid.file, "hero.mp4");
-    assert.equal(heroVid.paused, false, "hero video is paused");
-    assert.equal(heroVid.muted, true, "hero video must stay muted to autoplay");
+  // 0a. hero renders all three backdrop slides, exactly one visible
+  const shown = () =>
+    page.evaluate(() =>
+      [...document.querySelectorAll("#top img[aria-hidden]")]
+        .filter((i) => i.src.includes("/media/hero/"))
+        .map((i) => ({ file: i.src.split("/").pop(), on: getComputedStyle(i).opacity === "1" })),
+    );
+  const slides = await shown();
+  await check(`${lang}: hero has 3 backdrop slides, one visible`, () => {
+    assert.equal(slides.length, 3, `got ${slides.length} slides`);
+    assert.equal(slides.filter((s) => s.on).length, 1, "exactly one slide should be visible");
+    assert.equal(slides[0].on, true, "first slide should be the initial one");
   });
 
-  await page.locator("#top button[aria-label]").first().click();
-  await page.waitForTimeout(1800);
-  const heroModal = await page.evaluate(() => {
-    const v = document.querySelector('[role="dialog"] video');
-    return v && { file: v.currentSrc.split("/").pop(), muted: v.muted };
+  // 0b. the dots switch slides
+  const dots = page.locator("#top button[aria-current]");
+  await check(`${lang}: hero has one dot per slide`, async () =>
+    assert.equal(await dots.count(), 3),
+  );
+  await dots.nth(2).click();
+  await page.waitForTimeout(1600);
+  const after = await shown();
+  await check(`${lang}: clicking a dot switches the slide`, () => {
+    assert.equal(after[2].on, true, "third slide should be visible after clicking dot 3");
+    assert.equal(after[0].on, false, "first slide should have faded out");
   });
-  await check(`${lang}: hero play opens the full film with sound`, () => {
-    assert.ok(heroModal, "hero modal did not open");
-    assert.equal(heroModal.file, "elite-wing.mp4");
-    assert.equal(heroModal.muted, false, "lightbox should not be muted");
+
+  // 0c. auto-advance moves on by itself
+  const before = (await shown()).findIndex((s) => s.on);
+  await page.waitForTimeout(7000);
+  const advanced = (await shown()).findIndex((s) => s.on);
+  await check(`${lang}: hero auto-advances`, () =>
+    assert.notEqual(advanced, before, `still on slide ${before} after 7s`),
+  );
+
+  // 0d. partner logos all render (lazy-loaded, so scroll them in first)
+  await page.locator("#partners").scrollIntoViewIfNeeded();
+  await page.waitForTimeout(1200);
+  const logos = await page.evaluate(() =>
+    [...document.querySelectorAll("#partners img")].map((i) => ({
+      src: i.getAttribute("src"),
+      ok: i.complete && i.naturalWidth > 0,
+    })),
+  );
+  await check(`${lang}: all ${PARTNERS.length} partner logos render`, () => {
+    assert.equal(logos.length, PARTNERS.length, `got ${logos.length} logos`);
+    const broken = logos.filter((l) => !l.ok).map((l) => l.src);
+    assert.deepEqual(broken, [], `broken: ${broken.join(", ")}`);
   });
-  await page.keyboard.press("Escape");
-  await page.waitForTimeout(500);
-  const closed = (await page.locator('[role="dialog"]').count()) === 0;
-  await check(`${lang}: Escape closes the lightbox`, () => assert.ok(closed));
 
   const sec = page.locator("#gallery");
   await sec.scrollIntoViewIfNeeded();
@@ -174,6 +210,11 @@ for (const lang of ["en", "ar"]) {
     assert.doesNotMatch(full.file, /\.loop\.mp4$/, "lightbox is showing the preview loop");
     assert.ok(full.h > 0 && full.h <= 810, `video ${full.h}px tall, overflows 900px viewport`);
   });
+
+  await page.keyboard.press("Escape");
+  await page.waitForTimeout(500);
+  const closed = (await page.locator('[role="dialog"]').count()) === 0;
+  await check(`${lang}: Escape closes the lightbox`, () => assert.ok(closed, "dialog still open"));
 
   await page.close();
 }

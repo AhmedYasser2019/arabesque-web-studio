@@ -141,6 +141,7 @@ function Header() {
     { href: "#services", key: "nav.services" as const },
     { href: "#events", key: "nav.works" as const },
     { href: "#gallery", key: "works.kicker" as const },
+    { href: "#partners", key: "nav.partners" as const },
     { href: "#contact", key: "nav.contact" as const },
   ];
 
@@ -277,40 +278,78 @@ function FilmModal({ slug, onClose }: { slug: string | null; onClose: () => void
 }
 
 /* ---------------- Hero ---------------- */
-// The agency's own showreel — no burned-in captions, so it reads as a visual
-// beside the headline rather than competing with it.
-const HERO_FILM = "elite-wing";
+const HERO_SLIDES = ["/media/hero/1.jpg", "/media/hero/2.jpg", "/media/hero/3.jpg"];
+const HERO_SLIDE_MS = 6000;
+
+// Cross-fading backdrop. Auto-advance is suppressed for prefers-reduced-motion,
+// where the dots stay usable so the other slides are still reachable.
+function HeroBackdrop({ index, onSelect }: { index: number; onSelect: (i: number) => void }) {
+  const { tr } = useI18n();
+  return (
+    <>
+      <div className="absolute inset-0">
+        {HERO_SLIDES.map((src, i) => (
+          <img
+            key={src}
+            src={src}
+            alt=""
+            aria-hidden
+            // first slide is the LCP image, so it must not be lazy
+            loading={i === 0 ? "eager" : "lazy"}
+            fetchPriority={i === 0 ? "high" : "low"}
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1400ms] ease-in-out ${
+              i === index ? "opacity-100" : "opacity-0"
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* Dots sit on the far side from the copy, matching the client mockup */}
+      <div className="absolute inset-y-0 end-6 z-10 hidden flex-col items-center justify-center gap-3 md:flex">
+        {HERO_SLIDES.map((_, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => onSelect(i)}
+            aria-label={`${tr("hero.slide")} ${i + 1}`}
+            aria-current={i === index}
+            className={`rounded-full transition-all duration-500 ${
+              i === index ? "h-8 w-2 bg-lavender" : "h-2 w-2 bg-white/30 hover:bg-white/60"
+            }`}
+          />
+        ))}
+      </div>
+    </>
+  );
+}
 
 function Hero() {
   const { tr } = useI18n();
-  const [reel, setReel] = useState<string | null>(null);
+  const [slide, setSlide] = useState(0);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = setInterval(() => setSlide((v) => (v + 1) % HERO_SLIDES.length), HERO_SLIDE_MS);
+    return () => clearInterval(id);
+  }, [slide]);
+
   return (
     <section id="top" className="relative overflow-hidden">
-      {/* Backdrop is gradient + grid only — the one moving image in the hero is
-          the showreel beside the headline, so nothing competes with it. */}
+      <HeroBackdrop index={slide} onSelect={setSlide} />
+      {/* Darkens the photography enough for the headline to stay legible */}
       <div
-        className="absolute inset-0 -z-10"
+        className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(180deg, color-mix(in oklch, var(--background) 40%, transparent) 0%, color-mix(in oklch, var(--background) 85%, transparent) 65%, var(--background) 100%)",
+            "linear-gradient(180deg, color-mix(in oklch, var(--background) 25%, transparent) 0%, color-mix(in oklch, var(--background) 60%, transparent) 60%, var(--background) 100%)",
         }}
       />
-      <div className="absolute inset-0 -z-10 bg-grid opacity-30" />
+      <div className="absolute inset-0 bg-grid opacity-20" />
 
-      {/* Glow wing behind headline */}
-      <div className="pointer-events-none absolute end-[6%] top-[8%] -z-10 hidden md:block">
-        <div className="relative">
-          <div className="absolute inset-0 rounded-full bg-lavender/40 blur-[80px] animate-ew-glow" />
-          <img
-            src={wingMark}
-            alt=""
-            aria-hidden
-            className="relative h-[420px] w-[420px] opacity-90 mix-blend-screen animate-ew-float"
-          />
-        </div>
-      </div>
+      {/* No decorative wing overlay here — the backdrop photography already
+          carries the wing mark, and a second one fought it. */}
 
-      <div className="mx-auto max-w-7xl px-5 pb-24 pt-24 md:px-8 md:pt-32">
+      <div className="relative z-10 mx-auto max-w-7xl px-5 pb-24 pt-24 md:px-8 md:pt-32">
         <div className="grid items-center gap-10 md:grid-cols-2">
           <div>
             <Reveal variant="fade" duration={600}>
@@ -349,43 +388,8 @@ function Hero() {
             </Reveal>
           </div>
 
-          {/* Showreel — autoplays muted on loop, click for the full film with sound */}
-          <Reveal variant="zoom" delay={300} duration={900}>
-            <button
-              type="button"
-              onClick={() => setReel(HERO_FILM)}
-              aria-label={tr("hero.reel.play")}
-              className="group relative block w-full overflow-hidden rounded-3xl border border-lavender/25 bg-black shadow-2xl shadow-lavender/20 transition-transform duration-500 ease-out hover:scale-[1.02] focus-visible:scale-[1.02]"
-            >
-              <div className="pointer-events-none absolute -inset-8 -z-10 rounded-full bg-lavender/25 blur-3xl animate-ew-glow" />
-              <video
-                className="aspect-video w-full object-cover"
-                src={`${MEDIA}/hero.mp4`}
-                poster={`${MEDIA}/hero.jpg`}
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="metadata"
-                aria-hidden
-              />
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-lavender-dark/70 via-transparent to-transparent transition-opacity duration-500 group-hover:opacity-60" />
-              <span
-                aria-hidden
-                className="pointer-events-none absolute inset-0 flex items-center justify-center"
-              >
-                <span className="relative flex h-16 w-16 items-center justify-center rounded-full bg-white/95 text-lavender-dark shadow-2xl transition-transform duration-500 ease-out group-hover:scale-110">
-                  <span className="absolute inset-0 rounded-full bg-white/50 animate-ew-pulse-ring" />
-                  <Play className="relative h-6 w-6 fill-current ps-0.5" />
-                </span>
-              </span>
-              <span className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center gap-2 p-5 text-start">
-                <span className="text-xs font-semibold uppercase tracking-widest text-lavender-light">
-                  {tr("hero.reel.label")}
-                </span>
-              </span>
-            </button>
-          </Reveal>
+          {/* Right column left open so the skyline backdrop reads through */}
+          <div className="hidden md:block" />
         </div>
 
         {/* Stats bar */}
@@ -416,8 +420,6 @@ function Hero() {
           </div>
         </Reveal>
       </div>
-
-      <FilmModal slug={reel} onClose={() => setReel(null)} />
     </section>
   );
 }
@@ -757,6 +759,53 @@ function Gallery() {
   );
 }
 
+/* ---------------- Partners ----------------
+ * Logos lifted from the "شركاء النجاح" slide of the portfolio deck and keyed to
+ * transparent white, so they sit on the dark surface without a plate. */
+const PARTNERS = [
+  { slug: "tawuniya", name: "Tawuniya" },
+  { slug: "stc", name: "stc" },
+  { slug: "saudia", name: "Saudia" },
+  { slug: "nupco", name: "NUPCO" },
+  { slug: "sirc", name: "SIRC" },
+  { slug: "meena", name: "meena" },
+  { slug: "qfmc", name: "QFMC" },
+  { slug: "chefz", name: "The Chefz" },
+  { slug: "r7", name: "R7 Run Club" },
+  { slug: "waterburger", name: "Water Burger" },
+  { slug: "khoyoot", name: "Khoyoot Al-Tarekh" },
+];
+
+function Partners() {
+  const { tr } = useI18n();
+  return (
+    <section id="partners" className="border-t border-white/5 py-24">
+      <div className="mx-auto max-w-7xl px-5 md:px-8">
+        <SectionHead kicker={tr("partners.kicker")} title={tr("partners.title")} />
+        <Reveal variant="up" delay={120}>
+          <p className="mx-auto mt-6 max-w-4xl text-center leading-relaxed text-white/65">
+            {tr("partners.body")}
+          </p>
+        </Reveal>
+        <div className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+          {PARTNERS.map((p, i) => (
+            <Reveal key={p.slug} variant="zoom" delay={i * 60}>
+              <div className="group flex h-28 items-center justify-center rounded-2xl card-surface p-6 transition duration-300 hover:-translate-y-1 hover:border-lavender/60 hover:shadow-xl hover:shadow-lavender/10">
+                <img
+                  src={`${MEDIA}/partners/${p.slug}.png`}
+                  alt={p.name}
+                  loading="lazy"
+                  className="max-h-14 w-auto max-w-full object-contain opacity-70 transition duration-300 group-hover:opacity-100"
+                />
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ---------------- Testimonials ---------------- */
 function Testimonials() {
   const { tr } = useI18n();
@@ -1073,6 +1122,7 @@ export function Landing({ lang }: { lang?: Lang }) {
           <About />
           <Services />
           <Gallery />
+          <Partners />
           <Testimonials />
           <Newsletter />
           <Contact />
