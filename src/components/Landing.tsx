@@ -29,7 +29,7 @@ import {
 import { I18nProvider, useI18n, type Lang } from "@/lib/i18n";
 import { Reveal } from "@/components/Reveal";
 import { CountUp } from "@/components/CountUp";
-import wingMark from "@/assets/wing-mark.png";
+import logoLockup from "@/assets/logo-lockup.png";
 
 /* ---------------- Media ----------------
  * All of it is Elite Wing's own material now — no stock left on the page. */
@@ -108,26 +108,18 @@ function LangSwitch() {
   );
 }
 
-function WingMark({ className = "h-9 w-9" }: { className?: string }) {
-  return <img src={wingMark} alt="Elite Wing" className={`${className} object-contain`} />;
-}
-
+// The supplied lockup already sets the wing against both wordmarks, so the
+// mark and the type are no longer assembled from separate pieces here.
 function BrandLockup({ compact = false }: { compact?: boolean }) {
   return (
-    <a href="#top" className="group flex items-center gap-2.5">
-      <span
-        className={`transition-all duration-500 ${compact ? "scale-90" : "scale-100"} group-hover:rotate-6`}
-      >
-        <WingMark className={compact ? "h-8 w-8" : "h-10 w-10"} />
-      </span>
-      <div className="leading-tight">
-        <div
-          className={`font-bold tracking-[0.18em] text-white ${compact ? "text-[12px]" : "text-[13px]"}`}
-        >
-          ELITE WING
-        </div>
-        <div className="text-[10px] text-lavender-light/80 tracking-widest">إيليت وينغ</div>
-      </div>
+    <a href="#top" className="group flex items-center">
+      <img
+        src={logoLockup}
+        alt="Elite Wing · إيليت وينغ"
+        className={`w-auto object-contain transition-all duration-500 group-hover:opacity-90 ${
+          compact ? "h-9" : "h-12"
+        }`}
+      />
     </a>
   );
 }
