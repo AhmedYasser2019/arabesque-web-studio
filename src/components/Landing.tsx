@@ -929,9 +929,10 @@ function Contact() {
                   <a
                     href="tel:+966111234567"
                     className="flex items-center gap-3 text-white/90 hover:text-white"
-                    dir="ltr"
                   >
-                    <Phone className="h-4 w-4" /> +966 11 123 4567
+                    {/* Isolate only the number, not the row: dir on the flex
+                        container flips its layout out of the RTL column. */}
+                    <Phone className="h-4 w-4" /> <span dir="ltr">+966 11 123 4567</span>
                   </a>
                   <div className="flex items-center gap-3 text-white/90">
                     <MapPin className="h-4 w-4" /> {tr("contact.location.v")}
