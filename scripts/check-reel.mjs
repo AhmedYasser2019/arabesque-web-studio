@@ -99,10 +99,11 @@ for (const lang of ["en", "ar"]) {
         .map((i) => ({ file: i.src.split("/").pop(), on: getComputedStyle(i).opacity === "1" })),
     );
   const slides = await shown();
+  // Deliberately not asserting *which* slide is up: auto-advance runs on a
+  // timer from load, so a slow page can legitimately be past the first one.
   await check(`${lang}: hero has 3 backdrop slides, one visible`, () => {
     assert.equal(slides.length, 3, `got ${slides.length} slides`);
     assert.equal(slides.filter((s) => s.on).length, 1, "exactly one slide should be visible");
-    assert.equal(slides[0].on, true, "first slide should be the initial one");
   });
 
   // 0b. the dots switch slides
@@ -126,9 +127,18 @@ for (const lang of ["en", "ar"]) {
     assert.notEqual(advanced, before, `still on slide ${before} after 7s`),
   );
 
-  // 0d. partner logos all render (lazy-loaded, so scroll them in first)
+  // 0d. partner logos all render. They are lazy-loaded, so scroll them into
+  // view and wait for the loads to actually settle — a fixed sleep is flaky
+  // against a remote origin. `complete` also goes true on error, so the
+  // naturalWidth assertion below is what proves they decoded.
   await page.locator("#partners").scrollIntoViewIfNeeded();
-  await page.waitForTimeout(1200);
+  await page
+    .waitForFunction(
+      () => [...document.querySelectorAll("#partners img")].every((i) => i.complete),
+      null,
+      { timeout: 20000 },
+    )
+    .catch(() => {});
   const logos = await page.evaluate(() =>
     [...document.querySelectorAll("#partners img")].map((i) => ({
       src: i.getAttribute("src"),
@@ -169,7 +179,18 @@ for (const lang of ["en", "ar"]) {
   );
 
   await cards.nth(1).hover();
-  await page.waitForTimeout(2500);
+  // Wait for playback to actually start rather than guessing at a duration —
+  // fetching the clip from a remote origin can take well over a second.
+  await page
+    .waitForFunction(
+      () => {
+        const v = document.querySelector("#gallery video");
+        return v && !v.paused && v.currentTime > 0;
+      },
+      null,
+      { timeout: 20000 },
+    )
+    .catch(() => {});
   const loop = await page.evaluate(() => {
     const v = document.querySelector("#gallery video");
     return v && { file: v.currentSrc.split("/").pop(), t: v.currentTime, paused: v.paused };
