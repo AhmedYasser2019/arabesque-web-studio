@@ -37,18 +37,18 @@ export const t: Dict = {
     en: "Restoring corporate identity as an instrument of impact.",
   },
   "about.body": {
-    ar: "في سوقٍ مليء بالمشاريع التسويقية المتشابهة، جئنا لنُحوّل الهوية المؤسسية إلى أداة تفاعلية ذكية تصنع الفرق. نجمع بين الفكرة والتنفيذ بأعلى معايير الجودة، ونعمل شركاء حقيقيين لعملائنا في المملكة وخارجها.",
-    en: "In a market crowded with look-alike campaigns, we turn brand identity into an intelligent, interactive instrument. We fuse idea and execution at the highest standard, standing as true partners for clients inside and beyond the Kingdom.",
+    ar: "في سوقٍ مليء بالمشاريع التسويقية المتشابهة، لا تزال الرسالة المؤسسية تُختصر ولا تعكس الأهداف الطموحة. جئنا لنُعيد حضور الهوية المؤسسية، ونحوّلها إلى أداة تفاعلية ذكية تصنع الأثر وتوضّح الفرق.",
+    en: "In a market crowded with look-alike campaigns, the corporate message keeps getting cut short and stops reflecting real ambition. We came to restore that identity — turning it into an intelligent, interactive instrument that creates impact and makes the difference plain.",
   },
   "about.vision.t": { ar: "رؤيتنا", en: "Vision" },
   "about.vision.b": {
-    ar: "أن نكون الخيار الأول والشريك الوطني الرائد في حلول التسويق المتكاملة.",
-    en: "To be the first choice and leading national partner for integrated marketing solutions.",
+    ar: "أن نكون الخيار الأول والشريك الوطني الرائد لتقديم حلول تسويقية متكاملة، وخدمات عصرية مبتكرة تحقق أثرًا.",
+    en: "To be the first choice and leading national partner for integrated marketing solutions and modern, inventive services that deliver real impact.",
   },
   "about.mission.t": { ar: "رسالتنا", en: "Mission" },
   "about.mission.b": {
-    ar: "صناعة تجارب تسويقية استثنائية تجمع الإبداع والابتكار بمعايير عالية.",
-    en: "Crafting exceptional marketing experiences that blend creativity and innovation at the highest standard.",
+    ar: "صناعة تجارب تسويقية استثنائية تجمع بين الإبداع والابتكار، مع حلول متكاملة بمعايير عالية من الجودة والاحترافية، لنكون شركاء نجاح حقيقيين لعملائنا.",
+    en: "Crafting exceptional marketing experiences that blend creativity and innovation, with integrated solutions held to a high standard of quality and professionalism — so we stand as true partners in our clients' success.",
   },
   "about.values.t": { ar: "قيمنا", en: "Values" },
   "about.values.b": {
@@ -61,6 +61,10 @@ export const t: Dict = {
   "svc.title": {
     ar: "حلول متكاملة لعلامة تجارية تُحلّق.",
     en: "End-to-end solutions for a brand that takes flight.",
+  },
+  "svc.sub": {
+    ar: "نؤمن أن النجاح لا يُقاس بالحجم، بل بالقوة والسرعة والدقة في التنفيذ. هدفنا هو نجاحكم، ونحن شركاؤكم في الوصول إليه.",
+    en: "We believe success is measured not by size but by force, speed, and precision in execution. Your success is our goal — and we are your partners in reaching it.",
   },
   "svc.1.t": { ar: "الإدارة والاستشارات", en: "Management & Consulting" },
   "svc.1.b": {
@@ -85,7 +89,11 @@ export const t: Dict = {
 
   // method
   "method.kicker": { ar: "منهجيتنا", en: "Methodology" },
-  "method.title": { ar: "خمس ركائز. أثرٌ حقيقي.", en: "Five pillars. Real impact." },
+  "method.title": { ar: "نعمل وفق خمس ركائز أساسية", en: "We work on five core pillars" },
+  "method.sub": {
+    ar: "بخططٍ منهجية وعملٍ مدروس، نعمل وفق معايير دقيقة ومواصفات عالية تُبنى على التحليل العميق للوصول إلى هدف العميل، ثم نبتكر حلولاً إبداعية تحقق النتائج المرجوة.",
+    en: "With methodical planning and considered work, we operate to precise standards built on deep analysis of the client's goal — then invent the creative solutions that reach it.",
+  },
   "method.1.t": { ar: "الاستماع والتحليل", en: "Listen & Analyze" },
   "method.1.b": {
     ar: "نفهم هوية العميل، جمهوره، وأهدافه.",
@@ -178,21 +186,6 @@ export const t: Dict = {
   "stats.clients": { ar: "عميل سعيد", en: "Happy clients" },
   "stats.cities": { ar: "مدينة حول المملكة", en: "Cities across KSA" },
   "stats.years": { ar: "سنوات من الخبرة", en: "Years of experience" },
-
-  // upcoming events
-  "up.kicker": { ar: "الفعاليات القادمة", en: "Upcoming Events" },
-  "up.title": {
-    ar: "اكتشف مجموعة من الفعاليات المميزة",
-    en: "Discover a curated set of standout events",
-  },
-  "up.cta": { ar: "تفاصيل أكثر", en: "Learn more" },
-  "up.all": { ar: "عرض جميع الفعاليات", en: "View all events" },
-  "up.1.t": { ar: "منتدى الابتكار في الأعمال", en: "Business Innovation Forum" },
-  "up.1.b": { ar: "الرياض · فندق الموسوبيل", en: "Riyadh · Mövenpick Hotel" },
-  "up.2.t": { ar: "قمة التحول الرقمي", en: "Digital Transformation Summit" },
-  "up.2.b": { ar: "الرياض · مركز الملك عبدالله المالي", en: "Riyadh · KAFD" },
-  "up.3.t": { ar: "ملتقى الاستثمار السعودي", en: "Saudi Investment Meetup" },
-  "up.3.b": { ar: "الرياض · فندق ريتز كارلتون", en: "Riyadh · Ritz Carlton" },
 
   // gallery
   "gal.kicker": { ar: "لحظات من نجاحاتنا", en: "Moments of Success" },

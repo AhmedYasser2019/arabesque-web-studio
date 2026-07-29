@@ -34,22 +34,6 @@ import logoLockup from "@/assets/logo-lockup.png";
 /* ---------------- Media ----------------
  * All of it is Elite Wing's own material now — no stock left on the page. */
 
-// Stills pulled from Elite Wing's own portfolio deck (project-data/), not stock.
-const UPCOMING = [
-  {
-    date: { d: "24", m: { ar: "يونيو", en: "Jun" }, y: "2026" },
-    img: "/media/events/up-1.jpg",
-  },
-  {
-    date: { d: "15", m: { ar: "يوليو", en: "Jul" }, y: "2026" },
-    img: "/media/events/up-2.jpg",
-  },
-  {
-    date: { d: "05", m: { ar: "أغسطس", en: "Aug" }, y: "2026" },
-    img: "/media/events/up-3.jpg",
-  },
-];
-
 /* ---------------- Client work reel ----------------
  * Assets live in public/media as <slug>.jpg (poster), <slug>.loop.mp4 (muted
  * hover preview) and <slug>.mp4 (full film for the lightbox).
@@ -131,7 +115,7 @@ function Header() {
   const links = [
     { href: "#about", key: "nav.about" as const },
     { href: "#services", key: "nav.services" as const },
-    { href: "#events", key: "nav.works" as const },
+    { href: "#method", key: "nav.method" as const },
     { href: "#gallery", key: "works.kicker" as const },
     { href: "#partners", key: "nav.partners" as const },
     { href: "#contact", key: "nav.contact" as const },
@@ -371,7 +355,7 @@ function Hero() {
                   <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 rtl:group-hover:-translate-x-0.5" />
                 </a>
                 <a
-                  href="#events"
+                  href="#services"
                   className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition hover:border-lavender hover:-translate-y-0.5"
                 >
                   {tr("hero.cta.primary")}
@@ -416,6 +400,30 @@ function Hero() {
   );
 }
 
+/* ---------------- Section backdrop ----------------
+ * The deck's own device: a photograph sunk under a heavy lavender wash so the
+ * copy stays legible. Same four frames the portfolio uses for its dividers.
+ *
+ * `opacity` is per-section on purpose — how far a frame can come forward depends
+ * on what sits over it. Architecture behind body copy takes the default; the
+ * gallery frame goes lower because it has legible text of its own and a wall of
+ * video cards on top. */
+function SectionBg({ src, opacity = 0.45 }: { src: string; opacity?: number }) {
+  return (
+    // No negative z-index: the page wrapper's opaque background would hide it.
+    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+      <img
+        src={src}
+        alt=""
+        loading="lazy"
+        style={{ opacity }}
+        className="h-full w-full object-cover"
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-lavender-dark/40 to-background" />
+    </div>
+  );
+}
+
 /* ---------------- Section head ---------------- */
 function SectionHead({
   kicker,
@@ -440,61 +448,35 @@ function SectionHead({
   );
 }
 
-/* ---------------- Upcoming events ---------------- */
-function UpcomingEvents() {
-  const { tr, lang } = useI18n();
+/* ---------------- Methodology ----------------
+ * The deck's "منهجية العمل" slide — five pillars, in order. */
+function Methodology() {
+  const { tr } = useI18n();
   return (
-    <section id="events" className="py-24">
-      <div className="mx-auto max-w-7xl px-5 md:px-8">
-        <SectionHead kicker={tr("up.kicker")} title={tr("up.title")} />
-        <div className="mt-14 grid gap-6 md:grid-cols-3">
-          {UPCOMING.map((ev, i) => (
-            <Reveal key={i} variant="up" delay={i * 120}>
-              <article className="group relative overflow-hidden rounded-3xl card-surface transition hover:-translate-y-1 hover:border-lavender/60 hover:shadow-2xl hover:shadow-lavender/20">
-                <div className="relative aspect-[4/3] overflow-hidden">
-                  <img
-                    src={ev.img}
-                    alt=""
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-[1200ms] group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
-                  <div className="absolute top-4 end-4 rounded-2xl bg-background/85 px-4 py-3 text-center backdrop-blur-md ring-1 ring-lavender/30">
-                    <div className="text-2xl font-black leading-none text-white">{ev.date.d}</div>
-                    <div className="mt-1 text-[11px] font-semibold uppercase tracking-widest text-lavender-light">
-                      {ev.date.m[lang]}
-                    </div>
-                    <div className="text-[10px] text-white/60">{ev.date.y}</div>
-                  </div>
+    <section id="method" className="relative overflow-hidden border-t border-white/5 py-24">
+      <SectionBg src="/media/bg/3.jpg" />
+      <div className="relative mx-auto max-w-7xl px-5 md:px-8">
+        <SectionHead
+          kicker={tr("method.kicker")}
+          title={tr("method.title")}
+          subtitle={tr("method.sub")}
+        />
+        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
+          {[1, 2, 3, 4, 5].map((n, i) => (
+            <Reveal key={n} variant="up" delay={i * 110}>
+              <div className="group h-full rounded-3xl card-surface p-6 transition hover:-translate-y-1 hover:border-lavender/60 hover:shadow-xl hover:shadow-lavender/10">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl gradient-lavender text-sm font-black text-white shadow-lg shadow-lavender/40 transition-transform group-hover:scale-110">
+                  0{n}
                 </div>
-                <div className="p-6">
-                  <h3 className="text-lg font-bold text-white">
-                    {tr(`up.${i + 1}.t` as keyof typeof import("@/lib/i18n").t)}
-                  </h3>
-                  <div className="mt-2 flex items-center gap-2 text-xs text-white/60">
-                    <MapPin className="h-3.5 w-3.5 text-lavender" />
-                    {tr(`up.${i + 1}.b` as keyof typeof import("@/lib/i18n").t)}
-                  </div>
-                  <a
-                    href="#contact"
-                    className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-lavender/40 bg-lavender/10 px-4 py-2.5 text-xs font-bold text-lavender-light transition hover:bg-lavender/20"
-                  >
-                    {tr("up.cta")}
-                    <ArrowUpRight className="h-3.5 w-3.5" />
-                  </a>
-                </div>
-              </article>
+                <h3 className="mt-5 text-base font-bold text-white">
+                  {tr(`method.${n}.t` as keyof typeof import("@/lib/i18n").t)}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-white/65">
+                  {tr(`method.${n}.b` as keyof typeof import("@/lib/i18n").t)}
+                </p>
+              </div>
             </Reveal>
           ))}
-        </div>
-        <div className="mt-10 text-center">
-          <a
-            href="#contact"
-            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-6 py-3 text-sm font-semibold text-white transition hover:border-lavender hover:-translate-y-0.5"
-          >
-            {tr("up.all")}
-            <ArrowUpRight className="h-4 w-4" />
-          </a>
         </div>
       </div>
     </section>
@@ -505,8 +487,9 @@ function UpcomingEvents() {
 function About() {
   const { tr } = useI18n();
   return (
-    <section id="about" className="border-t border-white/5 py-24">
-      <div className="mx-auto max-w-7xl px-5 md:px-8">
+    <section id="about" className="relative overflow-hidden border-t border-white/5 py-24">
+      <SectionBg src="/media/bg/1.jpg" />
+      <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("about.kicker")} title={tr("about.title")} />
         <Reveal variant="up" delay={120}>
           <p className="mx-auto mt-6 max-w-3xl text-center text-lg text-white/70">
@@ -545,9 +528,10 @@ function Services() {
     { i: Wand2, k: "svc.4" },
   ] as const;
   return (
-    <section id="services" className="border-t border-white/5 py-24">
-      <div className="mx-auto max-w-7xl px-5 md:px-8">
-        <SectionHead kicker={tr("svc.kicker")} title={tr("svc.title")} />
+    <section id="services" className="relative overflow-hidden border-t border-white/5 py-24">
+      <SectionBg src="/media/bg/2.jpg" />
+      <div className="relative mx-auto max-w-7xl px-5 md:px-8">
+        <SectionHead kicker={tr("svc.kicker")} title={tr("svc.title")} subtitle={tr("svc.sub")} />
         <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
           {items.map(({ i: Icon, k }, idx) => (
             <Reveal key={k} variant="up" delay={idx * 100}>
@@ -677,8 +661,9 @@ function Gallery() {
   };
 
   return (
-    <section id="gallery" className="border-t border-white/5 py-24">
-      <div className="mx-auto max-w-7xl px-5 md:px-8">
+    <section id="gallery" className="relative overflow-hidden border-t border-white/5 py-24">
+      <SectionBg src="/media/bg/4.jpg" opacity={0.18} />
+      <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("gal.kicker")} title={tr("gal.title")} />
 
         <div className="mt-10 flex flex-wrap items-center justify-between gap-4">
@@ -1056,8 +1041,8 @@ function Footer() {
                   </a>
                 </li>
                 <li>
-                  <a href="#events" className="hover:text-lavender-light">
-                    {tr("up.kicker")}
+                  <a href="#method" className="hover:text-lavender-light">
+                    {tr("method.kicker")}
                   </a>
                 </li>
                 <li>
@@ -1111,9 +1096,9 @@ export function Landing({ lang }: { lang?: Lang }) {
         <Header />
         <main>
           <Hero />
-          <UpcomingEvents />
           <About />
           <Services />
+          <Methodology />
           <Gallery />
           <Partners />
           <Testimonials />

@@ -78,7 +78,7 @@ await Promise.all([
     head(`${FILMS}/${slug}.mp4`),
   ]),
   ...[1, 2, 3].map((n) => head(`${BASE}/media/hero/${n}.jpg`)),
-  ...[1, 2, 3].map((n) => head(`${BASE}/media/events/up-${n}.jpg`)),
+  ...[1, 2, 3, 4].map((n) => head(`${BASE}/media/bg/${n}.jpg`)),
   ...PARTNERS.map((p) => head(`${BASE}/media/partners/${p}.png`)),
 ]);
 await check(
