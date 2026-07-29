@@ -134,13 +134,14 @@ for (const lang of ["en", "ar"]) {
   await page.locator("#partners").scrollIntoViewIfNeeded();
   await page
     .waitForFunction(
-      () => [...document.querySelectorAll("#partners img")].every((i) => i.complete),
+      () =>
+        [...document.querySelectorAll('#partners img[src*="/partners/"]')].every((i) => i.complete),
       null,
       { timeout: 20000 },
     )
     .catch(() => {});
   const logos = await page.evaluate(() =>
-    [...document.querySelectorAll("#partners img")].map((i) => ({
+    [...document.querySelectorAll('#partners img[src*="/partners/"]')].map((i) => ({
       src: i.getAttribute("src"),
       ok: i.complete && i.naturalWidth > 0,
     })),
@@ -238,6 +239,53 @@ for (const lang of ["en", "ar"]) {
   await check(`${lang}: Escape closes the lightbox`, () => assert.ok(closed, "dialog still open"));
 
   await page.close();
+}
+
+// 6. both themes actually resolve. The page is written dark-first and the light
+// theme works by re-pointing --color-white at the identity navy, so the thing
+// that breaks silently is body copy staying white on a white page.
+for (const theme of ["dark", "light"]) {
+  const ctx = await browser.newContext();
+  await ctx.addInitScript((t) => {
+    try {
+      localStorage.setItem("theme", t);
+    } catch {
+      /* ignore */
+    }
+  }, theme);
+  const page = await ctx.newPage();
+  await page.goto(`${BASE}/ar`, { waitUntil: "domcontentloaded" });
+
+  const seen = await page.evaluate(() => {
+    const lum = (el, prop) => {
+      const m = getComputedStyle(el)
+        [prop].match(/[\d.]+/g)
+        .map(Number);
+      return (0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]) / 255;
+    };
+    return {
+      applied: document.documentElement.dataset.theme,
+      page: lum(document.body, "backgroundColor"),
+      // a heading that relies on text-white, i.e. the re-pointed variable
+      heading: lum(document.querySelector("#about h2"), "color"),
+      // the contact card opts back out via on-brand and must stay truly white
+      onBrand: getComputedStyle(document.querySelector("#contact h2")).color,
+    };
+  });
+
+  await check(`${theme}: theme applied and copy contrasts with the page`, () => {
+    assert.equal(seen.applied, theme);
+    if (theme === "light") assert.ok(seen.page > 0.8, `page luminance ${seen.page}`);
+    else assert.ok(seen.page < 0.2, `page luminance ${seen.page}`);
+    assert.ok(
+      Math.abs(seen.page - seen.heading) > 0.4,
+      `heading (${seen.heading.toFixed(2)}) too close to page (${seen.page.toFixed(2)})`,
+    );
+  });
+  await check(`${theme}: on-brand keeps real white on the lavender card`, () =>
+    assert.match(seen.onBrand, /^rgb\(255,\s*255,\s*255\)$/),
+  );
+  await ctx.close();
 }
 
 await browser.close();

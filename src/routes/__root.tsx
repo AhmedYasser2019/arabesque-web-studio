@@ -106,9 +106,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    // The script below rewrites data-theme before React hydrates, so the server
+    // markup deliberately disagrees with the DOM on that one attribute.
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
       <head>
         <HeadContent />
+        {/* Applies the saved theme before first paint. Without it the page
+            renders dark and then flips, which is worse than either theme. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{document.documentElement.dataset.theme=localStorage.getItem("theme")==="light"?"light":"dark"}catch(e){}`,
+          }}
+        />
       </head>
       <body>
         {children}

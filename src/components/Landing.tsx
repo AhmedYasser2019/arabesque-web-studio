@@ -25,11 +25,14 @@ import {
   Globe,
   ChevronLeft,
   ChevronRight,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { I18nProvider, useI18n, type Lang } from "@/lib/i18n";
 import { Reveal } from "@/components/Reveal";
 import { CountUp } from "@/components/CountUp";
 import logoLockup from "@/assets/logo-lockup.png";
+import logoLockupLight from "@/assets/logo-lockup-light.png";
 
 /* ---------------- Media ----------------
  * All of it is Elite Wing's own material now — no stock left on the page. */
@@ -92,17 +95,56 @@ function LangSwitch() {
   );
 }
 
+/* Dark stays the default; the inline script in __root.tsx has already applied
+ * the stored choice by the time this mounts, so we only read it back. */
+function ThemeSwitch() {
+  const [light, setLight] = useState(false);
+
+  useEffect(() => setLight(document.documentElement.dataset.theme === "light"), []);
+
+  const toggle = () => {
+    const next = !light;
+    setLight(next);
+    document.documentElement.dataset.theme = next ? "light" : "dark";
+    try {
+      localStorage.setItem("theme", next ? "light" : "dark");
+    } catch {
+      /* private mode — the choice just won't survive a reload */
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      aria-pressed={light}
+      aria-label={light ? "Switch to dark theme" : "Switch to light theme"}
+      className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/80 transition hover:border-lavender hover:text-white"
+    >
+      {light ? <Moon className="h-3.5 w-3.5" /> : <Sun className="h-3.5 w-3.5" />}
+    </button>
+  );
+}
+
 // The supplied lockup already sets the wing against both wordmarks, so the
-// mark and the type are no longer assembled from separate pieces here.
+// mark and the type are no longer assembled from separate pieces here. There
+// are two of them: the white keyline for dark surfaces, and the purple one the
+// brand pack ships for light. Inverting the white one would tint the wing, so
+// we swap the file instead.
 function BrandLockup({ compact = false }: { compact?: boolean }) {
+  const size = compact ? "h-9" : "h-12";
   return (
     <a href="#top" className="group flex items-center">
       <img
         src={logoLockup}
         alt="Elite Wing · إيليت وينغ"
-        className={`w-auto object-contain transition-all duration-500 group-hover:opacity-90 ${
-          compact ? "h-9" : "h-12"
-        }`}
+        className={`${size} w-auto object-contain transition-all duration-500 group-hover:opacity-90 light:hidden`}
+      />
+      <img
+        src={logoLockupLight}
+        alt=""
+        aria-hidden
+        className={`${size} hidden w-auto object-contain transition-all duration-500 group-hover:opacity-90 light:block`}
       />
     </a>
   );
@@ -163,10 +205,11 @@ function Header() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
+          <ThemeSwitch />
           <LangSwitch />
           <a
             href="#contact"
-            className="group hidden items-center gap-1.5 rounded-full gradient-lavender px-4 py-2 text-xs font-bold text-white shadow-lg shadow-lavender/30 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lavender/50 md:inline-flex"
+            className="group hidden items-center gap-1.5 rounded-full gradient-lavender px-4 py-2 text-xs font-bold text-white on-brand shadow-lg shadow-lavender/30 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lavender/50 md:inline-flex"
           >
             <span>{tr("nav.cta")}</span>
             <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 rtl:group-hover:-translate-x-0.5" />
@@ -229,7 +272,7 @@ function FilmModal({ slug, onClose }: { slug: string | null; onClose: () => void
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-5xl overflow-hidden rounded-3xl border border-white/10 bg-black shadow-2xl"
+        className="on-brand relative w-full max-w-5xl overflow-hidden rounded-3xl border border-white/10 bg-black shadow-2xl"
       >
         <button
           onClick={onClose}
@@ -281,7 +324,7 @@ function HeroBackdrop({ index, onSelect }: { index: number; onSelect: (i: number
       </div>
 
       {/* Dots sit on the far side from the copy, matching the client mockup */}
-      <div className="absolute inset-y-0 end-6 z-10 hidden flex-col items-center justify-center gap-3 md:flex">
+      <div className="on-brand absolute inset-y-0 end-6 z-10 hidden flex-col items-center justify-center gap-3 md:flex">
         {HERO_SLIDES.map((_, i) => (
           <button
             key={i}
@@ -312,12 +355,15 @@ function Hero() {
   return (
     <section id="top" className="relative overflow-hidden">
       <HeroBackdrop index={slide} onSelect={setSlide} />
-      {/* Darkens the photography enough for the headline to stay legible */}
+      {/* Darkens the photography enough for the headline to stay legible. The
+          scrim is keyed to --navy, which is dark in both themes: these are dusk
+          skylines, so the hero stays dark even in light mode and only its foot
+          fades out to whatever the page background is. */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(180deg, color-mix(in oklch, var(--background) 25%, transparent) 0%, color-mix(in oklch, var(--background) 60%, transparent) 60%, var(--background) 100%)",
+            "linear-gradient(180deg, color-mix(in oklch, var(--navy) 45%, transparent) 0%, color-mix(in oklch, var(--navy) 75%, transparent) 60%, var(--background) 100%)",
         }}
       />
       <div className="absolute inset-0 bg-grid opacity-20" />
@@ -327,7 +373,9 @@ function Hero() {
 
       <div className="relative z-10 mx-auto max-w-7xl px-5 pb-24 pt-24 md:px-8 md:pt-32">
         <div className="grid items-center gap-10 md:grid-cols-2">
-          <div>
+          {/* on-brand here rather than on the section: this copy sits on the
+              photograph, but the stats bar below is a normal surface card. */}
+          <div className="on-brand">
             <Reveal variant="fade" duration={600}>
               <span className="inline-flex items-center gap-2 rounded-full border border-lavender/40 bg-lavender/10 px-3 py-1 text-xs font-medium text-lavender-light">
                 <span className="relative flex h-1.5 w-1.5">
@@ -349,7 +397,7 @@ function Hero() {
               <div className="mt-8 flex flex-wrap gap-3">
                 <a
                   href="#contact"
-                  className="group inline-flex items-center gap-2 rounded-full gradient-lavender px-6 py-3 text-sm font-bold text-white shadow-lg shadow-lavender/30 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-lavender/50"
+                  className="group inline-flex items-center gap-2 rounded-full gradient-lavender px-6 py-3 text-sm font-bold text-white on-brand shadow-lg shadow-lavender/30 transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-lavender/50"
                 >
                   {tr("nav.cta")}
                   <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 rtl:group-hover:-translate-x-0.5" />
@@ -407,11 +455,17 @@ function Hero() {
  * `opacity` is per-section on purpose — how far a frame can come forward depends
  * on what sits over it. Architecture behind body copy takes the default; the
  * gallery frame goes lower because it has legible text of its own and a wall of
- * video cards on top. */
+ * video cards on top. The whole backdrop is then scaled by --backdrop-opacity,
+ * which the light theme pulls right down: navy copy needs a quieter photo under
+ * it than white copy does. */
 function SectionBg({ src, opacity = 0.45 }: { src: string; opacity?: number }) {
   return (
     // No negative z-index: the page wrapper's opaque background would hide it.
-    <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+    <div
+      aria-hidden
+      style={{ opacity: "var(--backdrop-opacity)" }}
+      className="pointer-events-none absolute inset-0 overflow-hidden"
+    >
       <img
         src={src}
         alt=""
@@ -465,7 +519,7 @@ function Methodology() {
           {[1, 2, 3, 4, 5].map((n, i) => (
             <Reveal key={n} variant="up" delay={i * 110}>
               <div className="group h-full rounded-3xl card-surface p-6 transition hover:-translate-y-1 hover:border-lavender/60 hover:shadow-xl hover:shadow-lavender/10">
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl gradient-lavender text-sm font-black text-white shadow-lg shadow-lavender/40 transition-transform group-hover:scale-110">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl gradient-lavender text-sm font-black text-white on-brand shadow-lg shadow-lavender/40 transition-transform group-hover:scale-110">
                   0{n}
                 </div>
                 <h3 className="mt-5 text-base font-bold text-white">
@@ -504,7 +558,7 @@ function About() {
           ].map((x, i) => (
             <Reveal key={i} variant="up" delay={i * 140}>
               <div className="group h-full rounded-3xl card-surface p-8 transition hover:-translate-y-1 hover:border-lavender/60 hover:shadow-xl hover:shadow-lavender/10">
-                <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl gradient-lavender text-white shadow-lg shadow-lavender/40 transition-transform group-hover:rotate-6 group-hover:scale-110">
+                <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl gradient-lavender text-white on-brand shadow-lg shadow-lavender/40 transition-transform group-hover:rotate-6 group-hover:scale-110">
                   <x.Icon className="h-5 w-5" />
                 </div>
                 <h3 className="text-xl font-bold text-white">{x.t}</h3>
@@ -538,7 +592,7 @@ function Services() {
               <div className="group relative h-full overflow-hidden rounded-3xl card-surface p-7 transition hover:-translate-y-1 hover:border-lavender/60 hover:shadow-2xl hover:shadow-lavender/10">
                 <div className="absolute -end-16 -top-16 h-40 w-40 rounded-full bg-lavender/15 blur-3xl transition group-hover:bg-lavender/30 animate-ew-float-slow" />
                 <div className="relative">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl gradient-lavender text-white shadow-lg shadow-lavender/40 transition-transform group-hover:-rotate-6 group-hover:scale-110">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl gradient-lavender text-white on-brand shadow-lg shadow-lavender/40 transition-transform group-hover:-rotate-6 group-hover:scale-110">
                     <Icon className="h-5 w-5" />
                   </div>
                   <div className="mt-5 text-xs font-semibold text-lavender-light">0{idx + 1}</div>
@@ -603,7 +657,7 @@ function ReelCard({
       onMouseLeave={() => onHover(null)}
       onFocus={() => onHover(slug)}
       onBlur={() => onHover(null)}
-      className="group relative w-[78%] shrink-0 snap-start overflow-hidden rounded-3xl card-surface text-start transition-transform duration-500 ease-out hover:scale-[1.04] focus-visible:scale-[1.04] sm:w-[46%] lg:w-[31%] xl:w-[23.5%]"
+      className="on-brand group relative w-[78%] shrink-0 snap-start overflow-hidden rounded-3xl card-surface text-start transition-transform duration-500 ease-out hover:scale-[1.04] focus-visible:scale-[1.04] sm:w-[46%] lg:w-[31%] xl:w-[23.5%]"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
         <img
@@ -676,7 +730,7 @@ function Gallery() {
                 aria-pressed={c === cat}
                 className={`rounded-full border px-4 py-2 text-xs font-semibold transition duration-300 ${
                   c === cat
-                    ? "border-transparent gradient-lavender text-white shadow-lg shadow-lavender/30"
+                    ? "border-transparent gradient-lavender text-white on-brand shadow-lg shadow-lavender/30"
                     : "border-white/15 bg-white/5 text-white/70 hover:border-lavender hover:text-white"
                 }`}
               >
@@ -756,8 +810,9 @@ const PARTNERS = [
 function Partners() {
   const { tr } = useI18n();
   return (
-    <section id="partners" className="border-t border-white/5 py-24">
-      <div className="mx-auto max-w-7xl px-5 md:px-8">
+    <section id="partners" className="relative overflow-hidden border-t border-white/5 py-24">
+      <SectionBg src="/media/bg/2.jpg" opacity={0.3} />
+      <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("partners.kicker")} title={tr("partners.title")} />
         <Reveal variant="up" delay={120}>
           <p className="mx-auto mt-6 max-w-4xl text-center leading-relaxed text-white/65">
@@ -772,7 +827,10 @@ function Partners() {
                   src={`${MEDIA}/partners/${p.slug}.png`}
                   alt={p.name}
                   loading="lazy"
-                  className="max-h-14 w-auto max-w-full object-contain opacity-70 transition duration-300 group-hover:opacity-100"
+                  // The supplied logos are keyed to transparent white, so on a
+                  // pale card they need inverting to stay visible. They are all
+                  // fully monochrome, so this only flips white to near-black.
+                  className="max-h-14 w-auto max-w-full object-contain opacity-70 transition duration-300 group-hover:opacity-100 [filter:var(--partner-logo-filter)]"
                 />
               </div>
             </Reveal>
@@ -793,8 +851,9 @@ function Testimonials() {
   const prev = () => setIdx((v) => (v - 1 + items.length) % items.length);
 
   return (
-    <section className="border-t border-white/5 py-24">
-      <div className="mx-auto max-w-5xl px-5 md:px-8">
+    <section className="relative overflow-hidden border-t border-white/5 py-24">
+      <SectionBg src="/media/bg/3.jpg" />
+      <div className="relative mx-auto max-w-5xl px-5 md:px-8">
         <SectionHead kicker={tr("test.kicker")} title={tr("test.title")} />
         <Reveal variant="up" delay={120}>
           <div className="relative mt-12 rounded-3xl card-surface p-8 md:p-12">
@@ -804,7 +863,7 @@ function Testimonials() {
             </p>
             <div className="mt-8 flex items-center justify-between gap-4 border-t border-white/10 pt-6">
               <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full gradient-lavender text-white font-bold">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full gradient-lavender text-white on-brand font-bold">
                   {tr(`test.${active}.n` as keyof typeof import("@/lib/i18n").t).slice(0, 1)}
                 </div>
                 <div>
@@ -852,8 +911,9 @@ function Testimonials() {
 function Newsletter() {
   const { tr } = useI18n();
   return (
-    <section className="py-16">
-      <div className="mx-auto max-w-5xl px-5 md:px-8">
+    <section className="relative overflow-hidden py-16">
+      <SectionBg src="/media/bg/1.jpg" />
+      <div className="relative mx-auto max-w-5xl px-5 md:px-8">
         <Reveal variant="up">
           <div className="relative overflow-hidden rounded-3xl card-surface p-8 md:p-12">
             <div className="pointer-events-none absolute -end-16 -top-16 h-64 w-64 rounded-full bg-lavender/25 blur-3xl animate-ew-float-slow" />
@@ -872,7 +932,7 @@ function Newsletter() {
                   placeholder={tr("news.placeholder")}
                   className="min-w-0 flex-1 bg-transparent px-3 py-2 text-sm text-white placeholder-white/50 outline-none"
                 />
-                <button className="inline-flex items-center gap-1.5 rounded-xl gradient-lavender px-4 py-2 text-xs font-bold text-white shadow-md shadow-lavender/30 transition hover:-translate-y-0.5">
+                <button className="inline-flex items-center gap-1.5 rounded-xl gradient-lavender px-4 py-2 text-xs font-bold text-white on-brand shadow-md shadow-lavender/30 transition hover:-translate-y-0.5">
                   {tr("news.cta")}
                   <Send className="h-3.5 w-3.5" />
                 </button>
@@ -889,10 +949,11 @@ function Newsletter() {
 function Contact() {
   const { tr } = useI18n();
   return (
-    <section id="contact" className="py-24">
-      <div className="mx-auto max-w-6xl px-5 md:px-8">
+    <section id="contact" className="relative overflow-hidden py-24">
+      <SectionBg src="/media/bg/4.jpg" />
+      <div className="relative mx-auto max-w-6xl px-5 md:px-8">
         <Reveal variant="zoom">
-          <div className="relative overflow-hidden rounded-[2rem] gradient-lavender p-8 text-white md:p-16">
+          <div className="relative overflow-hidden rounded-[2rem] gradient-lavender p-8 text-white on-brand md:p-16">
             <div className="absolute -end-20 -top-20 h-72 w-72 rounded-full bg-white/10 blur-3xl animate-ew-blob" />
             <div className="absolute -start-20 -bottom-20 h-72 w-72 rounded-full bg-black/30 blur-3xl animate-ew-float-slow" />
             <div className="relative grid gap-10 md:grid-cols-2 md:items-center">

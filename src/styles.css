@@ -3,6 +3,9 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+/* Mirrors the dark variant for the light theme, which is opt-in via the header
+   switch rather than a media query. */
+@custom-variant light (&:is(:root[data-theme="light"] *));
 
 @theme inline {
   --font-sans: "Cairo", "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -76,6 +79,61 @@
   --border: oklch(0.32 0.03 285 / 0.6);
   --input: oklch(0.30 0.03 285);
   --ring: var(--lavender);
+
+  /* How far a section's photo backdrop is allowed to come forward. */
+  --backdrop-opacity: 1;
+  --partner-logo-filter: none;
+}
+
+/* ============ Light theme ============
+ * Swatches are the identity guide's own, section 02 "الألوان":
+ *   الخزامي        #B27CDC   جوهر الإبداع والرُقي
+ *   الخزامي الفاتح  #F5E7FE   مثالي للخلفيات والتوازن البصري
+ *   الخزامي الغامق  #734F97   العمق والجدية
+ *   الكحلي الداكن   #2E3B5B   الثقة والاحتراف المؤسسي
+ *   الألوان المساعدة #E6E7FC #DFD7EC */
+:root[data-theme="light"] {
+  --lavender: #b27cdc;
+  /* Deliberately not a lighter lavender. `text-lavender-light` is the accent
+     ink across the page; on a pale background that has to go darker, and the
+     identity's deep khuzami is the swatch that reads. */
+  --lavender-light: #6d4a90;
+  --lavender-dark: #734f97;
+  --navy: #2e3b5b;
+  --pale: #f5e7fe;
+
+  --background: #fdfaff;
+  --foreground: #2e3b5b;
+  --panel: #ffffff;
+  --panel-2: #f5e7fe;
+
+  --muted-foreground: #59637f;
+  --border: color-mix(in oklch, #2e3b5b 16%, transparent);
+  --input: #dfd7ec;
+  --primary-foreground: #ffffff;
+  --accent-foreground: #ffffff;
+
+  /* The page was written dark-first, so `text-white` / `border-white/15` /
+     `bg-white/5` are really "ink on a dark surface" everywhere. On a pale page
+     that ink is the identity's navy, and Tailwind resolves all three through
+     this one variable. Anything genuinely sitting on a lavender or photo fill
+     opts back out with `on-brand`.
+
+     A notch deeper than the identity's #2E3B5B on purpose: most body copy is
+     `text-white/65`, and the straight navy composites to 3.9:1 against this
+     background, under AA. This lands that 65% variant at 4.55:1. */
+  --color-white: #212c47;
+
+  /* Photos have to sit further back under navy text than under white. */
+  --backdrop-opacity: 0.42;
+  /* White-keyed logos would vanish on a pale card. */
+  --partner-logo-filter: invert(1);
+}
+
+/* Restores real white for content on a lavender fill or a photograph, which
+   stay dark in both themes. */
+@utility on-brand {
+  --color-white: #ffffff;
 }
 
 @layer base {
