@@ -47,8 +47,8 @@ export const t: Dict = {
   },
   "about.mission.t": { ar: "رسالتنا", en: "Mission" },
   "about.mission.b": {
-    ar: "صناعة تجارب تسويقية استثنائية تجمع بين الإبداع والابتكار، مع حلول متكاملة بمعايير عالية من الجودة والاحترافية، لنكون شركاء نجاح حقيقيين لعملائنا.",
-    en: "Crafting exceptional marketing experiences that blend creativity and innovation, with integrated solutions held to a high standard of quality and professionalism — so we stand as true partners in our clients' success.",
+    ar: "في إيليت وينغ هي صناعة تجارب تسويقية استثنائية تجمع بين الإبداع والابتكار، مع تقديم حلول متكاملة بمعايير عالية من الجودة والاحترافية، لنكون شركاء نجاح حقيقيين في دعم عملائنا وتمكينهم من تحقيق طموحاتهم والتوسع بثقة في الأسواق المحلية والعالمية.",
+    en: "At Elite Wing, it is to craft exceptional marketing experiences that blend creativity and innovation, delivering integrated solutions held to a high standard of quality and professionalism — so we stand as true partners in supporting our clients, enabling them to realise their ambitions and expand with confidence in local and global markets.",
   },
   "about.values.t": { ar: "قيمنا", en: "Values" },
   "about.values.b": {
