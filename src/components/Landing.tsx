@@ -371,7 +371,7 @@ function Hero() {
       {/* No decorative wing overlay here — the backdrop photography already
           carries the wing mark, and a second one fought it. */}
 
-      <div className="relative z-10 mx-auto max-w-7xl px-5 pb-24 pt-24 md:px-8 md:pt-32">
+      <div className="relative z-10 mx-auto max-w-7xl px-5 pb-10 pt-24 md:px-8 md:pt-32">
         <div className="grid items-center gap-10 md:grid-cols-2">
           {/* on-brand here rather than on the section: this copy sits on the
               photograph, but the stats bar below is a normal surface card. */}
@@ -595,8 +595,7 @@ function Services() {
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl gradient-lavender text-white on-brand shadow-lg shadow-lavender/40 transition-transform group-hover:-rotate-6 group-hover:scale-110">
                     <Icon className="h-5 w-5" />
                   </div>
-                  <div className="mt-5 text-xs font-semibold text-lavender-light">0{idx + 1}</div>
-                  <h3 className="mt-1 text-lg font-bold text-white">
+                  <h3 className="mt-5 text-lg font-bold text-white">
                     {tr(`${k}.t` as keyof typeof import("@/lib/i18n").t)}
                   </h3>
                   <p className="mt-2 text-sm leading-relaxed text-white/65">
@@ -683,7 +682,7 @@ function ReelCard({
       </div>
       <div className="absolute inset-x-0 bottom-0 p-5">
         <div className="text-[11px] font-semibold uppercase tracking-widest text-lavender-light">
-          {tr("works.case")} · {String(index + 1).padStart(2, "0")}
+          {tr("works.case")}
         </div>
         <div className="mt-1 text-sm font-bold text-white">
           {tr(`reel.${slug}` as keyof typeof import("@/lib/i18n").t)}
