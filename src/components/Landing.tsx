@@ -353,6 +353,7 @@ function Hero() {
   }, [slide]);
 
   return (
+    <>
     <section id="top" className="relative overflow-hidden">
       <HeroBackdrop index={slide} onSelect={setSlide} />
       {/* Darkens the photography enough for the headline to stay legible. The
@@ -374,7 +375,7 @@ function Hero() {
       <div className="relative z-10 mx-auto max-w-7xl px-5 pb-10 pt-24 md:px-8 md:pt-32">
         <div className="grid items-center gap-10 md:grid-cols-2">
           {/* on-brand here rather than on the section: this copy sits on the
-              photograph, but the stats bar below is a normal surface card. */}
+              photograph, while the stats bar now lives in its own section below. */}
           <div className="on-brand">
             <Reveal variant="fade" duration={600}>
               <span className="inline-flex items-center gap-2 rounded-full border border-lavender/40 bg-lavender/10 px-3 py-1 text-xs font-medium text-lavender-light">
@@ -415,10 +416,13 @@ function Hero() {
           {/* Right column left open so the skyline backdrop reads through */}
           <div className="hidden md:block" />
         </div>
+      </div>
+    </section>
 
-        {/* Stats bar */}
-        <Reveal variant="up" delay={500}>
-          <div className="mt-16 rounded-3xl card-surface p-6 md:p-8">
+    <section className="relative">
+      <div className="mx-auto max-w-7xl px-5 py-10 md:px-8">
+        <Reveal variant="up" delay={200}>
+          <div className="rounded-3xl card-surface p-6 md:p-8">
             <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
               {(
                 [
@@ -433,10 +437,10 @@ function Hero() {
                     <Icon className="h-5 w-5" />
                   </div>
                   <div>
-                    <div className="text-2xl font-black text-white md:text-3xl">
+                    <div className="text-2xl font-black text-foreground md:text-3xl">
                       <CountUp end={end} suffix={suffix} />
                     </div>
-                    <div className="mt-0.5 text-xs text-white/60">{label}</div>
+                    <div className="mt-0.5 text-xs text-muted-foreground">{label}</div>
                   </div>
                 </div>
               ))}
@@ -445,6 +449,7 @@ function Hero() {
         </Reveal>
       </div>
     </section>
+    </>
   );
 }
 
@@ -507,7 +512,7 @@ function SectionHead({
 function Methodology() {
   const { tr } = useI18n();
   return (
-    <section id="method" className="relative overflow-hidden border-t border-white/5 py-24">
+    <section id="method" className="relative overflow-hidden py-24">
       <SectionBg src="/media/bg/3.jpg" />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead
@@ -541,7 +546,7 @@ function Methodology() {
 function About() {
   const { tr } = useI18n();
   return (
-    <section id="about" className="relative overflow-hidden border-t border-white/5 py-24">
+    <section id="about" className="relative overflow-hidden py-24">
       <SectionBg src="/media/bg/1.jpg" />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("about.kicker")} title={tr("about.title")} />
@@ -582,7 +587,7 @@ function Services() {
     { i: Wand2, k: "svc.4" },
   ] as const;
   return (
-    <section id="services" className="relative overflow-hidden border-t border-white/5 py-24">
+    <section id="services" className="relative overflow-hidden py-24">
       <SectionBg src="/media/bg/2.jpg" />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("svc.kicker")} title={tr("svc.title")} subtitle={tr("svc.sub")} />
@@ -714,7 +719,7 @@ function Gallery() {
   };
 
   return (
-    <section id="gallery" className="relative overflow-hidden border-t border-white/5 py-24">
+    <section id="gallery" className="relative overflow-hidden py-24">
       <SectionBg src="/media/bg/4.jpg" opacity={0.18} />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("gal.kicker")} title={tr("gal.title")} />
@@ -809,7 +814,7 @@ const PARTNERS = [
 function Partners() {
   const { tr } = useI18n();
   return (
-    <section id="partners" className="relative overflow-hidden border-t border-white/5 py-24">
+    <section id="partners" className="relative overflow-hidden py-24">
       <SectionBg src="/media/bg/2.jpg" opacity={0.3} />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("partners.kicker")} title={tr("partners.title")} />
@@ -850,7 +855,7 @@ function Testimonials() {
   const prev = () => setIdx((v) => (v - 1 + items.length) % items.length);
 
   return (
-    <section className="relative overflow-hidden border-t border-white/5 py-24">
+    <section className="relative overflow-hidden py-24">
       <SectionBg src="/media/bg/3.jpg" />
       <div className="relative mx-auto max-w-5xl px-5 md:px-8">
         <SectionHead kicker={tr("test.kicker")} title={tr("test.title")} />
