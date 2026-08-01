@@ -125,7 +125,7 @@
   --color-white: #212c47;
 
   /* Photos have to sit further back under navy text than under white. */
-  --backdrop-opacity: 0.75;
+  --backdrop-opacity: 1;
   /* White-keyed logos would vanish on a pale card. */
   --partner-logo-filter: invert(1);
 }
