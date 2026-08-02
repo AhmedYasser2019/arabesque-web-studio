@@ -297,7 +297,7 @@ function FilmModal({ slug, onClose }: { slug: string | null; onClose: () => void
 }
 
 /* ---------------- Hero ---------------- */
-const HERO_SLIDES = ["/media/hero/1.jpg", "/media/hero/2.jpg", "/media/hero/3.jpg"];
+const HERO_SLIDES = ["/media/hero/skyline-wing.jpg"];
 const HERO_SLIDE_MS = 6000;
 
 // Cross-fading backdrop. Auto-advance is suppressed for prefers-reduced-motion,
@@ -323,21 +323,25 @@ function HeroBackdrop({ index, onSelect }: { index: number; onSelect: (i: number
         ))}
       </div>
 
-      {/* Dots sit on the far side from the copy, matching the client mockup */}
-      <div className="on-brand absolute inset-y-0 end-6 z-10 hidden flex-col items-center justify-center gap-3 md:flex">
-        {HERO_SLIDES.map((_, i) => (
-          <button
-            key={i}
-            type="button"
-            onClick={() => onSelect(i)}
-            aria-label={`${tr("hero.slide")} ${i + 1}`}
-            aria-current={i === index}
-            className={`rounded-full transition-all duration-500 ${
-              i === index ? "h-8 w-2 bg-lavender" : "h-2 w-2 bg-white/30 hover:bg-white/60"
-            }`}
-          />
-        ))}
-      </div>
+      {/* Dots sit on the far side from the copy, matching the client mockup.
+          Pointless with a single slide, so they only render once there's
+          something to switch between. */}
+      {HERO_SLIDES.length > 1 && (
+        <div className="on-brand absolute inset-y-0 end-6 z-10 hidden flex-col items-center justify-center gap-3 md:flex">
+          {HERO_SLIDES.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => onSelect(i)}
+              aria-label={`${tr("hero.slide")} ${i + 1}`}
+              aria-current={i === index}
+              className={`rounded-full transition-all duration-500 ${
+                i === index ? "h-8 w-2 bg-lavender" : "h-2 w-2 bg-white/30 hover:bg-white/60"
+              }`}
+            />
+          ))}
+        </div>
+      )}
     </>
   );
 }
@@ -347,6 +351,7 @@ function Hero() {
   const [slide, setSlide] = useState(0);
 
   useEffect(() => {
+    if (HERO_SLIDES.length <= 1) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const id = setInterval(() => setSlide((v) => (v + 1) % HERO_SLIDES.length), HERO_SLIDE_MS);
     return () => clearInterval(id);
@@ -478,7 +483,7 @@ function SectionBg({ src, opacity = 0.45 }: { src: string; opacity?: number }) {
         style={{ opacity }}
         className="h-full w-full object-cover"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-lavender-dark/40 to-background" />
+      <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-lavender-dark/40 to-background/60" />
     </div>
   );
 }
@@ -512,7 +517,7 @@ function SectionHead({
 function Methodology() {
   const { tr } = useI18n();
   return (
-    <section id="method" className="relative overflow-hidden py-24">
+    <section id="method" className="relative overflow-hidden py-16">
       <SectionBg src="/media/bg/3.jpg" />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead
@@ -546,7 +551,7 @@ function Methodology() {
 function About() {
   const { tr } = useI18n();
   return (
-    <section id="about" className="relative overflow-hidden py-24">
+    <section id="about" className="relative overflow-hidden py-16">
       <SectionBg src="/media/bg/1.jpg" />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("about.kicker")} title={tr("about.title")} />
@@ -587,7 +592,7 @@ function Services() {
     { i: Wand2, k: "svc.4" },
   ] as const;
   return (
-    <section id="services" className="relative overflow-hidden py-24">
+    <section id="services" className="relative overflow-hidden py-16">
       <SectionBg src="/media/bg/2.jpg" />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("svc.kicker")} title={tr("svc.title")} subtitle={tr("svc.sub")} />
@@ -719,8 +724,8 @@ function Gallery() {
   };
 
   return (
-    <section id="gallery" className="relative overflow-hidden py-24">
-      <SectionBg src="/media/bg/4.jpg" opacity={0.18} />
+    <section id="gallery" className="relative overflow-hidden py-16">
+      <SectionBg src="/media/bg/4.jpg" opacity={0.32} />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("gal.kicker")} title={tr("gal.title")} />
 
@@ -814,8 +819,8 @@ const PARTNERS = [
 function Partners() {
   const { tr } = useI18n();
   return (
-    <section id="partners" className="relative overflow-hidden py-24">
-      <SectionBg src="/media/bg/2.jpg" opacity={0.3} />
+    <section id="partners" className="relative overflow-hidden py-16">
+      <SectionBg src="/media/bg/2.jpg" opacity={0.4} />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("partners.kicker")} title={tr("partners.title")} />
         <Reveal variant="up" delay={120}>
@@ -855,7 +860,7 @@ function Testimonials() {
   const prev = () => setIdx((v) => (v - 1 + items.length) % items.length);
 
   return (
-    <section className="relative overflow-hidden py-24">
+    <section className="relative overflow-hidden py-16">
       <SectionBg src="/media/bg/3.jpg" />
       <div className="relative mx-auto max-w-5xl px-5 md:px-8">
         <SectionHead kicker={tr("test.kicker")} title={tr("test.title")} />
@@ -953,7 +958,7 @@ function Newsletter() {
 function Contact() {
   const { tr } = useI18n();
   return (
-    <section id="contact" className="relative overflow-hidden py-24">
+    <section id="contact" className="relative overflow-hidden py-16">
       <SectionBg src="/media/bg/4.jpg" />
       <div className="relative mx-auto max-w-6xl px-5 md:px-8">
         <Reveal variant="zoom">
