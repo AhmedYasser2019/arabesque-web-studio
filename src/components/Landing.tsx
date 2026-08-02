@@ -359,7 +359,9 @@ function Hero() {
 
   return (
     <>
-    <section id="top" className="relative overflow-hidden">
+    {/* Tall enough that object-cover keeps most of the backdrop's frame: the
+        art is ~4:3, so a short hero would crop away more than half of it. */}
+    <section id="top" className="relative flex min-h-[88vh] items-center overflow-hidden">
       <HeroBackdrop index={slide} onSelect={setSlide} />
       {/* Darkens the photography enough for the headline to stay legible. The
           scrim is keyed to --navy, which is dark in both themes: these are dusk
@@ -377,7 +379,7 @@ function Hero() {
       {/* No decorative wing overlay here — the backdrop photography already
           carries the wing mark, and a second one fought it. */}
 
-      <div className="relative z-10 mx-auto max-w-7xl px-5 pb-10 pt-24 md:px-8 md:pt-32">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-5 pb-10 pt-24 md:px-8 md:pt-32">
         <div className="grid items-center gap-10 md:grid-cols-2">
           {/* on-brand here rather than on the section: this copy sits on the
               photograph, while the stats bar now lives in its own section below. */}
@@ -518,7 +520,7 @@ function Methodology() {
   const { tr } = useI18n();
   return (
     <section id="method" className="relative overflow-hidden py-16">
-      <SectionBg src="/media/bg/3.jpg" />
+      <SectionBg src="/media/bg/event-3.jpg" />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead
           kicker={tr("method.kicker")}
@@ -552,7 +554,7 @@ function About() {
   const { tr } = useI18n();
   return (
     <section id="about" className="relative overflow-hidden py-16">
-      <SectionBg src="/media/bg/1.jpg" />
+      <SectionBg src="/media/bg/event-1.jpg" />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("about.kicker")} title={tr("about.title")} />
         <Reveal variant="up" delay={120}>
@@ -593,7 +595,7 @@ function Services() {
   ] as const;
   return (
     <section id="services" className="relative overflow-hidden py-16">
-      <SectionBg src="/media/bg/2.jpg" />
+      <SectionBg src="/media/bg/event-2.jpg" />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("svc.kicker")} title={tr("svc.title")} subtitle={tr("svc.sub")} />
         <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
@@ -725,7 +727,7 @@ function Gallery() {
 
   return (
     <section id="gallery" className="relative overflow-hidden py-16">
-      <SectionBg src="/media/bg/4.jpg" opacity={0.32} />
+      <SectionBg src="/media/bg/event-1.jpg" opacity={0.32} />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("gal.kicker")} title={tr("gal.title")} />
 
@@ -820,7 +822,7 @@ function Partners() {
   const { tr } = useI18n();
   return (
     <section id="partners" className="relative overflow-hidden py-16">
-      <SectionBg src="/media/bg/2.jpg" opacity={0.4} />
+      <SectionBg src="/media/bg/event-2.jpg" opacity={0.4} />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("partners.kicker")} title={tr("partners.title")} />
         <Reveal variant="up" delay={120}>
@@ -861,7 +863,7 @@ function Testimonials() {
 
   return (
     <section className="relative overflow-hidden py-16">
-      <SectionBg src="/media/bg/3.jpg" />
+      <SectionBg src="/media/bg/event-3.jpg" />
       <div className="relative mx-auto max-w-5xl px-5 md:px-8">
         <SectionHead kicker={tr("test.kicker")} title={tr("test.title")} />
         <Reveal variant="up" delay={120}>
@@ -921,7 +923,7 @@ function Newsletter() {
   const { tr } = useI18n();
   return (
     <section className="relative overflow-hidden py-16">
-      <SectionBg src="/media/bg/1.jpg" />
+      <SectionBg src="/media/bg/event-1.jpg" />
       <div className="relative mx-auto max-w-5xl px-5 md:px-8">
         <Reveal variant="up">
           <div className="relative overflow-hidden rounded-3xl card-surface p-8 md:p-12">
@@ -959,7 +961,7 @@ function Contact() {
   const { tr } = useI18n();
   return (
     <section id="contact" className="relative overflow-hidden py-16">
-      <SectionBg src="/media/bg/4.jpg" />
+      <SectionBg src="/media/bg/event-2.jpg" />
       <div className="relative mx-auto max-w-6xl px-5 md:px-8">
         <Reveal variant="zoom">
           <div className="relative overflow-hidden rounded-[2rem] gradient-lavender p-8 text-white on-brand md:p-16">
