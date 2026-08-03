@@ -306,7 +306,10 @@ function HeroBackdrop({ index, onSelect }: { index: number; onSelect: (i: number
   const { tr } = useI18n();
   return (
     <>
-      <div className="absolute inset-0">
+      {/* Navy behind the frame, not the page colour: object-contain leaves bare
+          strips wherever the section is taller than the art, and the hero copy
+          is white in both themes. */}
+      <div className="absolute inset-0 bg-navy">
         {HERO_SLIDES.map((src, i) => (
           <img
             key={src}
@@ -316,7 +319,11 @@ function HeroBackdrop({ index, onSelect }: { index: number; onSelect: (i: number
             // first slide is the LCP image, so it must not be lazy
             loading={i === 0 ? "eager" : "lazy"}
             fetchPriority={i === 0 ? "high" : "low"}
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1400ms] ease-in-out ${
+            // contain, not cover: the section's min-height already matches this
+            // frame's ratio, so on anything roomy the two are identical. Where
+            // the copy outgrows that ratio — phones — cover would start eating
+            // the sides, and contain keeps the whole frame instead.
+            className={`absolute inset-0 h-full w-full object-contain object-top transition-opacity duration-[1400ms] ease-in-out ${
               i === index ? "opacity-100" : "opacity-0"
             }`}
           />
@@ -374,7 +381,7 @@ function Hero() {
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(180deg, color-mix(in oklch, var(--navy) 45%, transparent) 0%, color-mix(in oklch, var(--navy) 75%, transparent) 60%, var(--background) 100%)",
+            "linear-gradient(180deg, color-mix(in oklch, var(--navy) 45%, transparent) 0%, color-mix(in oklch, var(--navy) 75%, transparent) 60%, color-mix(in oklch, var(--navy) 75%, transparent) 92%, var(--background) 100%)",
         }}
       />
       <div className="absolute inset-0 bg-grid opacity-20" />
