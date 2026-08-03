@@ -359,9 +359,12 @@ function Hero() {
 
   return (
     <>
-    {/* Tall enough that object-cover keeps most of the backdrop's frame: the
-        art is ~4:3, so a short hero would crop away more than half of it. */}
-    <section id="top" className="relative flex min-h-[88vh] items-center overflow-hidden">
+    {/* 74.6vw is 100/1.34, the backdrop's own 1600x1194 ratio, so object-cover
+        has nothing left to crop and the whole frame stays visible. A floor
+        rather than aspect-ratio: on a phone the copy is taller than the ratio
+        allows, and a definite height would just clip it against overflow-hidden.
+        The section backdrops below use the same trick at their own ratio. */}
+    <section id="top" className="relative flex min-h-[74.6vw] items-center overflow-hidden">
       <HeroBackdrop index={slide} onSelect={setSlide} />
       {/* Darkens the photography enough for the headline to stay legible. The
           scrim is keyed to --navy, which is dark in both themes: these are dusk
@@ -519,9 +522,9 @@ function SectionHead({
 function Methodology() {
   const { tr } = useI18n();
   return (
-    <section id="method" className="relative overflow-hidden py-16">
+    <section id="method" className="relative flex min-h-[59.2vw] items-center overflow-hidden py-16">
       <SectionBg src="/media/bg/event-3.jpg" />
-      <div className="relative mx-auto max-w-7xl px-5 md:px-8">
+      <div className="relative mx-auto w-full max-w-7xl px-5 md:px-8">
         <SectionHead
           kicker={tr("method.kicker")}
           title={tr("method.title")}
@@ -553,9 +556,9 @@ function Methodology() {
 function About() {
   const { tr } = useI18n();
   return (
-    <section id="about" className="relative overflow-hidden py-16">
+    <section id="about" className="relative flex min-h-[59.2vw] items-center overflow-hidden py-16">
       <SectionBg src="/media/bg/event-1.jpg" />
-      <div className="relative mx-auto max-w-7xl px-5 md:px-8">
+      <div className="relative mx-auto w-full max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("about.kicker")} title={tr("about.title")} />
         <Reveal variant="up" delay={120}>
           <p className="mx-auto mt-6 max-w-3xl text-center text-lg text-white/70">
@@ -594,9 +597,9 @@ function Services() {
     { i: Wand2, k: "svc.4" },
   ] as const;
   return (
-    <section id="services" className="relative overflow-hidden py-16">
+    <section id="services" className="relative flex min-h-[59.2vw] items-center overflow-hidden py-16">
       <SectionBg src="/media/bg/event-2.jpg" />
-      <div className="relative mx-auto max-w-7xl px-5 md:px-8">
+      <div className="relative mx-auto w-full max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("svc.kicker")} title={tr("svc.title")} subtitle={tr("svc.sub")} />
         <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
           {items.map(({ i: Icon, k }, idx) => (
@@ -726,9 +729,9 @@ function Gallery() {
   };
 
   return (
-    <section id="gallery" className="relative overflow-hidden py-16">
+    <section id="gallery" className="relative flex min-h-[59.2vw] items-center overflow-hidden py-16">
       <SectionBg src="/media/bg/event-1.jpg" opacity={0.32} />
-      <div className="relative mx-auto max-w-7xl px-5 md:px-8">
+      <div className="relative mx-auto w-full max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("gal.kicker")} title={tr("gal.title")} />
 
         <div className="mt-10 flex flex-wrap items-center justify-between gap-4">
@@ -821,9 +824,9 @@ const PARTNERS = [
 function Partners() {
   const { tr } = useI18n();
   return (
-    <section id="partners" className="relative overflow-hidden py-16">
+    <section id="partners" className="relative flex min-h-[59.2vw] items-center overflow-hidden py-16">
       <SectionBg src="/media/bg/event-2.jpg" opacity={0.4} />
-      <div className="relative mx-auto max-w-7xl px-5 md:px-8">
+      <div className="relative mx-auto w-full max-w-7xl px-5 md:px-8">
         <SectionHead kicker={tr("partners.kicker")} title={tr("partners.title")} />
         <Reveal variant="up" delay={120}>
           <p className="mx-auto mt-6 max-w-4xl text-center leading-relaxed text-white/65">
@@ -862,9 +865,9 @@ function Testimonials() {
   const prev = () => setIdx((v) => (v - 1 + items.length) % items.length);
 
   return (
-    <section className="relative overflow-hidden py-16">
+    <section className="relative flex min-h-[59.2vw] items-center overflow-hidden py-16">
       <SectionBg src="/media/bg/event-3.jpg" />
-      <div className="relative mx-auto max-w-5xl px-5 md:px-8">
+      <div className="relative mx-auto w-full max-w-5xl px-5 md:px-8">
         <SectionHead kicker={tr("test.kicker")} title={tr("test.title")} />
         <Reveal variant="up" delay={120}>
           <div className="relative mt-12 rounded-3xl card-surface p-8 md:p-12">
@@ -922,9 +925,9 @@ function Testimonials() {
 function Newsletter() {
   const { tr } = useI18n();
   return (
-    <section className="relative overflow-hidden py-16">
+    <section className="relative flex min-h-[59.2vw] items-center overflow-hidden py-16">
       <SectionBg src="/media/bg/event-1.jpg" />
-      <div className="relative mx-auto max-w-5xl px-5 md:px-8">
+      <div className="relative mx-auto w-full max-w-5xl px-5 md:px-8">
         <Reveal variant="up">
           <div className="relative overflow-hidden rounded-3xl card-surface p-8 md:p-12">
             <div className="pointer-events-none absolute -end-16 -top-16 h-64 w-64 rounded-full bg-lavender/25 blur-3xl animate-ew-float-slow" />
@@ -960,9 +963,9 @@ function Newsletter() {
 function Contact() {
   const { tr } = useI18n();
   return (
-    <section id="contact" className="relative overflow-hidden py-16">
+    <section id="contact" className="relative flex min-h-[59.2vw] items-center overflow-hidden py-16">
       <SectionBg src="/media/bg/event-2.jpg" />
-      <div className="relative mx-auto max-w-6xl px-5 md:px-8">
+      <div className="relative mx-auto w-full max-w-6xl px-5 md:px-8">
         <Reveal variant="zoom">
           <div className="relative overflow-hidden rounded-[2rem] gradient-lavender p-8 text-white on-brand md:p-16">
             <div className="absolute -end-20 -top-20 h-72 w-72 rounded-full bg-white/10 blur-3xl animate-ew-blob" />
