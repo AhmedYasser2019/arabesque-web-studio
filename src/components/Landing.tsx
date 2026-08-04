@@ -27,56 +27,54 @@ import {
   ChevronRight,
   Sun,
   Moon,
+  type LucideIcon,
 } from "lucide-react";
-import { I18nProvider, useI18n, type Lang } from "@/lib/i18n";
+import { useI18n, type Lang } from "@/lib/i18n";
+import { ContentProvider, useContent } from "@/lib/content";
+import {
+  cmsEnabled,
+  loc,
+  postContact,
+  postSubscribe,
+  type Content,
+  type Loc,
+  type Work,
+} from "@/lib/cms";
 import { Reveal } from "@/components/Reveal";
 import { CountUp } from "@/components/CountUp";
-import logoLockup from "@/assets/logo-lockup.png";
-import logoLockupLight from "@/assets/logo-lockup-light.png";
 
-/* ---------------- Media ----------------
- * All of it is Elite Wing's own material now — no stock left on the page. */
-
-/* ---------------- Client work reel ----------------
- * Assets live in public/media as <slug>.jpg (poster), <slug>.loop.mp4 (muted
- * hover preview) and <slug>.mp4 (full film for the lightbox).
+/* ---------------- Content ----------------
+ * Every string, image and film on this page comes from the `Content` object the
+ * provider carries — either the panel's API or the copy baked into cms.ts, which
+ * is where the reel, the partner list and the section backdrops now live. The
+ * components below hold no copy of their own, so both sources render the same
+ * page and there is no second layout to drift out of sync.
  *
- * Posters + hover loops are small (~6 MB all together) and always ship with the
- * app. The full films are ~112 MB, which Cloudflare's free plan does not allow
- * us to serve, so their origin is switchable:
- *
- *   unset            -> /media, i.e. the local files (dev, and a VPS later)
- *   VITE_MEDIA_URL   -> that origin, e.g. https://cdn.example.com/media
- *
- * Set it in the Cloudflare Pages project's environment variables. Nothing else
- * changes — posters and loops stay local either way. */
-const MEDIA = "/media";
-const FILMS = (import.meta.env.VITE_MEDIA_URL || MEDIA).replace(/\/+$/, "");
+ * A section missing from `content.sections` was hidden in the panel, so each
+ * band returns null rather than rendering an empty frame. */
 
-const CATS = ["corporate", "conf", "doc", "health", "reel"] as const;
-type Cat = (typeof CATS)[number];
+/** Resolve a `{ar, en}` pair in the active language. */
+function useLoc() {
+  const { lang } = useI18n();
+  return (pair: Loc | null | undefined) => loc(pair, lang);
+}
 
-const REEL: { slug: string; cat: Cat }[] = [
-  // Tawuniya × Meena health activations hosted at corporate HQs
-  { slug: "tawuniya", cat: "corporate" },
-  { slug: "alrajhi", cat: "corporate" },
-  { slug: "riyad-bank", cat: "corporate" },
-  { slug: "anb", cat: "corporate" },
-  { slug: "mobily", cat: "corporate" },
-  { slug: "stc", cat: "corporate" },
-  { slug: "real-estate-registry", cat: "corporate" },
-  { slug: "gosh7", cat: "conf" },
-  { slug: "workshop-mena", cat: "conf" },
-  { slug: "r7", cat: "conf" },
-  { slug: "padel", cat: "conf" },
-  { slug: "khoyoot-altarekh", cat: "doc" },
-  { slug: "majlis-turathi", cat: "doc" },
-  { slug: "amanat-riyadh", cat: "doc" },
-  { slug: "first-final", cat: "health" },
-  { slug: "promo2", cat: "health" },
-  { slug: "e-w", cat: "reel" },
-  { slug: "elite-wing", cat: "reel" },
-];
+/* The panel stores lucide icon names, which is the set this page already draws
+ * from. A name with no entry here falls back instead of failing the render. */
+const ICONS: Record<string, LucideIcon> = {
+  sparkles: Sparkles,
+  compass: Compass,
+  camera: Camera,
+  "share-2": Share2,
+  "wand-2": Wand2,
+  users: Users,
+  calendar: Calendar,
+  "map-pin": MapPin,
+  award: Award,
+  globe: Globe,
+};
+
+const icon = (name: string | null | undefined): LucideIcon => ICONS[name ?? ""] ?? Sparkles;
 
 /* ---------------- Header ---------------- */
 function LangSwitch() {
@@ -132,36 +130,35 @@ function ThemeSwitch() {
 // brand pack ships for light. Inverting the white one would tint the wing, so
 // we swap the file instead.
 function BrandLockup({ compact = false }: { compact?: boolean }) {
+  const { logo } = useContent().settings;
   const size = compact ? "h-9" : "h-12";
   return (
     <a href="#top" className="group flex items-center">
-      <img
-        src={logoLockup}
-        alt="Elite Wing · إيليت وينغ"
-        className={`${size} w-auto object-contain transition-all duration-500 group-hover:opacity-90 light:hidden`}
-      />
-      <img
-        src={logoLockupLight}
-        alt=""
-        aria-hidden
-        className={`${size} hidden w-auto object-contain transition-all duration-500 group-hover:opacity-90 light:block`}
-      />
+      {logo.dark && (
+        <img
+          src={logo.dark}
+          alt="Elite Wing · إيليت وينغ"
+          className={`${size} w-auto object-contain transition-all duration-500 group-hover:opacity-90 light:hidden`}
+        />
+      )}
+      {logo.light && (
+        <img
+          src={logo.light}
+          alt=""
+          aria-hidden
+          className={`${size} hidden w-auto object-contain transition-all duration-500 group-hover:opacity-90 light:block`}
+        />
+      )}
     </a>
   );
 }
 
 function Header() {
   const { tr } = useI18n();
+  const L = useLoc();
+  const { nav } = useContent();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const links = [
-    { href: "#about", key: "nav.about" as const },
-    { href: "#services", key: "nav.services" as const },
-    { href: "#method", key: "nav.method" as const },
-    { href: "#gallery", key: "works.kicker" as const },
-    { href: "#partners", key: "nav.partners" as const },
-    { href: "#contact", key: "nav.contact" as const },
-  ];
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -193,13 +190,13 @@ function Header() {
       >
         <BrandLockup compact={scrolled} />
         <nav className="hidden items-center gap-7 lg:flex">
-          {links.map((l) => (
+          {nav.map((l) => (
             <a
-              key={l.href}
-              href={l.href}
+              key={l.anchor}
+              href={`#${l.anchor}`}
               className="group relative text-sm text-white/75 transition-colors duration-300 hover:text-white"
             >
-              {tr(l.key)}
+              {L(l.label)}
               <span className="pointer-events-none absolute -bottom-1 left-0 h-0.5 w-full origin-center scale-x-0 rounded-full gradient-lavender transition-transform duration-300 ease-out group-hover:scale-x-100" />
             </a>
           ))}
@@ -235,15 +232,15 @@ function Header() {
         className={`lg:hidden overflow-hidden border-t border-white/10 bg-background/95 backdrop-blur-md transition-[max-height,opacity] duration-500 ease-out ${open ? "max-h-[70vh] opacity-100" : "max-h-0 opacity-0"}`}
       >
         <nav className="flex flex-col gap-1 px-5 py-4">
-          {links.map((l, i) => (
+          {nav.map((l, i) => (
             <a
-              key={l.href}
-              href={l.href}
+              key={l.anchor}
+              href={`#${l.anchor}`}
               onClick={() => setOpen(false)}
               className={`group flex items-center justify-between rounded-xl border border-transparent px-3 py-3 text-sm text-white/85 transition-all duration-300 hover:border-lavender/40 hover:bg-white/5 ${open ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"}`}
               style={{ transitionDelay: open ? `${80 + i * 60}ms` : "0ms" }}
             >
-              <span>{tr(l.key)}</span>
+              <span>{L(l.label)}</span>
               <ArrowUpRight className="h-4 w-4 opacity-0 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:opacity-100 rtl:group-hover:-translate-x-0.5" />
             </a>
           ))}
@@ -254,15 +251,15 @@ function Header() {
 }
 
 /* Full-film lightbox, shared by the hero and the work reel. */
-function FilmModal({ slug, onClose }: { slug: string | null; onClose: () => void }) {
+function FilmModal({ work, onClose }: { work: Work | null; onClose: () => void }) {
   useEffect(() => {
-    if (!slug) return;
+    if (!work) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [slug, onClose]);
+  }, [work, onClose]);
 
-  if (!slug) return null;
+  if (!work?.film) return null;
   return (
     <div
       role="dialog"
@@ -284,8 +281,8 @@ function FilmModal({ slug, onClose }: { slug: string | null; onClose: () => void
         {/* object-contain + capped height keeps portrait films (9:16) inside
             the viewport instead of pushing the close button off-screen */}
         <video
-          src={`${FILMS}/${slug}.mp4`}
-          poster={`${MEDIA}/${slug}.jpg`}
+          src={work.film}
+          poster={work.poster ?? undefined}
           className="max-h-[85vh] w-full object-contain"
           controls
           autoPlay
@@ -297,20 +294,24 @@ function FilmModal({ slug, onClose }: { slug: string | null; onClose: () => void
 }
 
 /* ---------------- Hero ---------------- */
-const HERO_SLIDES = ["/media/hero/skyline-wing.jpg"];
 const HERO_SLIDE_MS = 6000;
 
 // Cross-fading backdrop. Auto-advance is suppressed for prefers-reduced-motion,
 // where the dots stay usable so the other slides are still reachable.
-function HeroBackdrop({ index, onSelect }: { index: number; onSelect: (i: number) => void }) {
+function HeroBackdrop({
+  slides,
+  index,
+  onSelect,
+}: {
+  slides: string[];
+  index: number;
+  onSelect: (i: number) => void;
+}) {
   const { tr } = useI18n();
   return (
     <>
-      {/* Navy behind the frame, not the page colour: object-contain leaves bare
-          strips wherever the section is taller than the art, and the hero copy
-          is white in both themes. */}
-      <div className="absolute inset-0 bg-navy">
-        {HERO_SLIDES.map((src, i) => (
+      <div className="absolute inset-0">
+        {slides.map((src, i) => (
           <img
             key={src}
             src={src}
@@ -319,11 +320,7 @@ function HeroBackdrop({ index, onSelect }: { index: number; onSelect: (i: number
             // first slide is the LCP image, so it must not be lazy
             loading={i === 0 ? "eager" : "lazy"}
             fetchPriority={i === 0 ? "high" : "low"}
-            // contain, not cover: the section's min-height already matches this
-            // frame's ratio, so on anything roomy the two are identical. Where
-            // the copy outgrows that ratio — phones — cover would start eating
-            // the sides, and contain keeps the whole frame instead.
-            className={`absolute inset-0 h-full w-full object-contain object-top transition-opacity duration-[1400ms] ease-in-out ${
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1400ms] ease-in-out ${
               i === index ? "opacity-100" : "opacity-0"
             }`}
           />
@@ -331,11 +328,10 @@ function HeroBackdrop({ index, onSelect }: { index: number; onSelect: (i: number
       </div>
 
       {/* Dots sit on the far side from the copy, matching the client mockup.
-          Pointless with a single slide, so they only render once there's
-          something to switch between. */}
-      {HERO_SLIDES.length > 1 && (
+          With one slide there is nothing to switch between. */}
+      {slides.length > 1 && (
         <div className="on-brand absolute inset-y-0 end-6 z-10 hidden flex-col items-center justify-center gap-3 md:flex">
-          {HERO_SLIDES.map((_, i) => (
+          {slides.map((_, i) => (
             <button
               key={i}
               type="button"
@@ -355,24 +351,23 @@ function HeroBackdrop({ index, onSelect }: { index: number; onSelect: (i: number
 
 function Hero() {
   const { tr } = useI18n();
+  const L = useLoc();
+  const { sections, heroSlides, stats } = useContent();
+  const hero = sections.hero;
   const [slide, setSlide] = useState(0);
 
   useEffect(() => {
-    if (HERO_SLIDES.length <= 1) return;
+    if (heroSlides.length < 2) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = setInterval(() => setSlide((v) => (v + 1) % HERO_SLIDES.length), HERO_SLIDE_MS);
+    const id = setInterval(() => setSlide((v) => (v + 1) % heroSlides.length), HERO_SLIDE_MS);
     return () => clearInterval(id);
-  }, [slide]);
+  }, [slide, heroSlides.length]);
+
+  if (!hero) return null;
 
   return (
-    <>
-    {/* 74.6vw is 100/1.34, the backdrop's own 1600x1194 ratio, so object-cover
-        has nothing left to crop and the whole frame stays visible. A floor
-        rather than aspect-ratio: on a phone the copy is taller than the ratio
-        allows, and a definite height would just clip it against overflow-hidden.
-        The section backdrops below use the same trick at their own ratio. */}
-    <section id="top" className="relative flex min-h-[74.6vw] items-center overflow-hidden">
-      <HeroBackdrop index={slide} onSelect={setSlide} />
+    <section id="top" className="relative overflow-hidden">
+      <HeroBackdrop slides={heroSlides} index={slide} onSelect={setSlide} />
       {/* Darkens the photography enough for the headline to stay legible. The
           scrim is keyed to --navy, which is dark in both themes: these are dusk
           skylines, so the hero stays dark even in light mode and only its foot
@@ -381,7 +376,7 @@ function Hero() {
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(180deg, color-mix(in oklch, var(--navy) 45%, transparent) 0%, color-mix(in oklch, var(--navy) 75%, transparent) 60%, color-mix(in oklch, var(--navy) 75%, transparent) 92%, var(--background) 100%)",
+            "linear-gradient(180deg, color-mix(in oklch, var(--navy) 45%, transparent) 0%, color-mix(in oklch, var(--navy) 75%, transparent) 60%, var(--background) 100%)",
         }}
       />
       <div className="absolute inset-0 bg-grid opacity-20" />
@@ -389,10 +384,10 @@ function Hero() {
       {/* No decorative wing overlay here — the backdrop photography already
           carries the wing mark, and a second one fought it. */}
 
-      <div className="relative z-10 mx-auto w-full max-w-7xl px-5 pb-10 pt-24 md:px-8 md:pt-32">
+      <div className="relative z-10 mx-auto max-w-7xl px-5 pb-24 pt-24 md:px-8 md:pt-32">
         <div className="grid items-center gap-10 md:grid-cols-2">
           {/* on-brand here rather than on the section: this copy sits on the
-              photograph, while the stats bar now lives in its own section below. */}
+              photograph, but the stats bar below is a normal surface card. */}
           <div className="on-brand">
             <Reveal variant="fade" duration={600}>
               <span className="inline-flex items-center gap-2 rounded-full border border-lavender/40 bg-lavender/10 px-3 py-1 text-xs font-medium text-lavender-light">
@@ -400,16 +395,16 @@ function Hero() {
                   <span className="absolute inline-flex h-full w-full rounded-full bg-lavender opacity-75 animate-ping" />
                   <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-lavender" />
                 </span>
-                {tr("hero.eyebrow")}
+                {L(hero.kicker)}
               </span>
             </Reveal>
             <Reveal variant="up" delay={120} duration={800}>
               <h1 className="mt-6 text-5xl font-black leading-[1.05] tracking-tight text-white md:text-6xl lg:text-7xl">
-                {tr("hero.title.a")} <span className="text-shimmer">{tr("hero.title.b")}</span>
+                {L(hero.title)} <span className="text-shimmer">{L(hero.titleAccent)}</span>
               </h1>
             </Reveal>
             <Reveal variant="up" delay={240}>
-              <p className="mt-6 max-w-xl text-lg text-white/70">{tr("hero.sub")}</p>
+              <p className="mt-6 max-w-xl text-lg text-white/70">{L(hero.subtitle)}</p>
             </Reveal>
             <Reveal variant="up" delay={360}>
               <div className="mt-8 flex flex-wrap gap-3">
@@ -433,54 +428,49 @@ function Hero() {
           {/* Right column left open so the skyline backdrop reads through */}
           <div className="hidden md:block" />
         </div>
-      </div>
-    </section>
 
-    <section className="relative">
-      <div className="mx-auto max-w-7xl px-5 py-10 md:px-8">
-        <Reveal variant="up" delay={200}>
-          <div className="rounded-3xl card-surface p-6 md:p-8">
-            <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
-              {(
-                [
-                  { icon: Users, end: 250, suffix: "+", label: tr("stats.clients") },
-                  { icon: Calendar, end: 450, suffix: "+", label: tr("stats.events") },
-                  { icon: MapPin, end: 15, suffix: "+", label: tr("stats.cities") },
-                  { icon: Award, end: 10, suffix: "+", label: tr("stats.years") },
-                ] as const
-              ).map(({ icon: Icon, end, suffix, label }, i) => (
-                <div key={i} className="flex items-center gap-4">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-lavender/15 text-lavender-light ring-1 ring-lavender/30">
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <div className="text-2xl font-black text-foreground md:text-3xl">
-                      <CountUp end={end} suffix={suffix} />
+        {/* Stats bar */}
+        {stats.length > 0 && (
+          <Reveal variant="up" delay={500}>
+            <div className="mt-16 rounded-3xl card-surface p-6 md:p-8">
+              <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+                {stats.map((stat, i) => {
+                  const Icon = icon(stat.icon);
+                  return (
+                    <div key={i} className="flex items-center gap-4">
+                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-lavender/15 text-lavender-light ring-1 ring-lavender/30">
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <div>
+                        <div className="text-2xl font-black text-white md:text-3xl">
+                          <CountUp end={stat.value} suffix={stat.suffix ?? ""} />
+                        </div>
+                        <div className="mt-0.5 text-xs text-white/60">{L(stat.label)}</div>
+                      </div>
                     </div>
-                    <div className="mt-0.5 text-xs text-muted-foreground">{label}</div>
-                  </div>
-                </div>
-              ))}
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        </Reveal>
+          </Reveal>
+        )}
       </div>
     </section>
-    </>
   );
 }
 
 /* ---------------- Section backdrop ----------------
  * The deck's own device: a photograph sunk under a heavy lavender wash so the
- * copy stays legible. Same four frames the portfolio uses for its dividers.
+ * copy stays legible.
  *
- * `opacity` is per-section on purpose — how far a frame can come forward depends
- * on what sits over it. Architecture behind body copy takes the default; the
- * gallery frame goes lower because it has legible text of its own and a wall of
- * video cards on top. The whole backdrop is then scaled by --backdrop-opacity,
- * which the light theme pulls right down: navy copy needs a quieter photo under
- * it than white copy does. */
-function SectionBg({ src, opacity = 0.45 }: { src: string; opacity?: number }) {
+ * The strength is per-section on purpose — how far a frame can come forward
+ * depends on what sits over it. Architecture behind body copy takes the
+ * default; the gallery frame goes lower because it has legible text of its own
+ * and a wall of video cards on top. The whole backdrop is then scaled by
+ * --backdrop-opacity, which the light theme pulls right down: navy copy needs a
+ * quieter photo under it than white copy does. */
+function SectionBg({ src, opacity = 0.45 }: { src: string | null; opacity?: number }) {
+  if (!src) return null;
   return (
     // No negative z-index: the page wrapper's opaque background would hide it.
     <div
@@ -495,7 +485,7 @@ function SectionBg({ src, opacity = 0.45 }: { src: string; opacity?: number }) {
         style={{ opacity }}
         className="h-full w-full object-cover"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-lavender-dark/40 to-background/60" />
+      <div className="absolute inset-0 bg-gradient-to-b from-background via-lavender-dark/40 to-background" />
     </div>
   );
 }
@@ -525,31 +515,27 @@ function SectionHead({
 }
 
 /* ---------------- Methodology ----------------
- * The deck's "منهجية العمل" slide — five pillars, in order. */
+ * The deck's "منهجية العمل" slide — the pillars, in order. */
 function Methodology() {
-  const { tr } = useI18n();
+  const L = useLoc();
+  const { sections, method } = useContent();
+  const sec = sections.method;
+  if (!sec || method.length === 0) return null;
+
   return (
-    <section id="method" className="relative flex min-h-[59.2vw] items-center overflow-hidden py-16">
-      <SectionBg src="/media/bg/event-3.jpg" />
-      <div className="relative mx-auto w-full max-w-7xl px-5 md:px-8">
-        <SectionHead
-          kicker={tr("method.kicker")}
-          title={tr("method.title")}
-          subtitle={tr("method.sub")}
-        />
+    <section id="method" className="relative overflow-hidden border-t border-white/5 py-24">
+      <SectionBg src={sec.backdrop} opacity={sec.backdropOpacity} />
+      <div className="relative mx-auto max-w-7xl px-5 md:px-8">
+        <SectionHead kicker={L(sec.kicker)} title={L(sec.title)} subtitle={L(sec.subtitle)} />
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
-          {[1, 2, 3, 4, 5].map((n, i) => (
-            <Reveal key={n} variant="up" delay={i * 110}>
+          {method.map((pillar, i) => (
+            <Reveal key={i} variant="up" delay={i * 110}>
               <div className="group h-full rounded-3xl card-surface p-6 transition hover:-translate-y-1 hover:border-lavender/60 hover:shadow-xl hover:shadow-lavender/10">
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl gradient-lavender text-sm font-black text-white on-brand shadow-lg shadow-lavender/40 transition-transform group-hover:scale-110">
-                  0{n}
+                  {String(i + 1).padStart(2, "0")}
                 </div>
-                <h3 className="mt-5 text-base font-bold text-white">
-                  {tr(`method.${n}.t` as keyof typeof import("@/lib/i18n").t)}
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/65">
-                  {tr(`method.${n}.b` as keyof typeof import("@/lib/i18n").t)}
-                </p>
+                <h3 className="mt-5 text-base font-bold text-white">{L(pillar.title)}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-white/65">{L(pillar.body)}</p>
               </div>
             </Reveal>
           ))}
@@ -561,33 +547,34 @@ function Methodology() {
 
 /* ---------------- About ---------------- */
 function About() {
-  const { tr } = useI18n();
+  const L = useLoc();
+  const { sections, about } = useContent();
+  const sec = sections.about;
+  if (!sec) return null;
+
   return (
-    <section id="about" className="relative flex min-h-[59.2vw] items-center overflow-hidden py-16">
-      <SectionBg src="/media/bg/event-1.jpg" />
-      <div className="relative mx-auto w-full max-w-7xl px-5 md:px-8">
-        <SectionHead kicker={tr("about.kicker")} title={tr("about.title")} />
+    <section id="about" className="relative overflow-hidden border-t border-white/5 py-24">
+      <SectionBg src={sec.backdrop} opacity={sec.backdropOpacity} />
+      <div className="relative mx-auto max-w-7xl px-5 md:px-8">
+        <SectionHead kicker={L(sec.kicker)} title={L(sec.title)} />
         <Reveal variant="up" delay={120}>
-          <p className="mx-auto mt-6 max-w-3xl text-center text-lg text-white/70">
-            {tr("about.body")}
-          </p>
+          <p className="mx-auto mt-6 max-w-3xl text-center text-lg text-white/70">{L(sec.body)}</p>
         </Reveal>
         <div className="mt-14 grid gap-5 md:grid-cols-3">
-          {[
-            { t: tr("about.vision.t"), b: tr("about.vision.b"), Icon: Compass },
-            { t: tr("about.mission.t"), b: tr("about.mission.b"), Icon: Sparkles },
-            { t: tr("about.values.t"), b: tr("about.values.b"), Icon: Award },
-          ].map((x, i) => (
-            <Reveal key={i} variant="up" delay={i * 140}>
-              <div className="group h-full rounded-3xl card-surface p-8 transition hover:-translate-y-1 hover:border-lavender/60 hover:shadow-xl hover:shadow-lavender/10">
-                <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl gradient-lavender text-white on-brand shadow-lg shadow-lavender/40 transition-transform group-hover:rotate-6 group-hover:scale-110">
-                  <x.Icon className="h-5 w-5" />
+          {about.map((card, i) => {
+            const Icon = icon(card.icon);
+            return (
+              <Reveal key={i} variant="up" delay={i * 140}>
+                <div className="group h-full rounded-3xl card-surface p-8 transition hover:-translate-y-1 hover:border-lavender/60 hover:shadow-xl hover:shadow-lavender/10">
+                  <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl gradient-lavender text-white on-brand shadow-lg shadow-lavender/40 transition-transform group-hover:rotate-6 group-hover:scale-110">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="text-xl font-bold text-white">{L(card.title)}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-white/65">{L(card.body)}</p>
                 </div>
-                <h3 className="text-xl font-bold text-white">{x.t}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/65">{x.b}</p>
-              </div>
-            </Reveal>
-          ))}
+              </Reveal>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -596,37 +583,37 @@ function About() {
 
 /* ---------------- Services ---------------- */
 function Services() {
-  const { tr } = useI18n();
-  const items = [
-    { i: Compass, k: "svc.1" },
-    { i: Camera, k: "svc.2" },
-    { i: Share2, k: "svc.3" },
-    { i: Wand2, k: "svc.4" },
-  ] as const;
+  const L = useLoc();
+  const { sections, services } = useContent();
+  const sec = sections.services;
+  if (!sec || services.length === 0) return null;
+
   return (
-    <section id="services" className="relative flex min-h-[59.2vw] items-center overflow-hidden py-16">
-      <SectionBg src="/media/bg/event-2.jpg" />
-      <div className="relative mx-auto w-full max-w-7xl px-5 md:px-8">
-        <SectionHead kicker={tr("svc.kicker")} title={tr("svc.title")} subtitle={tr("svc.sub")} />
+    <section id="services" className="relative overflow-hidden border-t border-white/5 py-24">
+      <SectionBg src={sec.backdrop} opacity={sec.backdropOpacity} />
+      <div className="relative mx-auto max-w-7xl px-5 md:px-8">
+        <SectionHead kicker={L(sec.kicker)} title={L(sec.title)} subtitle={L(sec.subtitle)} />
         <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-          {items.map(({ i: Icon, k }, idx) => (
-            <Reveal key={k} variant="up" delay={idx * 100}>
-              <div className="group relative h-full overflow-hidden rounded-3xl card-surface p-7 transition hover:-translate-y-1 hover:border-lavender/60 hover:shadow-2xl hover:shadow-lavender/10">
-                <div className="absolute -end-16 -top-16 h-40 w-40 rounded-full bg-lavender/15 blur-3xl transition group-hover:bg-lavender/30 animate-ew-float-slow" />
-                <div className="relative">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl gradient-lavender text-white on-brand shadow-lg shadow-lavender/40 transition-transform group-hover:-rotate-6 group-hover:scale-110">
-                    <Icon className="h-5 w-5" />
+          {services.map((svc, idx) => {
+            const Icon = icon(svc.icon);
+            return (
+              <Reveal key={idx} variant="up" delay={idx * 100}>
+                <div className="group relative h-full overflow-hidden rounded-3xl card-surface p-7 transition hover:-translate-y-1 hover:border-lavender/60 hover:shadow-2xl hover:shadow-lavender/10">
+                  <div className="absolute -end-16 -top-16 h-40 w-40 rounded-full bg-lavender/15 blur-3xl transition group-hover:bg-lavender/30 animate-ew-float-slow" />
+                  <div className="relative">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-xl gradient-lavender text-white on-brand shadow-lg shadow-lavender/40 transition-transform group-hover:-rotate-6 group-hover:scale-110">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <div className="mt-5 text-xs font-semibold text-lavender-light">
+                      {String(idx + 1).padStart(2, "0")}
+                    </div>
+                    <h3 className="mt-1 text-lg font-bold text-white">{L(svc.title)}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-white/65">{L(svc.body)}</p>
                   </div>
-                  <h3 className="mt-5 text-lg font-bold text-white">
-                    {tr(`${k}.t` as keyof typeof import("@/lib/i18n").t)}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-white/65">
-                    {tr(`${k}.b` as keyof typeof import("@/lib/i18n").t)}
-                  </p>
                 </div>
-              </div>
-            </Reveal>
-          ))}
+              </Reveal>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -636,12 +623,12 @@ function Services() {
 /* ---------------- Gallery (work reel) ---------------- */
 
 // Muted preview loop, mounted only while a card is hovered/focused so we never
-// pull 18 videos down on page load. Fades in once decoding actually starts.
-function HoverLoop({ slug }: { slug: string }) {
+// pull every video down on page load. Fades in once decoding actually starts.
+function HoverLoop({ src }: { src: string }) {
   const [playing, setPlaying] = useState(false);
   return (
     <video
-      src={`${MEDIA}/${slug}.loop.mp4`}
+      src={src}
       autoPlay
       muted
       loop
@@ -657,37 +644,40 @@ function HoverLoop({ slug }: { slug: string }) {
 }
 
 function ReelCard({
-  slug,
+  work,
   index,
   hot,
   onHover,
   onOpen,
 }: {
-  slug: string;
+  work: Work;
   index: number;
   hot: boolean;
   onHover: (slug: string | null) => void;
   onOpen: () => void;
 }) {
   const { tr } = useI18n();
+  const L = useLoc();
   return (
     <button
       type="button"
       onClick={onOpen}
-      onMouseEnter={() => onHover(slug)}
+      onMouseEnter={() => onHover(work.slug)}
       onMouseLeave={() => onHover(null)}
-      onFocus={() => onHover(slug)}
+      onFocus={() => onHover(work.slug)}
       onBlur={() => onHover(null)}
       className="on-brand group relative w-[78%] shrink-0 snap-start overflow-hidden rounded-3xl card-surface text-start transition-transform duration-500 ease-out hover:scale-[1.04] focus-visible:scale-[1.04] sm:w-[46%] lg:w-[31%] xl:w-[23.5%]"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
-        <img
-          src={`${MEDIA}/${slug}.jpg`}
-          alt=""
-          loading="lazy"
-          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-        />
-        {hot && <HoverLoop slug={slug} />}
+        {work.poster && (
+          <img
+            src={work.poster}
+            alt=""
+            loading="lazy"
+            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+          />
+        )}
+        {hot && work.loop && <HoverLoop src={work.loop} />}
         {/* purple gradient wash — lifts on hover so the footage reads through */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-lavender-dark/90 via-lavender/35 to-lavender-light/15 transition-opacity duration-500 group-hover:opacity-50" />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
@@ -704,11 +694,9 @@ function ReelCard({
       </div>
       <div className="absolute inset-x-0 bottom-0 p-5">
         <div className="text-[11px] font-semibold uppercase tracking-widest text-lavender-light">
-          {tr("works.case")}
+          {tr("works.case")} · {String(index + 1).padStart(2, "0")}
         </div>
-        <div className="mt-1 text-sm font-bold text-white">
-          {tr(`reel.${slug}` as keyof typeof import("@/lib/i18n").t)}
-        </div>
+        <div className="mt-1 text-sm font-bold text-white">{L(work.title)}</div>
       </div>
     </button>
   );
@@ -716,16 +704,23 @@ function ReelCard({
 
 function Gallery() {
   const { tr, dir } = useI18n();
-  const [cat, setCat] = useState<Cat>("corporate");
+  const L = useLoc();
+  const { sections, works, workCategories } = useContent();
+  const sec = sections.gallery;
+
+  const [cat, setCat] = useState<string | null>(null);
   const [hot, setHot] = useState<string | null>(null);
-  const [open, setOpen] = useState<string | null>(null);
+  const [open, setOpen] = useState<Work | null>(null);
   const rail = useRef<HTMLDivElement>(null);
 
-  const items = REEL.filter((v) => v.cat === cat);
+  // The panel owns the category list and its order, so the opening filter is
+  // whichever category comes first rather than a hardcoded slug.
+  const active = cat ?? workCategories[0]?.slug ?? null;
+  const items = works.filter((w) => w.category === active);
 
   useEffect(() => {
     rail.current?.scrollTo({ left: 0, behavior: "smooth" });
-  }, [cat]);
+  }, [active]);
 
   // In RTL the scroll axis is mirrored, so "next" walks scrollLeft negative.
   const nudge = (step: 1 | -1) => {
@@ -735,27 +730,29 @@ function Gallery() {
     el.scrollBy({ left: by, behavior: "smooth" });
   };
 
+  if (!sec || works.length === 0) return null;
+
   return (
-    <section id="gallery" className="relative flex min-h-[59.2vw] items-center overflow-hidden py-16">
-      <SectionBg src="/media/bg/event-1.jpg" opacity={0.32} />
-      <div className="relative mx-auto w-full max-w-7xl px-5 md:px-8">
-        <SectionHead kicker={tr("gal.kicker")} title={tr("gal.title")} />
+    <section id="gallery" className="relative overflow-hidden border-t border-white/5 py-24">
+      <SectionBg src={sec.backdrop} opacity={sec.backdropOpacity} />
+      <div className="relative mx-auto max-w-7xl px-5 md:px-8">
+        <SectionHead kicker={L(sec.kicker)} title={L(sec.title)} />
 
         <div className="mt-10 flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-wrap gap-2">
-            {CATS.map((c) => (
+            {workCategories.map((c) => (
               <button
-                key={c}
+                key={c.slug}
                 type="button"
-                onClick={() => setCat(c)}
-                aria-pressed={c === cat}
+                onClick={() => setCat(c.slug)}
+                aria-pressed={c.slug === active}
                 className={`rounded-full border px-4 py-2 text-xs font-semibold transition duration-300 ${
-                  c === cat
+                  c.slug === active
                     ? "border-transparent gradient-lavender text-white on-brand shadow-lg shadow-lavender/30"
                     : "border-white/15 bg-white/5 text-white/70 hover:border-lavender hover:text-white"
                 }`}
               >
-                {tr(`cat.${c}` as keyof typeof import("@/lib/i18n").t)}
+                {L(c.title)}
               </button>
             ))}
           </div>
@@ -786,11 +783,11 @@ function Gallery() {
           {items.map((item, i) => (
             <ReelCard
               key={item.slug}
-              slug={item.slug}
+              work={item}
               index={i}
               hot={hot === item.slug}
               onHover={setHot}
-              onOpen={() => setOpen(item.slug)}
+              onOpen={() => setOpen(item)}
             />
           ))}
         </div>
@@ -806,53 +803,44 @@ function Gallery() {
         </div>
       </div>
 
-      <FilmModal slug={open} onClose={() => setOpen(null)} />
+      <FilmModal work={open} onClose={() => setOpen(null)} />
     </section>
   );
 }
 
 /* ---------------- Partners ----------------
- * Logos lifted from the "شركاء النجاح" slide of the portfolio deck and keyed to
- * transparent white, so they sit on the dark surface without a plate. */
-const PARTNERS = [
-  { slug: "tawuniya", name: "Tawuniya" },
-  { slug: "stc", name: "stc" },
-  { slug: "saudia", name: "Saudia" },
-  { slug: "nupco", name: "NUPCO" },
-  { slug: "sirc", name: "SIRC" },
-  { slug: "meena", name: "meena" },
-  { slug: "qfmc", name: "QFMC" },
-  { slug: "chefz", name: "The Chefz" },
-  { slug: "r7", name: "R7 Run Club" },
-  { slug: "waterburger", name: "Water Burger" },
-  { slug: "khoyoot", name: "Khoyoot Al-Tarekh" },
-];
-
+ * Logos keyed to transparent white, so they sit on the dark surface without a
+ * plate and get inverted for the light theme. */
 function Partners() {
-  const { tr } = useI18n();
+  const L = useLoc();
+  const { sections, partners } = useContent();
+  const sec = sections.partners;
+  if (!sec || partners.length === 0) return null;
+
   return (
-    <section id="partners" className="relative flex min-h-[59.2vw] items-center overflow-hidden py-16">
-      <SectionBg src="/media/bg/event-2.jpg" opacity={0.4} />
-      <div className="relative mx-auto w-full max-w-7xl px-5 md:px-8">
-        <SectionHead kicker={tr("partners.kicker")} title={tr("partners.title")} />
+    <section id="partners" className="relative overflow-hidden border-t border-white/5 py-24">
+      <SectionBg src={sec.backdrop} opacity={sec.backdropOpacity} />
+      <div className="relative mx-auto max-w-7xl px-5 md:px-8">
+        <SectionHead kicker={L(sec.kicker)} title={L(sec.title)} />
         <Reveal variant="up" delay={120}>
           <p className="mx-auto mt-6 max-w-4xl text-center leading-relaxed text-white/65">
-            {tr("partners.body")}
+            {L(sec.body)}
           </p>
         </Reveal>
         <div className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-          {PARTNERS.map((p, i) => (
-            <Reveal key={p.slug} variant="zoom" delay={i * 60}>
+          {partners.map((p, i) => (
+            <Reveal key={p.name} variant="zoom" delay={i * 60}>
               <div className="group flex h-28 items-center justify-center rounded-2xl card-surface p-6 transition duration-300 hover:-translate-y-1 hover:border-lavender/60 hover:shadow-xl hover:shadow-lavender/10">
-                <img
-                  src={`${MEDIA}/partners/${p.slug}.png`}
-                  alt={p.name}
-                  loading="lazy"
-                  // The supplied logos are keyed to transparent white, so on a
-                  // pale card they need inverting to stay visible. They are all
-                  // fully monochrome, so this only flips white to near-black.
-                  className="max-h-14 w-auto max-w-full object-contain opacity-70 transition duration-300 group-hover:opacity-100 [filter:var(--partner-logo-filter)]"
-                />
+                {p.logo && (
+                  <img
+                    src={p.logo}
+                    alt={p.name}
+                    loading="lazy"
+                    // They are all fully monochrome, so the light theme's invert
+                    // only flips white to near-black.
+                    className="max-h-14 w-auto max-w-full object-contain opacity-70 transition duration-300 group-hover:opacity-100 [filter:var(--partner-logo-filter)]"
+                  />
+                )}
               </div>
             </Reveal>
           ))}
@@ -864,63 +852,77 @@ function Partners() {
 
 /* ---------------- Testimonials ---------------- */
 function Testimonials() {
-  const { tr } = useI18n();
+  const L = useLoc();
+  const { sections, testimonials } = useContent();
+  const sec = sections.testimonials;
   const [idx, setIdx] = useState(0);
-  const items = [1, 2] as const;
-  const active = items[idx];
-  const next = () => setIdx((v) => (v + 1) % items.length);
-  const prev = () => setIdx((v) => (v - 1 + items.length) % items.length);
+
+  if (!sec || testimonials.length === 0) return null;
+
+  // The panel can remove entries, so clamp rather than trusting the index.
+  const active = testimonials[Math.min(idx, testimonials.length - 1)];
+  const next = () => setIdx((v) => (v + 1) % testimonials.length);
+  const prev = () => setIdx((v) => (v - 1 + testimonials.length) % testimonials.length);
 
   return (
-    <section className="relative flex min-h-[59.2vw] items-center overflow-hidden py-16">
-      <SectionBg src="/media/bg/event-3.jpg" />
-      <div className="relative mx-auto w-full max-w-5xl px-5 md:px-8">
-        <SectionHead kicker={tr("test.kicker")} title={tr("test.title")} />
+    <section className="relative overflow-hidden border-t border-white/5 py-24">
+      <SectionBg src={sec.backdrop} opacity={sec.backdropOpacity} />
+      <div className="relative mx-auto max-w-5xl px-5 md:px-8">
+        <SectionHead kicker={L(sec.kicker)} title={L(sec.title)} />
         <Reveal variant="up" delay={120}>
           <div className="relative mt-12 rounded-3xl card-surface p-8 md:p-12">
             <Quote className="absolute end-8 top-8 h-10 w-10 text-lavender/30" />
             <p className="max-w-3xl text-lg leading-relaxed text-white/85 md:text-xl">
-              {tr(`test.${active}.q` as keyof typeof import("@/lib/i18n").t)}
+              {L(active.quote)}
             </p>
             <div className="mt-8 flex items-center justify-between gap-4 border-t border-white/10 pt-6">
               <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full gradient-lavender text-white on-brand font-bold">
-                  {tr(`test.${active}.n` as keyof typeof import("@/lib/i18n").t).slice(0, 1)}
+                <div className="flex h-12 w-12 items-center justify-center overflow-hidden rounded-full gradient-lavender font-bold text-white on-brand">
+                  {active.avatar ? (
+                    <img
+                      src={active.avatar}
+                      alt=""
+                      aria-hidden
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    L(active.name).slice(0, 1)
+                  )}
                 </div>
                 <div>
-                  <div className="font-bold text-white">
-                    {tr(`test.${active}.n` as keyof typeof import("@/lib/i18n").t)}
-                  </div>
-                  <div className="text-xs text-white/60">
-                    {tr(`test.${active}.r` as keyof typeof import("@/lib/i18n").t)}
-                  </div>
+                  <div className="font-bold text-white">{L(active.name)}</div>
+                  <div className="text-xs text-white/60">{L(active.role)}</div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={prev}
-                  aria-label="Previous"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/70 transition hover:border-lavender hover:text-white"
-                >
-                  <ChevronLeft className="h-4 w-4 rtl:rotate-180" />
-                </button>
-                <button
-                  onClick={next}
-                  aria-label="Next"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/70 transition hover:border-lavender hover:text-white"
-                >
-                  <ChevronRight className="h-4 w-4 rtl:rotate-180" />
-                </button>
+              {testimonials.length > 1 && (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={prev}
+                    aria-label="Previous"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/70 transition hover:border-lavender hover:text-white"
+                  >
+                    <ChevronLeft className="h-4 w-4 rtl:rotate-180" />
+                  </button>
+                  <button
+                    onClick={next}
+                    aria-label="Next"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/70 transition hover:border-lavender hover:text-white"
+                  >
+                    <ChevronRight className="h-4 w-4 rtl:rotate-180" />
+                  </button>
+                </div>
+              )}
+            </div>
+            {testimonials.length > 1 && (
+              <div className="mt-4 flex items-center gap-1">
+                {testimonials.map((_, i) => (
+                  <span
+                    key={i}
+                    className={`h-1.5 rounded-full transition-all ${i === idx ? "w-8 bg-lavender" : "w-3 bg-white/20"}`}
+                  />
+                ))}
               </div>
-            </div>
-            <div className="mt-4 flex items-center gap-1">
-              {items.map((_, i) => (
-                <span
-                  key={i}
-                  className={`h-1.5 rounded-full transition-all ${i === idx ? "w-8 bg-lavender" : "w-3 bg-white/20"}`}
-                />
-              ))}
-            </div>
+            )}
           </div>
         </Reveal>
       </div>
@@ -928,36 +930,83 @@ function Testimonials() {
   );
 }
 
+/** Submission feedback. Bilingual inline, so it needs no dictionary entry. */
+function FormStatus({ state }: { state: "idle" | "sending" | "sent" | "error" }) {
+  const { lang } = useI18n();
+  if (state === "idle" || state === "sending") return null;
+
+  const sent = lang === "ar" ? "تم الإرسال، شكرًا لك." : "Sent — thank you.";
+  const failed = lang === "ar" ? "تعذّر الإرسال، حاول مرة أخرى." : "Could not send. Please retry.";
+
+  return (
+    <p
+      role="status"
+      className={`mt-2 text-xs ${state === "sent" ? "text-lavender-light" : "text-destructive"}`}
+    >
+      {state === "sent" ? sent : failed}
+    </p>
+  );
+}
+
+type FormState = "idle" | "sending" | "sent" | "error";
+
 /* ---------------- Newsletter ---------------- */
 function Newsletter() {
   const { tr } = useI18n();
+  const L = useLoc();
+  const { sections } = useContent();
+  const sec = sections.newsletter;
+  const [state, setState] = useState<FormState>("idle");
+
+  if (!sec) return null;
+
+  // Without a CMS there is nowhere to send this, so the form stays inert —
+  // which is exactly what it did before.
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!cmsEnabled) return;
+    const form = e.currentTarget;
+    const email = String(new FormData(form).get("email") ?? "");
+    setState("sending");
+    const ok = await postSubscribe(email);
+    setState(ok ? "sent" : "error");
+    if (ok) form.reset();
+  };
+
   return (
-    <section className="relative flex min-h-[59.2vw] items-center overflow-hidden py-16">
-      <SectionBg src="/media/bg/event-1.jpg" />
-      <div className="relative mx-auto w-full max-w-5xl px-5 md:px-8">
+    <section className="relative overflow-hidden py-16">
+      <SectionBg src={sec.backdrop} opacity={sec.backdropOpacity} />
+      <div className="relative mx-auto max-w-5xl px-5 md:px-8">
         <Reveal variant="up">
           <div className="relative overflow-hidden rounded-3xl card-surface p-8 md:p-12">
             <div className="pointer-events-none absolute -end-16 -top-16 h-64 w-64 rounded-full bg-lavender/25 blur-3xl animate-ew-float-slow" />
             <div className="relative grid items-center gap-8 md:grid-cols-2">
               <div>
-                <h3 className="text-2xl font-black text-white md:text-3xl">{tr("news.title")}</h3>
-                <p className="mt-2 text-sm text-white/65">{tr("news.sub")}</p>
+                <h3 className="text-2xl font-black text-white md:text-3xl">{L(sec.title)}</h3>
+                <p className="mt-2 text-sm text-white/65">{L(sec.subtitle)}</p>
               </div>
-              <form
-                className="flex items-center gap-2 rounded-2xl border border-white/15 bg-white/5 p-2"
-                onSubmit={(e) => e.preventDefault()}
-              >
-                <input
-                  type="email"
-                  required
-                  placeholder={tr("news.placeholder")}
-                  className="min-w-0 flex-1 bg-transparent px-3 py-2 text-sm text-white placeholder-white/50 outline-none"
-                />
-                <button className="inline-flex items-center gap-1.5 rounded-xl gradient-lavender px-4 py-2 text-xs font-bold text-white on-brand shadow-md shadow-lavender/30 transition hover:-translate-y-0.5">
-                  {tr("news.cta")}
-                  <Send className="h-3.5 w-3.5" />
-                </button>
-              </form>
+              <div>
+                <form
+                  className="flex items-center gap-2 rounded-2xl border border-white/15 bg-white/5 p-2"
+                  onSubmit={onSubmit}
+                >
+                  <input
+                    type="email"
+                    name="email"
+                    required
+                    placeholder={tr("news.placeholder")}
+                    className="min-w-0 flex-1 bg-transparent px-3 py-2 text-sm text-white placeholder-white/50 outline-none"
+                  />
+                  <button
+                    disabled={state === "sending"}
+                    className="inline-flex items-center gap-1.5 rounded-xl gradient-lavender px-4 py-2 text-xs font-bold text-white on-brand shadow-md shadow-lavender/30 transition hover:-translate-y-0.5 disabled:opacity-60"
+                  >
+                    {tr("news.cta")}
+                    <Send className="h-3.5 w-3.5" />
+                  </button>
+                </form>
+                <FormStatus state={state} />
+              </div>
             </div>
           </div>
         </Reveal>
@@ -969,10 +1018,38 @@ function Newsletter() {
 /* ---------------- Contact ---------------- */
 function Contact() {
   const { tr } = useI18n();
+  const L = useLoc();
+  const { sections, settings } = useContent();
+  const sec = sections.contact;
+  const [state, setState] = useState<FormState>("idle");
+
+  if (!sec) return null;
+
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+
+    // No CMS to receive it, so fall back to what this form always did.
+    if (!cmsEnabled) {
+      window.location.href = `mailto:${settings.email ?? ""}`;
+      return;
+    }
+
+    const fd = new FormData(form);
+    setState("sending");
+    const ok = await postContact({
+      name: String(fd.get("name") ?? ""),
+      email: String(fd.get("email") ?? ""),
+      message: String(fd.get("message") ?? ""),
+    });
+    setState(ok ? "sent" : "error");
+    if (ok) form.reset();
+  };
+
   return (
-    <section id="contact" className="relative flex min-h-[59.2vw] items-center overflow-hidden py-16">
-      <SectionBg src="/media/bg/event-2.jpg" />
-      <div className="relative mx-auto w-full max-w-6xl px-5 md:px-8">
+    <section id="contact" className="relative overflow-hidden py-24">
+      <SectionBg src={sec.backdrop} opacity={sec.backdropOpacity} />
+      <div className="relative mx-auto max-w-6xl px-5 md:px-8">
         <Reveal variant="zoom">
           <div className="relative overflow-hidden rounded-[2rem] gradient-lavender p-8 text-white on-brand md:p-16">
             <div className="absolute -end-20 -top-20 h-72 w-72 rounded-full bg-white/10 blur-3xl animate-ew-blob" />
@@ -980,60 +1057,70 @@ function Contact() {
             <div className="relative grid gap-10 md:grid-cols-2 md:items-center">
               <div>
                 <div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest">
-                  {tr("contact.kicker")}
+                  {L(sec.kicker)}
                 </div>
                 <h2 className="mt-4 text-3xl font-black leading-tight md:text-5xl">
-                  {tr("contact.title")}
+                  {L(sec.title)}
                 </h2>
-                <p className="mt-4 max-w-md text-white/85">{tr("contact.sub")}</p>
+                <p className="mt-4 max-w-md text-white/85">{L(sec.subtitle)}</p>
                 <div className="mt-8 space-y-3 text-sm">
-                  <a
-                    href="mailto:info@elitewing.sa"
-                    className="flex items-center gap-3 text-white/90 hover:text-white"
-                  >
-                    <Mail className="h-4 w-4" /> info@elitewing.sa
-                  </a>
-                  <a
-                    href="tel:+966111234567"
-                    className="flex items-center gap-3 text-white/90 hover:text-white"
-                  >
-                    {/* Isolate only the number, not the row: dir on the flex
-                        container flips its layout out of the RTL column. */}
-                    <Phone className="h-4 w-4" /> <span dir="ltr">+966 11 123 4567</span>
-                  </a>
+                  {settings.email && (
+                    <a
+                      href={`mailto:${settings.email}`}
+                      className="flex items-center gap-3 text-white/90 hover:text-white"
+                    >
+                      <Mail className="h-4 w-4" /> {settings.email}
+                    </a>
+                  )}
+                  {settings.phone && (
+                    <a
+                      href={`tel:${settings.phone.replace(/[^+\d]/g, "")}`}
+                      className="flex items-center gap-3 text-white/90 hover:text-white"
+                    >
+                      {/* Isolate only the number, not the row: dir on the flex
+                          container flips its layout out of the RTL column. */}
+                      <Phone className="h-4 w-4" /> <span dir="ltr">{settings.phone}</span>
+                    </a>
+                  )}
                   <div className="flex items-center gap-3 text-white/90">
-                    <MapPin className="h-4 w-4" /> {tr("contact.location.v")}
+                    <MapPin className="h-4 w-4" /> {L(settings.location)}
                   </div>
                 </div>
               </div>
               <form
                 className="rounded-2xl bg-white/10 p-6 backdrop-blur-md ring-1 ring-white/20"
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  window.location.href = "mailto:info@elitewing.sa";
-                }}
+                onSubmit={onSubmit}
               >
                 <div className="grid gap-3">
                   <input
+                    name="name"
                     className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm placeholder-white/60 outline-none focus:border-white"
                     placeholder={tr("contact.form.name")}
                     required
                   />
                   <input
                     type="email"
+                    name="email"
                     className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm placeholder-white/60 outline-none focus:border-white"
                     placeholder={tr("contact.form.email")}
                     required
                   />
                   <textarea
+                    name="message"
                     rows={4}
                     className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm placeholder-white/60 outline-none focus:border-white"
                     placeholder={tr("contact.form.message")}
+                    // The API requires it; the mailto fallback cannot carry it.
+                    required={cmsEnabled}
                   />
-                  <button className="mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-lavender-dark transition hover:bg-white/90">
+                  <button
+                    disabled={state === "sending"}
+                    className="mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-lavender-dark transition hover:bg-white/90 disabled:opacity-60"
+                  >
                     {tr("contact.cta")}
                     <ArrowUpRight className="h-4 w-4" />
                   </button>
+                  <FormStatus state={state} />
                 </div>
               </form>
             </div>
@@ -1047,11 +1134,16 @@ function Contact() {
 /* ---------------- Footer ---------------- */
 function Footer() {
   const { tr } = useI18n();
+  const L = useLoc();
+  const { settings, services, nav } = useContent();
+
+  // A social account with no URL set is left off rather than linked to "#".
   const socials = [
-    { Icon: Instagram, label: "Instagram", href: "#" },
-    { Icon: Linkedin, label: "LinkedIn", href: "#" },
-    { Icon: Twitter, label: "X", href: "#" },
-  ];
+    { Icon: Instagram, label: "Instagram", href: settings.social.instagram },
+    { Icon: Linkedin, label: "LinkedIn", href: settings.social.linkedin },
+    { Icon: Twitter, label: "X", href: settings.social.twitter },
+  ].filter((s) => s.href);
+
   return (
     <footer className="relative overflow-hidden border-t border-white/10 py-14">
       <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
@@ -1068,13 +1160,13 @@ function Footer() {
             <div>
               <BrandLockup />
               <p className="mt-4 max-w-xs text-xs leading-relaxed text-white/60">
-                {tr("footer.tagline")}
+                {L(settings.footer.tagline)}
               </p>
               <div className="mt-5 flex items-center gap-2">
                 {socials.map(({ Icon, label, href }) => (
                   <a
                     key={label}
-                    href={href}
+                    href={href ?? "#"}
                     aria-label={label}
                     className="group relative inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/70 transition-all duration-300 hover:-translate-y-1 hover:border-lavender hover:text-white"
                   >
@@ -1091,74 +1183,52 @@ function Footer() {
             <div>
               <div className="mb-3 text-sm font-bold text-white">{tr("nav.services")}</div>
               <ul className="space-y-2 text-sm text-white/60">
-                <li>
-                  <a href="#services" className="hover:text-lavender-light">
-                    {tr("svc.1.t")}
-                  </a>
-                </li>
-                <li>
-                  <a href="#services" className="hover:text-lavender-light">
-                    {tr("svc.2.t")}
-                  </a>
-                </li>
-                <li>
-                  <a href="#services" className="hover:text-lavender-light">
-                    {tr("svc.3.t")}
-                  </a>
-                </li>
-                <li>
-                  <a href="#services" className="hover:text-lavender-light">
-                    {tr("svc.4.t")}
-                  </a>
-                </li>
+                {services.map((svc, i) => (
+                  <li key={i}>
+                    <a href="#services" className="hover:text-lavender-light">
+                      {L(svc.title)}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
 
             <div>
               <div className="mb-3 text-sm font-bold text-white">{tr("nav.home")}</div>
               <ul className="space-y-2 text-sm text-white/60">
-                <li>
-                  <a href="#about" className="hover:text-lavender-light">
-                    {tr("nav.about")}
-                  </a>
-                </li>
-                <li>
-                  <a href="#method" className="hover:text-lavender-light">
-                    {tr("method.kicker")}
-                  </a>
-                </li>
-                <li>
-                  <a href="#gallery" className="hover:text-lavender-light">
-                    {tr("gal.kicker")}
-                  </a>
-                </li>
-                <li>
-                  <a href="#contact" className="hover:text-lavender-light">
-                    {tr("nav.contact")}
-                  </a>
-                </li>
+                {nav.map((l) => (
+                  <li key={l.anchor}>
+                    <a href={`#${l.anchor}`} className="hover:text-lavender-light">
+                      {L(l.label)}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </div>
 
             <div>
               <div className="mb-3 text-sm font-bold text-white">{tr("nav.contact")}</div>
               <ul className="space-y-2 text-sm text-white/60">
+                {settings.phone && (
+                  <li className="flex items-center gap-2">
+                    <Phone className="h-3.5 w-3.5 text-lavender" />{" "}
+                    <span dir="ltr">{settings.phone}</span>
+                  </li>
+                )}
+                {settings.email && (
+                  <li className="flex items-center gap-2">
+                    <Mail className="h-3.5 w-3.5 text-lavender" /> {settings.email}
+                  </li>
+                )}
                 <li className="flex items-center gap-2">
-                  <Phone className="h-3.5 w-3.5 text-lavender" />{" "}
-                  <span dir="ltr">+966 11 123 4567</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Mail className="h-3.5 w-3.5 text-lavender" /> info@elitewing.sa
-                </li>
-                <li className="flex items-center gap-2">
-                  <MapPin className="h-3.5 w-3.5 text-lavender" /> {tr("contact.location.v")}
+                  <MapPin className="h-3.5 w-3.5 text-lavender" /> {L(settings.location)}
                 </li>
               </ul>
             </div>
           </div>
 
           <div className="mt-10 flex flex-col items-center justify-between gap-3 border-t border-white/10 pt-6 text-xs text-white/50 md:flex-row">
-            <div>{tr("footer.rights")}</div>
+            <div>{L(settings.footer.rights)}</div>
             <div className="flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((s) => (
                 <Star key={s} className="h-3.5 w-3.5 fill-lavender text-lavender" />
@@ -1171,9 +1241,9 @@ function Footer() {
   );
 }
 
-export function Landing({ lang }: { lang?: Lang }) {
+export function Landing({ lang, content }: { lang?: Lang; content?: Content }) {
   return (
-    <I18nProvider initialLang={lang}>
+    <ContentProvider content={content} lang={lang}>
       <div className="min-h-screen bg-background text-foreground">
         <Header />
         <main>
@@ -1189,6 +1259,6 @@ export function Landing({ lang }: { lang?: Lang }) {
         </main>
         <Footer />
       </div>
-    </I18nProvider>
+    </ContentProvider>
   );
 }

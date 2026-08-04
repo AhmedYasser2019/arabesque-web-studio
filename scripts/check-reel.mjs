@@ -14,7 +14,11 @@ const BASE = process.env.BASE_URL ?? "http://localhost:8081";
 // Full films may live off-origin (see VITE_MEDIA_URL). Posters and loops never do.
 const FILMS = (process.env.VITE_MEDIA_URL || `${BASE}/media`).replace(/\/+$/, "");
 
-// keep in sync with REEL/CATS in src/components/Landing.tsx
+/* The counts the page is expected to render. These are the baked-in reel in
+ * src/lib/cms.ts, which is also what the CMS seeder loads — so this file checks
+ * out against either content source. If the client adds or removes films in the
+ * panel and you are running with VITE_CMS_URL set, these move. */
+// keep in sync with REEL/CATS in src/lib/cms.ts
 const EXPECTED = [7, 4, 3, 2, 2];
 const PARTNERS = [
   "tawuniya",

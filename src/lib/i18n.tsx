@@ -286,9 +286,15 @@ const Ctx = createContext<I18nCtx | null>(null);
 export function I18nProvider({
   children,
   initialLang,
+  /* Labels from the CMS, when there is one. Consulted ahead of the dictionary
+   * below, which stays the fallback so a string added in code keeps working
+   * before anyone types it into the panel. Typed structurally rather than
+   * imported from cms.ts, which would put these two files in a cycle. */
+  labels,
 }: {
   children: ReactNode;
   initialLang?: Lang;
+  labels?: Record<string, { ar: string; en: string }>;
 }) {
   const [lang, setLangState] = useState<Lang>(initialLang ?? "ar");
 
@@ -309,7 +315,7 @@ export function I18nProvider({
     if (typeof window !== "undefined") localStorage.setItem("lang", l);
   };
 
-  const tr = (key: keyof typeof t) => t[key]?.[lang] ?? String(key);
+  const tr = (key: keyof typeof t) => labels?.[key]?.[lang] || t[key]?.[lang] || String(key);
 
   return (
     <Ctx.Provider value={{ lang, setLang, tr, dir: lang === "ar" ? "rtl" : "ltr" }}>
