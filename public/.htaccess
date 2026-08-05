@@ -1,0 +1,29 @@
+# Apache counterpart to _headers (which only Cloudflare reads). Copied into the
+# build by Vite, so it ships to public_html with everything else.
+
+# /en and /ar are directories holding an index.html.
+DirectoryIndex index.html
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/xml text/plain application/javascript application/json application/xml image/svg+xml
+</IfModule>
+
+<IfModule mod_headers.c>
+  # Filenames carry a content hash, so these can never go stale.
+  <FilesMatch "\.(js|css|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  # Pages are rebuilt on every deploy — revalidate so a deploy is visible at once.
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+# Films are large and their names are stable; a week is long enough that repeat
+# visits stream from cache, short enough that swapping a reel still lands.
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType video/mp4 "access plus 7 days"
+  ExpiresByType image/jpeg "access plus 7 days"
+  ExpiresByType image/png "access plus 7 days"
+</IfModule>
