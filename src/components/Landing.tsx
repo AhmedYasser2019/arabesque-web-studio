@@ -376,7 +376,7 @@ function Hero() {
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(180deg, color-mix(in oklch, var(--navy) 45%, transparent) 0%, color-mix(in oklch, var(--navy) 75%, transparent) 60%, var(--background) 100%)",
+            "linear-gradient(180deg, color-mix(in oklch, var(--navy) 45%, transparent) 0%, color-mix(in oklch, var(--navy) 75%, transparent) 55%, color-mix(in oklch, var(--lavender-dark) 60%, transparent) 82%, var(--background) 100%)",
         }}
       />
       <div className="absolute inset-0 bg-grid opacity-20" />
@@ -384,10 +384,10 @@ function Hero() {
       {/* No decorative wing overlay here — the backdrop photography already
           carries the wing mark, and a second one fought it. */}
 
-      <div className="relative z-10 mx-auto max-w-7xl px-5 pb-24 pt-24 md:px-8 md:pt-32">
+      <div className="relative z-10 mx-auto max-w-7xl px-5 pb-8 pt-24 md:px-8 md:pt-32">
         <div className="grid items-center gap-10 md:grid-cols-2">
-          {/* on-brand here rather than on the section: this copy sits on the
-              photograph, but the stats bar below is a normal surface card. */}
+          {/* on-brand: everything in the hero sits on the photograph, which
+              stays dark in both themes. */}
           <div className="on-brand">
             <Reveal variant="fade" duration={600}>
               <span className="inline-flex items-center gap-2 rounded-full border border-lavender/40 bg-lavender/10 px-3 py-1 text-xs font-medium text-lavender-light">
@@ -432,20 +432,26 @@ function Hero() {
         {/* Stats bar */}
         {stats.length > 0 && (
           <Reveal variant="up" delay={500}>
-            <div className="mt-16 rounded-3xl card-surface p-6 md:p-8">
-              <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
+            {/* Translucent navy rather than a surface card: an opaque panel
+                here cuts the wing mark in the backdrop in half. */}
+            {/* me-auto, not mx-auto: the bar's start edge lines up with the
+                headline above it rather than floating centred. */}
+            <div className="on-brand me-auto mt-32 max-w-5xl rounded-2xl border border-white/15 bg-navy/45 px-5 py-4 md:mt-40 backdrop-blur-md">
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                 {stats.map((stat, i) => {
                   const Icon = icon(stat.icon);
                   return (
-                    <div key={i} className="flex items-center gap-4">
-                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-lavender/15 text-lavender-light ring-1 ring-lavender/30">
-                        <Icon className="h-5 w-5" />
+                    <div key={i} className="flex items-center gap-3">
+                      {/* text-pale, not text-lavender-light: on this dark card
+                          the light theme's deep khuzami accent disappears. */}
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-lavender/20 text-pale ring-1 ring-lavender/40">
+                        <Icon className="h-4 w-4" />
                       </div>
                       <div>
-                        <div className="text-2xl font-black text-white md:text-3xl">
+                        <div className="text-xl font-black text-white md:text-2xl">
                           <CountUp end={stat.value} suffix={stat.suffix ?? ""} />
                         </div>
-                        <div className="mt-0.5 text-xs text-white/60">{L(stat.label)}</div>
+                        <div className="text-[11px] text-white/60">{L(stat.label)}</div>
                       </div>
                     </div>
                   );
@@ -483,9 +489,19 @@ function SectionBg({ src, opacity = 0.45 }: { src: string | null; opacity?: numb
         alt=""
         loading="lazy"
         style={{ opacity }}
-        className="h-full w-full object-cover"
+        className="backdrop-photo h-full w-full object-cover"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-background via-lavender-dark/40 to-background" />
+      {/* Short fades at the seams instead of one edge-to-edge wash: the old
+          gradient spent its whole run climbing back to the page colour, which
+          is what bleached the frames out. The middle now keeps a flat khuzami
+          tint and lets the photograph through. */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(180deg, var(--background) 0%, color-mix(in oklch, var(--lavender-dark) 32%, transparent) 22%, color-mix(in oklch, var(--lavender-dark) 32%, transparent) 78%, var(--background) 100%)",
+        }}
+      />
     </div>
   );
 }
@@ -508,7 +524,9 @@ function SectionHead({
           {kicker}
         </div>
         <h2 className="mt-4 text-3xl font-black tracking-tight text-white md:text-5xl">{title}</h2>
-        {subtitle && <p className="mt-3 text-white/60">{subtitle}</p>}
+        {/* /75 not /60: this line sits straight on the backdrop photo, which now
+            comes further forward than it used to. */}
+        {subtitle && <p className="mt-3 text-white/75">{subtitle}</p>}
       </div>
     </Reveal>
   );

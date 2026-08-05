@@ -82,6 +82,7 @@
 
   /* How far a section's photo backdrop is allowed to come forward. */
   --backdrop-opacity: 1;
+  --backdrop-blend: normal;
   --partner-logo-filter: none;
 }
 
@@ -102,9 +103,13 @@
   --navy: #2e3b5b;
   --pale: #f5e7fe;
 
-  --background: #fdfaff;
+  /* Tinted, not white: the page itself is the identity's pale khuzami so the
+     white panels read as cards instead of dissolving into the background. */
+  --background: #e7dff2;
   --foreground: #2e3b5b;
-  --panel: #ffffff;
+  /* Not pure white — the panels carry a khuzami tint so the page reads as the
+     brand's lavender rather than a white sheet. */
+  --panel: #fbf7fe;
   --panel-2: #f5e7fe;
 
   --muted-foreground: #59637f;
@@ -121,11 +126,15 @@
 
      A notch deeper than the identity's #2E3B5B on purpose: most body copy is
      `text-white/65`, and the straight navy composites to 3.9:1 against this
-     background, under AA. This lands that 65% variant at 4.55:1. */
-  --color-white: #212c47;
+     background, under AA. This lands that 65% variant at 4.76:1. */
+  --color-white: #141c33;
 
   /* Photos have to sit further back under navy text than under white. */
   --backdrop-opacity: 1;
+  /* These are bright daylight frames: laid over a pale page they bleach out to
+     white haze. Multiply keeps their darks and stains the rest with the page's
+     khuzami, so the section backdrops read as brand colour, not fog. */
+  --backdrop-blend: multiply;
   /* White-keyed logos would vanish on a pale card. */
   --partner-logo-filter: invert(1);
 }
@@ -177,6 +186,10 @@
     linear-gradient(to right, color-mix(in oklch, var(--lavender) 8%, transparent) 1px, transparent 1px),
     linear-gradient(to bottom, color-mix(in oklch, var(--lavender) 8%, transparent) 1px, transparent 1px);
   background-size: 48px 48px;
+}
+
+@utility backdrop-photo {
+  mix-blend-mode: var(--backdrop-blend);
 }
 
 @utility card-surface {
