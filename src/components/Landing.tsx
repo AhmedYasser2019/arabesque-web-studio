@@ -499,7 +499,7 @@ function SectionBg({ src, opacity = 0.45 }: { src: string | null; opacity?: numb
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(180deg, var(--background) 0%, color-mix(in oklch, var(--lavender-dark) 32%, transparent) 22%, color-mix(in oklch, var(--lavender-dark) 32%, transparent) 78%, var(--background) 100%)",
+            "linear-gradient(180deg, var(--background) 0%, color-mix(in oklch, var(--lavender-dark) 32%, transparent) 8%, color-mix(in oklch, var(--lavender-dark) 32%, transparent) 92%, var(--background) 100%)",
         }}
       />
     </div>
@@ -622,10 +622,7 @@ function Services() {
                     <div className="flex h-12 w-12 items-center justify-center rounded-xl gradient-lavender text-white on-brand shadow-lg shadow-lavender/40 transition-transform group-hover:-rotate-6 group-hover:scale-110">
                       <Icon className="h-5 w-5" />
                     </div>
-                    <div className="mt-5 text-xs font-semibold text-lavender-light">
-                      {String(idx + 1).padStart(2, "0")}
-                    </div>
-                    <h3 className="mt-1 text-lg font-bold text-white">{L(svc.title)}</h3>
+                    <h3 className="mt-5 text-lg font-bold text-white">{L(svc.title)}</h3>
                     <p className="mt-2 text-sm leading-relaxed text-white/65">{L(svc.body)}</p>
                   </div>
                 </div>
@@ -663,13 +660,11 @@ function HoverLoop({ src }: { src: string }) {
 
 function ReelCard({
   work,
-  index,
   hot,
   onHover,
   onOpen,
 }: {
   work: Work;
-  index: number;
   hot: boolean;
   onHover: (slug: string | null) => void;
   onOpen: () => void;
@@ -712,7 +707,7 @@ function ReelCard({
       </div>
       <div className="absolute inset-x-0 bottom-0 p-5">
         <div className="text-[11px] font-semibold uppercase tracking-widest text-lavender-light">
-          {tr("works.case")} · {String(index + 1).padStart(2, "0")}
+          {tr("works.case")}
         </div>
         <div className="mt-1 text-sm font-bold text-white">{L(work.title)}</div>
       </div>
@@ -798,11 +793,10 @@ function Gallery() {
           ref={rail}
           className="mt-6 flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth py-6 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
-          {items.map((item, i) => (
+          {items.map((item) => (
             <ReelCard
               key={item.slug}
               work={item}
-              index={i}
               hot={hot === item.slug}
               onHover={setHot}
               onOpen={() => setOpen(item)}
