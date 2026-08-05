@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-
-const BASE_URL = "https://elitewing.com.sa";
+import { SITE_URL as BASE_URL, abs } from "@/lib/seo";
 
 interface Entry {
   path: string;
@@ -14,16 +13,18 @@ export const Route = createFileRoute("/sitemap.xml")({
     handlers: {
       GET: async () => {
         const entries: Entry[] = [
+          // Trailing slashes: the host 301s /ar -> /ar/, and a sitemap of
+          // redirects wastes crawl budget.
           { path: "/", changefreq: "weekly", priority: "1.0" },
-          { path: "/ar", changefreq: "weekly", priority: "1.0" },
-          { path: "/en", changefreq: "weekly", priority: "1.0" },
+          { path: "/ar/", changefreq: "weekly", priority: "1.0" },
+          { path: "/en/", changefreq: "weekly", priority: "1.0" },
         ];
 
         const urls = entries.map((e) => {
           const alt = [
-            `      <xhtml:link rel="alternate" hreflang="ar" href="${BASE_URL}/ar"/>`,
-            `      <xhtml:link rel="alternate" hreflang="en" href="${BASE_URL}/en"/>`,
-            `      <xhtml:link rel="alternate" hreflang="x-default" href="${BASE_URL}/"/>`,
+            `      <xhtml:link rel="alternate" hreflang="ar" href="${abs("/ar/")}"/>`,
+            `      <xhtml:link rel="alternate" hreflang="en" href="${abs("/en/")}"/>`,
+            `      <xhtml:link rel="alternate" hreflang="x-default" href="${abs("/")}"/>`,
           ].join("\n");
           return [
             `  <url>`,

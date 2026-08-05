@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Landing } from "@/components/Landing";
 import { loadContent } from "@/lib/cms";
+import { abs } from "@/lib/seo";
 
 // Used when no CMS is configured, and as the fallback if its SEO fields are
 // blank. See src/lib/cms.ts for the switch.
@@ -27,7 +28,7 @@ export const Route = createFileRoute("/ar")({
         { property: "og:title", content: title },
         { property: "og:description", content: description },
         { property: "og:type", content: "website" },
-        { property: "og:url", content: "/ar" },
+        { property: "og:url", content: abs("/ar/") },
         { property: "og:locale", content: "ar_SA" },
         { property: "og:locale:alternate", content: "en_US" },
         { name: "twitter:card", content: "summary_large_image" },
@@ -35,10 +36,10 @@ export const Route = createFileRoute("/ar")({
         { name: "twitter:description", content: description },
       ],
       links: [
-        { rel: "canonical", href: "/ar" },
-        { rel: "alternate", hrefLang: "ar", href: "/ar" },
-        { rel: "alternate", hrefLang: "en", href: "/en" },
-        { rel: "alternate", hrefLang: "x-default", href: "/" },
+        { rel: "canonical", href: abs("/ar/") },
+        { rel: "alternate", hrefLang: "ar", href: abs("/ar/") },
+        { rel: "alternate", hrefLang: "en", href: abs("/en/") },
+        { rel: "alternate", hrefLang: "x-default", href: abs("/") },
       ],
     };
   },

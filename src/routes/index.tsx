@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Landing } from "@/components/Landing";
 import { loadContent } from "@/lib/cms";
+import { abs } from "@/lib/seo";
 
 // The x-default page, so its title carries both languages. Used when no CMS is
 // configured, and as the fallback if its SEO fields are blank.
@@ -33,7 +34,7 @@ export const Route = createFileRoute("/")({
         { property: "og:title", content: shareTitle },
         { property: "og:description", content: shareDesc },
         { property: "og:type", content: "website" },
-        { property: "og:url", content: "/" },
+        { property: "og:url", content: abs("/") },
         { property: "og:locale", content: "ar_SA" },
         { property: "og:locale:alternate", content: "en_US" },
         { name: "twitter:card", content: "summary_large_image" },
@@ -41,10 +42,10 @@ export const Route = createFileRoute("/")({
         { name: "twitter:description", content: shareDesc },
       ],
       links: [
-        { rel: "canonical", href: "/" },
-        { rel: "alternate", hrefLang: "ar", href: "/ar" },
-        { rel: "alternate", hrefLang: "en", href: "/en" },
-        { rel: "alternate", hrefLang: "x-default", href: "/" },
+        { rel: "canonical", href: abs("/") },
+        { rel: "alternate", hrefLang: "ar", href: abs("/ar/") },
+        { rel: "alternate", hrefLang: "en", href: abs("/en/") },
+        { rel: "alternate", hrefLang: "x-default", href: abs("/") },
       ],
     };
   },
