@@ -129,19 +129,27 @@ function ThemeSwitch() {
 // are two of them: the white keyline for dark surfaces, and the purple one the
 // brand pack ships for light. Inverting the white one would tint the wing, so
 // we swap the file instead.
-function BrandLockup({ compact = false }: { compact?: boolean }) {
+function BrandLockup({
+  compact = false,
+  onBrand = false,
+}: {
+  compact?: boolean;
+  onBrand?: boolean;
+}) {
   const { logo } = useContent().settings;
   const size = compact ? "h-9" : "h-12";
+  // onBrand: the lockup sits on a dark fill in both themes (the footer), so the
+  // light theme's ink-on-pale variant would disappear into it.
   return (
     <a href="#top" className="group flex items-center">
       {logo.dark && (
         <img
           src={logo.dark}
           alt="Elite Wing · إيليت وينغ"
-          className={`${size} w-auto object-contain transition-all duration-500 group-hover:opacity-90 light:hidden`}
+          className={`${size} w-auto object-contain transition-all duration-500 group-hover:opacity-90 ${onBrand ? "" : "light:hidden"}`}
         />
       )}
-      {logo.light && (
+      {logo.light && !onBrand && (
         <img
           src={logo.light}
           alt=""
@@ -376,7 +384,7 @@ function Hero() {
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(180deg, color-mix(in oklch, var(--navy) 45%, transparent) 0%, color-mix(in oklch, var(--navy) 75%, transparent) 55%, color-mix(in oklch, var(--lavender-dark) 60%, transparent) 82%, var(--background) 100%)",
+            "linear-gradient(180deg, color-mix(in oklch, var(--navy) 45%, transparent) 0%, color-mix(in oklch, var(--navy) 75%, transparent) 55%, color-mix(in oklch, var(--lavender-dark) 60%, transparent) 82%, var(--seam) 100%)",
         }}
       />
       <div className="absolute inset-0 bg-grid opacity-20" />
@@ -499,7 +507,7 @@ function SectionBg({ src, opacity = 0.45 }: { src: string | null; opacity?: numb
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(180deg, var(--background) 0%, color-mix(in oklch, var(--lavender-dark) 32%, transparent) 8%, color-mix(in oklch, var(--lavender-dark) 32%, transparent) 92%, var(--background) 100%)",
+            "linear-gradient(180deg, var(--seam) 0%, color-mix(in oklch, var(--lavender-dark) 32%, transparent) 8%, color-mix(in oklch, var(--lavender-dark) 32%, transparent) 92%, var(--seam) 100%)",
         }}
       />
     </div>
@@ -541,7 +549,7 @@ function Methodology() {
   if (!sec || method.length === 0) return null;
 
   return (
-    <section id="method" className="relative overflow-hidden border-t border-white/5 py-24">
+    <section id="method" className="relative overflow-hidden py-24">
       <SectionBg src={sec.backdrop} opacity={sec.backdropOpacity} />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={L(sec.kicker)} title={L(sec.title)} subtitle={L(sec.subtitle)} />
@@ -571,7 +579,7 @@ function About() {
   if (!sec) return null;
 
   return (
-    <section id="about" className="relative overflow-hidden border-t border-white/5 py-24">
+    <section id="about" className="relative overflow-hidden py-24">
       <SectionBg src={sec.backdrop} opacity={sec.backdropOpacity} />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={L(sec.kicker)} title={L(sec.title)} />
@@ -607,7 +615,7 @@ function Services() {
   if (!sec || services.length === 0) return null;
 
   return (
-    <section id="services" className="relative overflow-hidden border-t border-white/5 py-24">
+    <section id="services" className="relative overflow-hidden py-24">
       <SectionBg src={sec.backdrop} opacity={sec.backdropOpacity} />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={L(sec.kicker)} title={L(sec.title)} subtitle={L(sec.subtitle)} />
@@ -746,7 +754,7 @@ function Gallery() {
   if (!sec || works.length === 0) return null;
 
   return (
-    <section id="gallery" className="relative overflow-hidden border-t border-white/5 py-24">
+    <section id="gallery" className="relative overflow-hidden py-24">
       <SectionBg src={sec.backdrop} opacity={sec.backdropOpacity} />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={L(sec.kicker)} title={L(sec.title)} />
@@ -830,7 +838,7 @@ function Partners() {
   if (!sec || partners.length === 0) return null;
 
   return (
-    <section id="partners" className="relative overflow-hidden border-t border-white/5 py-24">
+    <section id="partners" className="relative overflow-hidden py-24">
       <SectionBg src={sec.backdrop} opacity={sec.backdropOpacity} />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={L(sec.kicker)} title={L(sec.title)} />
@@ -877,7 +885,7 @@ function Testimonials() {
   const prev = () => setIdx((v) => (v - 1 + testimonials.length) % testimonials.length);
 
   return (
-    <section className="relative overflow-hidden border-t border-white/5 py-24">
+    <section className="relative overflow-hidden py-24">
       <SectionBg src={sec.backdrop} opacity={sec.backdropOpacity} />
       <div className="relative mx-auto max-w-5xl px-5 md:px-8">
         <SectionHead kicker={L(sec.kicker)} title={L(sec.title)} />
@@ -1156,9 +1164,11 @@ function Footer() {
     { Icon: Twitter, label: "X", href: settings.social.twitter },
   ].filter((s) => s.href);
 
+  // Navy in both themes: in light mode the footer was the page's largest pale
+  // block, and a dark foot closes the page on brand.
   return (
-    <footer className="relative overflow-hidden border-t border-white/10 py-14">
-      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
+    <footer className="on-brand relative overflow-hidden border-t border-white/10 bg-navy py-14">
+      <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
         <div className="absolute -top-24 left-1/2 h-64 w-[70%] -translate-x-1/2 rounded-full bg-lavender/20 blur-3xl animate-ew-float-slow" />
       </div>
       <div
@@ -1170,7 +1180,7 @@ function Footer() {
         <div className="mx-auto max-w-7xl px-5 md:px-8">
           <div className="grid gap-10 md:grid-cols-4">
             <div>
-              <BrandLockup />
+              <BrandLockup onBrand />
               <p className="mt-4 max-w-xs text-xs leading-relaxed text-white/60">
                 {L(settings.footer.tagline)}
               </p>

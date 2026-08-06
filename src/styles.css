@@ -83,6 +83,11 @@
   /* How far a section's photo backdrop is allowed to come forward. */
   --backdrop-opacity: 1;
   --backdrop-blend: normal;
+  /* Every band below the hero is photo-backed, so the page background only ever
+     shows at the seams between them. Landing there straight on --background left
+     a bright stripe between two tinted frames; the seams carry the same khuzami
+     wash the frames do. */
+  --seam: color-mix(in oklch, var(--lavender-dark) 38%, var(--background));
   --partner-logo-filter: none;
 }
 
@@ -105,7 +110,7 @@
 
   /* Tinted, not white: the page itself is the identity's pale khuzami so the
      white panels read as cards instead of dissolving into the background. */
-  --background: #e7dff2;
+  --background: #dfd7ec;
   --foreground: #2e3b5b;
   /* Not pure white — the panels carry a khuzami tint so the page reads as the
      brand's lavender rather than a white sheet. */
@@ -126,7 +131,8 @@
 
      A notch deeper than the identity's #2E3B5B on purpose: most body copy is
      `text-white/65`, and the straight navy composites to 3.9:1 against this
-     background, under AA. This lands that 65% variant at 4.76:1. */
+     background, under AA. This lands that 65% variant at 4.6:1 on the identity's
+     own #DFD7EC helper, which the page background uses. */
   --color-white: #141c33;
 
   /* Photos have to sit further back under navy text than under white. */
