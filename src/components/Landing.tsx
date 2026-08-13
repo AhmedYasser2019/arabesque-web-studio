@@ -318,7 +318,15 @@ function HeroBackdrop({
   const { tr } = useI18n();
   return (
     <>
-      <div className="absolute inset-0">
+      {/* The foot dissolves instead of ending: below it is the page backdrop's
+          own photograph, and a hard bottom edge here reads as a seam. */}
+      <div
+        className="absolute inset-0"
+        style={{
+          maskImage: "linear-gradient(180deg, #000 86%, transparent 100%)",
+          WebkitMaskImage: "linear-gradient(180deg, #000 86%, transparent 100%)",
+        }}
+      >
         {slides.map((src, i) => (
           <img
             key={src}
@@ -328,7 +336,11 @@ function HeroBackdrop({
             // first slide is the LCP image, so it must not be lazy
             loading={i === 0 ? "eager" : "lazy"}
             fetchPriority={i === 0 ? "high" : "low"}
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1400ms] ease-in-out ${
+            /* The wing mark is painted into these frames at roughly a tenth to
+               a third across, and a phone-shaped crop of a 16:9 skyline keeps
+               only the middle third — which is exactly the part without it.
+               Below md the crop is pulled left so the mark stays in shot. */
+            className={`absolute inset-0 h-full w-full object-cover object-[15%_center] transition-opacity duration-[1400ms] ease-in-out md:object-center ${
               i === index ? "opacity-100" : "opacity-0"
             }`}
           />
@@ -384,7 +396,7 @@ function Hero() {
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(180deg, color-mix(in oklch, var(--navy) 45%, transparent) 0%, color-mix(in oklch, var(--navy) 75%, transparent) 55%, color-mix(in oklch, var(--lavender-dark) 60%, transparent) 82%, var(--seam) 100%)",
+            "linear-gradient(180deg, color-mix(in oklch, var(--navy) 45%, transparent) 0%, color-mix(in oklch, var(--navy) 75%, transparent) 55%, color-mix(in oklch, var(--lavender-dark) 45%, transparent) 86%, transparent 100%)",
         }}
       />
       <div className="absolute inset-0 bg-grid opacity-20" />
@@ -473,42 +485,58 @@ function Hero() {
   );
 }
 
-/* ---------------- Section backdrop ----------------
- * The deck's own device: a photograph sunk under a heavy lavender wash so the
- * copy stays legible.
+/* ---------------- Page backdrop ----------------
+ * The deck's own device: photographs sunk under a heavy lavender wash so the
+ * copy stays legible, scrolling with the page so each band of it shows a
+ * different frame.
  *
- * The strength is per-section on purpose — how far a frame can come forward
- * depends on what sits over it. Architecture behind body copy takes the
- * default; the gallery frame goes lower because it has legible text of its own
- * and a wall of video cards on top. The whole backdrop is then scaled by
- * --backdrop-opacity, which the light theme pulls right down: navy copy needs a
- * quieter photo under it than white copy does. */
-function SectionBg({ src, opacity = 0.45 }: { src: string | null; opacity?: number }) {
-  if (!src) return null;
+ * One layer for the whole page, not one per section. Per-section frames put a
+ * cut between two different photographs at every boundary, and fading each one
+ * at its own edge only turned the cut into a pale stripe. Here the frames are
+ * slices of one continuous layer, overlapping by a fifth of their height, so
+ * consecutive photos cross-dissolve and there is no boundary to see.
+ *
+ * --backdrop-opacity scales the lot per theme: navy copy needs a quieter photo
+ * under it than white copy does. */
+function PageBackdrop() {
+  const { sections } = useContent();
+  // The panel's own running order, one frame per photo-backed band, so the
+  // rhythm of the page is the one the deck sets.
+  const shots = Object.values(sections)
+    .map((s) => s?.backdrop)
+    .filter((src): src is string => !!src);
+  if (!shots.length) return null;
+  const step = 100 / shots.length;
+
   return (
-    // No negative z-index: the page wrapper's opaque background would hide it.
-    <div
-      aria-hidden
-      style={{ opacity: "var(--backdrop-opacity)" }}
-      className="pointer-events-none absolute inset-0 overflow-hidden"
-    >
-      <img
-        src={src}
-        alt=""
-        loading="lazy"
-        style={{ opacity }}
-        className="backdrop-photo h-full w-full object-cover"
-      />
-      {/* Short fades at the seams instead of one edge-to-edge wash: the old
-          gradient spent its whole run climbing back to the page colour, which
-          is what bleached the frames out. The middle now keeps a flat khuzami
-          tint and lets the photograph through. */}
+    // Above the body canvas, below the content — so the page wrapper must not
+    // paint a background of its own.
+    <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+      {shots.map((src, i) => (
+        <div
+          key={`${src}-${i}`}
+          style={{
+            top: `${i * step}%`,
+            height: `${step * 1.25}%`,
+            backgroundImage: `url("${src}")`,
+            opacity: "calc(0.42 * var(--backdrop-opacity))",
+            maskImage: "linear-gradient(180deg, transparent, #000 20%, #000 80%, transparent)",
+            WebkitMaskImage:
+              "linear-gradient(180deg, transparent, #000 20%, #000 80%, transparent)",
+          }}
+          /* A slice of a phone-height page is many times taller than it is
+             wide, and `cover` answers that by zooming into a sliver of the
+             photograph. Below md the frame is sized to the full width instead
+             and floats in the middle of its slice, so the whole picture is
+             there — the brand wash carries the space around it. */
+          className="backdrop-photo absolute inset-x-0 bg-center bg-no-repeat [background-size:100%_auto] md:[background-size:cover]"
+        />
+      ))}
+      {/* Flat khuzami wash: one tint over the whole layer, so nothing about it
+          changes at a section boundary. */}
       <div
         className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(180deg, var(--seam) 0%, color-mix(in oklch, var(--lavender-dark) 32%, transparent) 8%, color-mix(in oklch, var(--lavender-dark) 32%, transparent) 92%, var(--seam) 100%)",
-        }}
+        style={{ background: "color-mix(in oklch, var(--lavender-dark) 32%, transparent)" }}
       />
     </div>
   );
@@ -550,7 +578,6 @@ function Methodology() {
 
   return (
     <section id="method" className="relative overflow-hidden py-24">
-      <SectionBg src={sec.backdrop} opacity={sec.backdropOpacity} />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={L(sec.kicker)} title={L(sec.title)} subtitle={L(sec.subtitle)} />
         <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
@@ -580,7 +607,6 @@ function About() {
 
   return (
     <section id="about" className="relative overflow-hidden py-24">
-      <SectionBg src={sec.backdrop} opacity={sec.backdropOpacity} />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={L(sec.kicker)} title={L(sec.title)} />
         <Reveal variant="up" delay={120}>
@@ -616,7 +642,6 @@ function Services() {
 
   return (
     <section id="services" className="relative overflow-hidden py-24">
-      <SectionBg src={sec.backdrop} opacity={sec.backdropOpacity} />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={L(sec.kicker)} title={L(sec.title)} subtitle={L(sec.subtitle)} />
         <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
@@ -755,7 +780,6 @@ function Gallery() {
 
   return (
     <section id="gallery" className="relative overflow-hidden py-24">
-      <SectionBg src={sec.backdrop} opacity={sec.backdropOpacity} />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={L(sec.kicker)} title={L(sec.title)} />
 
@@ -839,7 +863,6 @@ function Partners() {
 
   return (
     <section id="partners" className="relative overflow-hidden py-24">
-      <SectionBg src={sec.backdrop} opacity={sec.backdropOpacity} />
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={L(sec.kicker)} title={L(sec.title)} />
         <Reveal variant="up" delay={120}>
@@ -886,7 +909,6 @@ function Testimonials() {
 
   return (
     <section className="relative overflow-hidden py-24">
-      <SectionBg src={sec.backdrop} opacity={sec.backdropOpacity} />
       <div className="relative mx-auto max-w-5xl px-5 md:px-8">
         <SectionHead kicker={L(sec.kicker)} title={L(sec.title)} />
         <Reveal variant="up" delay={120}>
@@ -995,7 +1017,6 @@ function Newsletter() {
 
   return (
     <section className="relative overflow-hidden py-16">
-      <SectionBg src={sec.backdrop} opacity={sec.backdropOpacity} />
       <div className="relative mx-auto max-w-5xl px-5 md:px-8">
         <Reveal variant="up">
           <div className="relative overflow-hidden rounded-3xl card-surface p-8 md:p-12">
@@ -1068,15 +1089,14 @@ function Contact() {
 
   return (
     <section id="contact" className="relative overflow-hidden py-24">
-      <SectionBg src={sec.backdrop} opacity={sec.backdropOpacity} />
       <div className="relative mx-auto max-w-6xl px-5 md:px-8">
         <Reveal variant="zoom">
-          <div className="relative overflow-hidden rounded-[2rem] gradient-lavender p-8 text-white on-brand md:p-16">
-            <div className="absolute -end-20 -top-20 h-72 w-72 rounded-full bg-white/10 blur-3xl animate-ew-blob" />
-            <div className="absolute -start-20 -bottom-20 h-72 w-72 rounded-full bg-black/30 blur-3xl animate-ew-float-slow" />
+          <div className="relative overflow-hidden rounded-[2rem] card-surface p-8 text-white md:p-16">
+            <div className="pointer-events-none absolute -end-20 -top-20 h-72 w-72 rounded-full bg-lavender/25 blur-3xl animate-ew-blob" />
+            <div className="pointer-events-none absolute -start-20 -bottom-20 h-72 w-72 rounded-full bg-lavender/15 blur-3xl animate-ew-float-slow" />
             <div className="relative grid gap-10 md:grid-cols-2 md:items-center">
               <div>
-                <div className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest">
+                <div className="inline-flex items-center gap-2 rounded-full border border-lavender/30 bg-lavender/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-lavender-light">
                   {L(sec.kicker)}
                 </div>
                 <h2 className="mt-4 text-3xl font-black leading-tight md:text-5xl">
@@ -1108,7 +1128,7 @@ function Contact() {
                 </div>
               </div>
               <form
-                className="rounded-2xl bg-white/10 p-6 backdrop-blur-md ring-1 ring-white/20"
+                className="rounded-2xl bg-white/5 p-6 backdrop-blur-md ring-1 ring-white/15"
                 onSubmit={onSubmit}
               >
                 <div className="grid gap-3">
@@ -1135,7 +1155,7 @@ function Contact() {
                   />
                   <button
                     disabled={state === "sending"}
-                    className="mt-2 inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-bold text-lavender-dark transition hover:bg-white/90 disabled:opacity-60"
+                    className="mt-2 inline-flex items-center justify-center gap-2 rounded-xl gradient-lavender px-5 py-3 text-sm font-bold text-white on-brand shadow-lg shadow-lavender/30 transition hover:-translate-y-0.5 disabled:opacity-60"
                   >
                     {tr("contact.cta")}
                     <ArrowUpRight className="h-4 w-4" />
@@ -1266,7 +1286,8 @@ function Footer() {
 export function Landing({ lang, content }: { lang?: Lang; content?: Content }) {
   return (
     <ContentProvider content={content} lang={lang}>
-      <div className="min-h-screen bg-background text-foreground">
+      <div className="relative min-h-screen text-foreground">
+        <PageBackdrop />
         <Header />
         <main>
           <Hero />
