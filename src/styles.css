@@ -80,8 +80,10 @@
   --input: oklch(0.30 0.03 285);
   --ring: var(--lavender);
 
-  /* How far the page's photo backdrop is allowed to come forward. */
+  /* How far the page's photo backdrop is allowed to come forward, and the
+     khuzami washed over it. */
   --backdrop-opacity: 1;
+  --backdrop-wash: color-mix(in oklch, var(--lavender-dark) 32%, transparent);
   --backdrop-blend: normal;
   --partner-logo-filter: none;
 }
@@ -130,8 +132,13 @@
      own #DFD7EC helper, which the page background uses. */
   --color-white: #141c33;
 
-  /* Photos have to sit further back under navy text than under white. */
   --backdrop-opacity: 1;
+  /* The identity's own khuzami rather than the deep one, and heavier. These
+     frames are bright daylight, and a white sky is exactly what multiply
+     cannot touch — the only thing that pulls the haze out of it is a wash with
+     colour in it. Taking the light swatch keeps the luminance where navy copy
+     can still be read on it; the deep swatch at this strength could not. */
+  --backdrop-wash: color-mix(in oklch, var(--lavender) 52%, transparent);
   /* These are bright daylight frames: laid over a pale page they bleach out to
      white haze. Multiply keeps their darks and stains the rest with the page's
      khuzami, so the section backdrops read as brand colour, not fog. */

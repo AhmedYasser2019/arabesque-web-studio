@@ -512,32 +512,41 @@ function PageBackdrop() {
     // Above the body canvas, below the content — so the page wrapper must not
     // paint a background of its own.
     <div aria-hidden className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-      {shots.map((src, i) => (
-        <div
-          key={`${src}-${i}`}
-          style={{
-            top: `${i * step}%`,
-            height: `${step * 1.25}%`,
-            backgroundImage: `url("${src}")`,
-            opacity: "calc(0.42 * var(--backdrop-opacity))",
-            maskImage: "linear-gradient(180deg, transparent, #000 20%, #000 80%, transparent)",
-            WebkitMaskImage:
-              "linear-gradient(180deg, transparent, #000 20%, #000 80%, transparent)",
-          }}
-          /* A slice of a phone-height page is many times taller than it is
-             wide, and `cover` answers that by zooming into a sliver of the
-             photograph. Below md the frame is sized to the full width instead
-             and floats in the middle of its slice, so the whole picture is
-             there — the brand wash carries the space around it. */
-          className="backdrop-photo absolute inset-x-0 bg-center bg-no-repeat [background-size:100%_auto] md:[background-size:cover]"
-        />
-      ))}
+      {/* Opacity and the light theme's multiply sit on the group, never on a
+          frame. Per-frame they applied twice wherever two frames overlapped,
+          and dissolving two half-transparent layers into each other dips to
+          three quarters coverage at the crossover — the page showing through
+          that dip was the pale band across the seam. At full strength inside
+          the group the frames cross-dissolve cleanly, and the whole stack is
+          faded once on the way out. */}
+      <div
+        className="backdrop-photo absolute inset-0"
+        style={{ opacity: "calc(0.42 * var(--backdrop-opacity))" }}
+      >
+        {shots.map((src, i) => (
+          <div
+            key={`${src}-${i}`}
+            style={{
+              top: `${i * step}%`,
+              height: `${step * 1.25}%`,
+              backgroundImage: `url("${src}")`,
+            }}
+            /* Two frames, two problems.
+               md+: `cover` fills the slice, so only the leading edge needs a
+               fade — the frame beneath is already at full strength by the time
+               this one's hard edge arrives and hides it.
+               Below md: a phone-shaped slice would zoom `cover` into a sliver
+               of the photograph, so the frame runs at full width in its own
+               aspect (56.25% of it, these are all 16:9) and floats in the
+               middle of the slice. The mask is sized to that band rather than
+               to the slice, so what dissolves is the picture's own edges. */
+            className="absolute inset-x-0 bg-center bg-no-repeat [background-size:100%_auto] [mask-image:linear-gradient(180deg,transparent,#000_26%,#000_74%,transparent)] [mask-position:center] [mask-repeat:no-repeat] [mask-size:100%_56.25vw] md:[background-size:cover] md:[mask-image:linear-gradient(180deg,transparent,#000_20%)] md:[mask-position:top] md:[mask-size:auto]"
+          />
+        ))}
+      </div>
       {/* Flat khuzami wash: one tint over the whole layer, so nothing about it
           changes at a section boundary. */}
-      <div
-        className="absolute inset-0"
-        style={{ background: "color-mix(in oklch, var(--lavender-dark) 32%, transparent)" }}
-      />
+      <div className="absolute inset-0" style={{ background: "var(--backdrop-wash)" }} />
     </div>
   );
 }
@@ -555,14 +564,20 @@ function SectionHead({
   return (
     <Reveal variant="up">
       <div className="mx-auto max-w-3xl text-center">
-        <div className="inline-flex items-center gap-2 rounded-full border border-lavender/30 bg-lavender/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-lavender-light">
+        {/* The pale fill is light-only: khuzami ink on a 10% tint of itself is
+            fine over the dark theme's backdrop and nowhere near AA over the
+            light one. Filling the pill keeps the accent colour and gives it
+            something to sit on. */}
+        <div className="inline-flex items-center gap-2 rounded-full border border-lavender/30 bg-lavender/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-lavender-light light:bg-panel">
           <Sparkles className="h-3 w-3" />
           {kicker}
         </div>
         <h2 className="mt-4 text-3xl font-black tracking-tight text-white md:text-5xl">{title}</h2>
         {/* /75 not /60: this line sits straight on the backdrop photo, which now
-            comes further forward than it used to. */}
-        {subtitle && <p className="mt-3 text-white/75">{subtitle}</p>}
+            comes further forward than it used to. Nearly solid in the light
+            theme, where the same line is navy ink on a khuzami-washed
+            photograph and 75% of it lands under AA. */}
+        {subtitle && <p className="mt-3 text-white/75 light:text-white/90">{subtitle}</p>}
       </div>
     </Reveal>
   );
@@ -610,7 +625,9 @@ function About() {
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={L(sec.kicker)} title={L(sec.title)} />
         <Reveal variant="up" delay={120}>
-          <p className="mx-auto mt-6 max-w-3xl text-center text-lg text-white/70">{L(sec.body)}</p>
+          <p className="mx-auto mt-6 max-w-3xl text-center text-lg text-white/70 light:text-white/90">
+            {L(sec.body)}
+          </p>
         </Reveal>
         <div className="mt-14 grid gap-5 md:grid-cols-3">
           {about.map((card, i) => {
@@ -794,7 +811,7 @@ function Gallery() {
                 className={`rounded-full border px-4 py-2 text-xs font-semibold transition duration-300 ${
                   c.slug === active
                     ? "border-transparent gradient-lavender text-white on-brand shadow-lg shadow-lavender/30"
-                    : "border-white/15 bg-white/5 text-white/70 hover:border-lavender hover:text-white"
+                    : "border-white/15 bg-white/5 text-white/70 hover:border-lavender hover:text-white light:text-white/90"
                 }`}
               >
                 {L(c.title)}
@@ -866,7 +883,7 @@ function Partners() {
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={L(sec.kicker)} title={L(sec.title)} />
         <Reveal variant="up" delay={120}>
-          <p className="mx-auto mt-6 max-w-4xl text-center leading-relaxed text-white/65">
+          <p className="mx-auto mt-6 max-w-4xl text-center leading-relaxed text-white/65 light:text-white/90">
             {L(sec.body)}
           </p>
         </Reveal>
