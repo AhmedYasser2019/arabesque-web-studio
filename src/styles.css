@@ -109,10 +109,13 @@
      white panels read as cards instead of dissolving into the background. */
   --background: #dfd7ec;
   --foreground: #2e3b5b;
-  /* Not pure white — the panels carry a khuzami tint so the page reads as the
-     brand's lavender rather than a white sheet. */
-  --panel: #fbf7fe;
-  --panel-2: #f5e7fe;
+  /* The identity's own pale khuzami, not a near-white with a hint of it. At
+     #FBF7FE the cards measured 94% luminance — a tenth of the page was reading
+     as bare white sheet, which is the one thing the palette is not. This is the
+     guide's #F5E7FE, with the elevated surface a notch under it so the two
+     still separate. */
+  --panel: #f5e7fe;
+  --panel-2: #ebdcf9;
 
   --muted-foreground: #59637f;
   --border: color-mix(in oklch, #2e3b5b 16%, transparent);
@@ -132,13 +135,15 @@
      own #DFD7EC helper, which the page background uses. */
   --color-white: #141c33;
 
-  --backdrop-opacity: 1;
-  /* The identity's own khuzami rather than the deep one, and heavier. These
-     frames are bright daylight, and a white sky is exactly what multiply
-     cannot touch — the only thing that pulls the haze out of it is a wash with
-     colour in it. Taking the light swatch keeps the luminance where navy copy
-     can still be read on it; the deep swatch at this strength could not. */
-  --backdrop-wash: color-mix(in oklch, var(--lavender) 52%, transparent);
+  /* Back, and the wash forward to meet it. These are sunset skylines: half of
+     every frame is bright sky, which is the one thing multiply cannot darken,
+     so under navy copy the sky bleached to near-white while the towers stayed
+     dark — a backdrop swinging from 0.79 to 0.32 luminance. Holding the photo
+     at three tenths and letting khuzami carry the field flattens that swing
+     into one mid band. The photograph reads as texture in the brand colour
+     rather than as a picture the page is losing a fight with. */
+  --backdrop-opacity: 0.72;
+  --backdrop-wash: color-mix(in oklch, var(--lavender) 70%, transparent);
   /* These are bright daylight frames: laid over a pale page they bleach out to
      white haze. Multiply keeps their darks and stains the rest with the page's
      khuzami, so the section backdrops read as brand colour, not fog. */

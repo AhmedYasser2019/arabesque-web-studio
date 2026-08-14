@@ -603,7 +603,9 @@ function Methodology() {
                   {String(i + 1).padStart(2, "0")}
                 </div>
                 <h3 className="mt-5 text-base font-bold text-white">{L(pillar.title)}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-white/65">{L(pillar.body)}</p>
+                <p className="mt-2 text-sm leading-relaxed text-white/65 light:text-white/80">
+                  {L(pillar.body)}
+                </p>
               </div>
             </Reveal>
           ))}
@@ -639,7 +641,9 @@ function About() {
                     <Icon className="h-5 w-5" />
                   </div>
                   <h3 className="text-xl font-bold text-white">{L(card.title)}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-white/65">{L(card.body)}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-white/65 light:text-white/80">
+                    {L(card.body)}
+                  </p>
                 </div>
               </Reveal>
             );
@@ -673,7 +677,9 @@ function Services() {
                       <Icon className="h-5 w-5" />
                     </div>
                     <h3 className="mt-5 text-lg font-bold text-white">{L(svc.title)}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-white/65">{L(svc.body)}</p>
+                    <p className="mt-2 text-sm leading-relaxed text-white/65 light:text-white/80">
+                      {L(svc.body)}
+                    </p>
                   </div>
                 </div>
               </Reveal>
@@ -950,7 +956,7 @@ function Testimonials() {
                 </div>
                 <div>
                   <div className="font-bold text-white">{L(active.name)}</div>
-                  <div className="text-xs text-white/60">{L(active.role)}</div>
+                  <div className="text-xs text-white/60 light:text-white/80">{L(active.role)}</div>
                 </div>
               </div>
               {testimonials.length > 1 && (
@@ -1041,7 +1047,7 @@ function Newsletter() {
             <div className="relative grid items-center gap-8 md:grid-cols-2">
               <div>
                 <h3 className="text-2xl font-black text-white md:text-3xl">{L(sec.title)}</h3>
-                <p className="mt-2 text-sm text-white/65">{L(sec.subtitle)}</p>
+                <p className="mt-2 text-sm text-white/65 light:text-white/80">{L(sec.subtitle)}</p>
               </div>
               <div>
                 <form
