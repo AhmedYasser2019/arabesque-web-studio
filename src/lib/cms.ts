@@ -50,7 +50,8 @@ export interface Content {
     email: string | null;
     phone: string | null;
     location: Loc | null;
-    social: { instagram: string | null; linkedin: string | null; twitter: string | null };
+    /** Footer icons, in panel order. `platform` keys the icon map in Landing.tsx. */
+    social: { platform: string; url: string }[];
     footer: { tagline: Loc | null; rights: Loc | null };
     seo: { title: Loc | null; description: Loc | null };
   };
@@ -154,8 +155,9 @@ export const STATIC_CONTENT: Content = {
     email: "info@elitewing.sa",
     phone: "+966 11 123 4567",
     location: s("contact.location.v"),
-    // The site has always linked these to "#" — no accounts supplied yet.
-    social: { instagram: "#", linkedin: "#", twitter: "#" },
+    // No accounts baked in: the panel owns this list, and a footer with no
+    // icons beats one linking to "#".
+    social: [],
     footer: { tagline: s("footer.tagline"), rights: s("footer.rights") },
     seo: {
       title: {
@@ -272,6 +274,20 @@ const pick = <T>(value: T | null | undefined, fallback: T): T =>
  * — but every other key falls back, and labels merge, so a malformed or
  * half-filled response degrades instead of blanking the page.
  */
+/* The footer maps over a list of `{platform, url}`. A panel still on the old
+ * three-column shape sends `{instagram, linkedin, twitter}` instead, and simply
+ * rejecting that dropped whatever had been filled in on the way through — the
+ * accounts were saved and the icons never appeared. Both shapes come out as the
+ * list, empty entries and all other shapes as null so the caller falls back. */
+function socialList(raw: unknown): { platform: string; url: string }[] | null {
+  if (Array.isArray(raw)) return raw.filter((s) => s?.url);
+  if (!raw || typeof raw !== "object") return null;
+  const list = Object.entries(raw as Record<string, unknown>)
+    .filter(([, url]) => typeof url === "string" && url && url !== "#")
+    .map(([platform, url]) => ({ platform, url: url as string }));
+  return list.length ? list : null;
+}
+
 function normalize(raw: Partial<Content>): Content {
   const f = STATIC_CONTENT;
 
@@ -280,7 +296,7 @@ function normalize(raw: Partial<Content>): Content {
       ...f.settings,
       ...(raw.settings ?? {}),
       logo: { ...f.settings.logo, ...(raw.settings?.logo ?? {}) },
-      social: { ...f.settings.social, ...(raw.settings?.social ?? {}) },
+      social: socialList(raw.settings?.social) ?? f.settings.social,
       footer: { ...f.settings.footer, ...(raw.settings?.footer ?? {}) },
       seo: { ...f.settings.seo, ...(raw.settings?.seo ?? {}) },
     },

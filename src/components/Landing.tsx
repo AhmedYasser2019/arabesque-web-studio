@@ -15,6 +15,12 @@ import {
   Instagram,
   Linkedin,
   Twitter,
+  Facebook,
+  Youtube,
+  MessageCircle,
+  Music2,
+  Ghost,
+  Link2,
   Calendar,
   Users,
   Award,
@@ -75,6 +81,26 @@ const ICONS: Record<string, LucideIcon> = {
 };
 
 const icon = (name: string | null | undefined): LucideIcon => ICONS[name ?? ""] ?? Sparkles;
+
+/* Footer accounts. Keys match the platform list in the panel's
+ * SiteSettingResource; lucide ships no mark for WhatsApp, TikTok or Snapchat,
+ * so those borrow its nearest glyph. An unknown platform still renders, as a
+ * plain link. */
+const SOCIAL_ICONS: Record<string, LucideIcon> = {
+  facebook: Facebook,
+  x: Twitter,
+  instagram: Instagram,
+  telegram: Send,
+  whatsapp: MessageCircle,
+  linkedin: Linkedin,
+  tiktok: Music2,
+  youtube: Youtube,
+  snapchat: Ghost,
+  phone: Phone,
+  email: Mail,
+  location: MapPin,
+  website: Globe,
+};
 
 /* ---------------- Header ---------------- */
 function LangSwitch() {
@@ -498,13 +524,70 @@ function Hero() {
  *
  * --backdrop-opacity scales the lot per theme: navy copy needs a quieter photo
  * under it than white copy does. */
+/* Local-only comparison harness: ?bg=<set> swaps the frames and the two knobs
+ * that go with them, so a candidate set can be walked through in the real page
+ * instead of judged from stills. The list is also the slice list, so a set of
+ * seven draws seven bands and nothing repeats. Stripped from production builds,
+ * and due out of the source entirely once a set is chosen.
+ * ponytail: dev switch, delete with the decision. */
+const ARCH = ["011", "022", "033", "044"].map((n) => `/media/bg-alt/arch-${n}.jpg`);
+const NEW3 = [1, 2, 3].map((n) => `/media/bg-alt/new-${n}.jpg`);
+const KNOBS = { light: [1, "45%"] as [number, string], dark: [0.3, "42%"] as [number, string] };
+
+const BG_TRIALS: Record<
+  string,
+  { shots: string[]; light: [number, string]; dark: [number, string] }
+> = {
+  arch: { shots: [...ARCH, ...ARCH], ...KNOBS },
+  event: { shots: [1, 2, 3, 4, 5, 1, 3, 4].map((n) => `/media/bg-alt/event-${n}.jpg`), ...KNOBS },
+  // The three new frames on their own — three bands, each one long.
+  new: { shots: NEW3, ...KNOBS },
+  // Seven distinct frames for the whole page: nothing comes round twice. A
+  // heavier light wash than the rest — with seven frames in play one of them
+  // always lands under a paragraph, and 45% left the worst of those at 4.34.
+  // Architecture down the body of the page, then the three event frames in
+  // order across the foot.
+  mix: { shots: [...ARCH, ...NEW3], light: [0.85, "48%"], dark: KNOBS.dark },
+};
+
+function useBackdropTrial() {
+  const [trial, setTrial] = useState<(typeof BG_TRIALS)[string] | null>(null);
+  useEffect(() => {
+    if (!import.meta.env.DEV) return;
+    const t = BG_TRIALS[new URLSearchParams(window.location.search).get("bg") ?? ""];
+    setTrial(t ?? null);
+    if (!t) return;
+    // A stylesheet rather than inline properties, so switching theme mid-trial
+    // still lands on the right pair. The group's opacity is 0.42 × the
+    // variable, hence the division.
+    const el = document.createElement("style");
+    const rule = ([op, wash]: [number, string], colour: string) =>
+      `--backdrop-opacity:${(op / 0.42).toFixed(3)};--backdrop-wash:color-mix(in oklch, var(${colour}) ${wash}, transparent);`;
+    el.textContent =
+      `:root[data-theme="light"]{${rule(t.light, "--lavender")}}` +
+      `:root:not([data-theme="light"]){${rule(t.dark, "--lavender-dark")}}`;
+    document.head.append(el);
+    return () => el.remove();
+  }, []);
+  return trial;
+}
+
 function PageBackdrop() {
   const { sections } = useContent();
-  // The panel's own running order, one frame per photo-backed band, so the
-  // rhythm of the page is the one the deck sets.
-  const shots = Object.values(sections)
-    .map((s) => s?.backdrop)
-    .filter((src): src is string => !!src);
+  const trial = useBackdropTrial();
+  // The panel's own running order, one band per distinct photograph. Deduped
+  // because the panel assigns a backdrop per section and only has a handful of
+  // frames to go round: eight sections drawing on four pictures meant the set
+  // visibly started over halfway down the page. One band each, however many
+  // there are, and adding a frame in the panel adds a band.
+  const shots = [
+    ...new Set(
+      trial?.shots ??
+        Object.values(sections)
+          .map((s) => s?.backdrop)
+          .filter((src): src is string => !!src),
+    ),
+  ];
   if (!shots.length) return null;
   const step = 100 / shots.length;
 
@@ -1200,12 +1283,8 @@ function Footer() {
   const L = useLoc();
   const { settings, services, nav } = useContent();
 
-  // A social account with no URL set is left off rather than linked to "#".
-  const socials = [
-    { Icon: Instagram, label: "Instagram", href: settings.social.instagram },
-    { Icon: Linkedin, label: "LinkedIn", href: settings.social.linkedin },
-    { Icon: Twitter, label: "X", href: settings.social.twitter },
-  ].filter((s) => s.href);
+  // Which accounts show, and in what order, is the panel's call.
+  const socials = settings.social.filter((s) => s.url);
 
   // Navy in both themes: in light mode the footer was the page's largest pale
   // block, and a dark foot closes the page on brand.
@@ -1227,21 +1306,26 @@ function Footer() {
               <p className="mt-4 max-w-xs text-xs leading-relaxed text-white/60">
                 {L(settings.footer.tagline)}
               </p>
-              <div className="mt-5 flex items-center gap-2">
-                {socials.map(({ Icon, label, href }) => (
-                  <a
-                    key={label}
-                    href={href ?? "#"}
-                    aria-label={label}
-                    className="group relative inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/70 transition-all duration-300 hover:-translate-y-1 hover:border-lavender hover:text-white"
-                  >
-                    <span
-                      aria-hidden
-                      className="pointer-events-none absolute inset-0 rounded-full bg-lavender/25 opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-100"
-                    />
-                    <Icon className="relative h-4 w-4" />
-                  </a>
-                ))}
+              <div className="mt-5 flex flex-wrap items-center gap-2">
+                {socials.map(({ platform, url }, i) => {
+                  const Icon = SOCIAL_ICONS[platform] ?? Link2;
+                  return (
+                    <a
+                      key={`${platform}-${i}`}
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={platform}
+                      className="group relative inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/5 text-white/70 transition-all duration-300 hover:-translate-y-1 hover:border-lavender hover:text-white"
+                    >
+                      <span
+                        aria-hidden
+                        className="pointer-events-none absolute inset-0 rounded-full bg-lavender/25 opacity-0 blur-md transition-opacity duration-300 group-hover:opacity-100"
+                      />
+                      <Icon className="relative h-4 w-4" />
+                    </a>
+                  );
+                })}
               </div>
             </div>
 
