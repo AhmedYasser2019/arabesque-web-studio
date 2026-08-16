@@ -199,10 +199,13 @@ export const STATIC_CONTENT: Content = {
       // and legible text of its own.
       ...band("gal", "gallery", `${MEDIA}/bg/4.jpg`, 0.18),
     },
-    partners: band("partners", "partners", `${MEDIA}/bg/2.jpg`, 0.3),
-    testimonials: band("test", null, `${MEDIA}/bg/3.jpg`),
-    newsletter: band("news", null, `${MEDIA}/bg/1.jpg`),
-    contact: band("contact", "contact", `${MEDIA}/bg/4.jpg`),
+    // Frames 5–7 are the event photography, and the last two share one: the
+    // page draws a band per distinct picture, so repeating a frame costs a
+    // band. Mirrors the panel's seeder — keep the two in step.
+    partners: band("partners", "partners", `${MEDIA}/bg/5.jpg`, 0.3),
+    testimonials: band("test", null, `${MEDIA}/bg/6.jpg`),
+    newsletter: band("news", null, `${MEDIA}/bg/7.jpg`),
+    contact: band("contact", "contact", `${MEDIA}/bg/7.jpg`),
   },
 
   heroSlides: [`${MEDIA}/hero/1.jpg`, `${MEDIA}/hero/2.jpg`, `${MEDIA}/hero/3.jpg`],

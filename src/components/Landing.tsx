@@ -524,57 +524,8 @@ function Hero() {
  *
  * --backdrop-opacity scales the lot per theme: navy copy needs a quieter photo
  * under it than white copy does. */
-/* Local-only comparison harness: ?bg=<set> swaps the frames and the two knobs
- * that go with them, so a candidate set can be walked through in the real page
- * instead of judged from stills. The list is also the slice list, so a set of
- * seven draws seven bands and nothing repeats. Stripped from production builds,
- * and due out of the source entirely once a set is chosen.
- * ponytail: dev switch, delete with the decision. */
-const ARCH = ["011", "022", "033", "044"].map((n) => `/media/bg-alt/arch-${n}.jpg`);
-const NEW3 = [1, 2, 3].map((n) => `/media/bg-alt/new-${n}.jpg`);
-const KNOBS = { light: [1, "45%"] as [number, string], dark: [0.3, "42%"] as [number, string] };
-
-const BG_TRIALS: Record<
-  string,
-  { shots: string[]; light: [number, string]; dark: [number, string] }
-> = {
-  arch: { shots: [...ARCH, ...ARCH], ...KNOBS },
-  event: { shots: [1, 2, 3, 4, 5, 1, 3, 4].map((n) => `/media/bg-alt/event-${n}.jpg`), ...KNOBS },
-  // The three new frames on their own — three bands, each one long.
-  new: { shots: NEW3, ...KNOBS },
-  // Seven distinct frames for the whole page: nothing comes round twice. A
-  // heavier light wash than the rest — with seven frames in play one of them
-  // always lands under a paragraph, and 45% left the worst of those at 4.34.
-  // Architecture down the body of the page, then the three event frames in
-  // order across the foot.
-  mix: { shots: [...ARCH, ...NEW3], light: [0.85, "48%"], dark: KNOBS.dark },
-};
-
-function useBackdropTrial() {
-  const [trial, setTrial] = useState<(typeof BG_TRIALS)[string] | null>(null);
-  useEffect(() => {
-    if (!import.meta.env.DEV) return;
-    const t = BG_TRIALS[new URLSearchParams(window.location.search).get("bg") ?? ""];
-    setTrial(t ?? null);
-    if (!t) return;
-    // A stylesheet rather than inline properties, so switching theme mid-trial
-    // still lands on the right pair. The group's opacity is 0.42 × the
-    // variable, hence the division.
-    const el = document.createElement("style");
-    const rule = ([op, wash]: [number, string], colour: string) =>
-      `--backdrop-opacity:${(op / 0.42).toFixed(3)};--backdrop-wash:color-mix(in oklch, var(${colour}) ${wash}, transparent);`;
-    el.textContent =
-      `:root[data-theme="light"]{${rule(t.light, "--lavender")}}` +
-      `:root:not([data-theme="light"]){${rule(t.dark, "--lavender-dark")}}`;
-    document.head.append(el);
-    return () => el.remove();
-  }, []);
-  return trial;
-}
-
 function PageBackdrop() {
   const { sections } = useContent();
-  const trial = useBackdropTrial();
   // The panel's own running order, one band per distinct photograph. Deduped
   // because the panel assigns a backdrop per section and only has a handful of
   // frames to go round: eight sections drawing on four pictures meant the set
@@ -582,10 +533,9 @@ function PageBackdrop() {
   // there are, and adding a frame in the panel adds a band.
   const shots = [
     ...new Set(
-      trial?.shots ??
-        Object.values(sections)
-          .map((s) => s?.backdrop)
-          .filter((src): src is string => !!src),
+      Object.values(sections)
+        .map((s) => s?.backdrop)
+        .filter((src): src is string => !!src),
     ),
   ];
   if (!shots.length) return null;

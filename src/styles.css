@@ -80,10 +80,12 @@
   --input: oklch(0.30 0.03 285);
   --ring: var(--lavender);
 
-  /* How far the page's photo backdrop is allowed to come forward, and the
-     khuzami washed over it. */
-  --backdrop-opacity: 1;
-  --backdrop-wash: color-mix(in oklch, var(--lavender-dark) 32%, transparent);
+  /* How far the page's photo backdrop is allowed to come forward (0.42 × this
+     is the layer's real opacity), and the khuzami washed over it. The graded
+     frames sit higher-key than the camera files did, so this theme pulls them
+     back where the old numbers left white copy at 4.4:1 over them. */
+  --backdrop-opacity: 0.714;
+  --backdrop-wash: color-mix(in oklch, var(--lavender-dark) 42%, transparent);
   --backdrop-blend: normal;
   --partner-logo-filter: none;
 }
@@ -135,15 +137,16 @@
      own #DFD7EC helper, which the page background uses. */
   --color-white: #141c33;
 
-  /* Back, and the wash forward to meet it. These are sunset skylines: half of
-     every frame is bright sky, which is the one thing multiply cannot darken,
-     so under navy copy the sky bleached to near-white while the towers stayed
-     dark — a backdrop swinging from 0.79 to 0.32 luminance. Holding the photo
-     at three tenths and letting khuzami carry the field flattens that swing
-     into one mid band. The photograph reads as texture in the brand colour
-     rather than as a picture the page is losing a fight with. */
-  --backdrop-opacity: 0.72;
-  --backdrop-wash: color-mix(in oklch, var(--lavender) 70%, transparent);
+  /* Tuned against the graded frame set the panel now carries. The frames used
+     to be straight camera files swinging from 0.79 to 0.32 luminance — half
+     bright sky, which is the one thing multiply cannot darken — and the only
+     way to stop the sky bleaching out under navy copy was to hold the photo
+     right back and let khuzami do the work. The frames are flat now, so the
+     photograph can come nearly all the way forward and the wash can come off
+     it: the worst paragraph on the page still measures 5.3:1.
+     Note 0.42 × this is the layer's real opacity. */
+  --backdrop-opacity: 2.024;
+  --backdrop-wash: color-mix(in oklch, var(--lavender) 48%, transparent);
   /* These are bright daylight frames: laid over a pale page they bleach out to
      white haze. Multiply keeps their darks and stains the rest with the page's
      khuzami, so the section backdrops read as brand colour, not fog. */
