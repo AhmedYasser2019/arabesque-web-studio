@@ -255,9 +255,15 @@ function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-500 ${
+      /* Solid, not glass. The header is sticky rather than fixed, so it holds
+         its own strip at the top of the page — and the backdrop layer runs the
+         full height of the wrapper, photographs included, straight under it.
+         A 65%-panel glass let that photograph through, so the bar arrived
+         carrying whichever frame happened to be behind it. `bg-background` is
+         the one surface both themes agree on. */
+      className={`sticky top-0 z-50 bg-background transition-all duration-500 ${
         scrolled
-          ? "glass border-b border-white/10 shadow-2xl shadow-lavender-dark/10"
+          ? "border-b border-white/10 shadow-2xl shadow-lavender-dark/10"
           : "border-b border-transparent"
       }`}
     >

@@ -115,9 +115,16 @@
      #FBF7FE the cards measured 94% luminance — a tenth of the page was reading
      as bare white sheet, which is the one thing the palette is not. This is the
      guide's #F5E7FE, with the elevated surface a notch under it so the two
-     still separate. */
-  --panel: #f5e7fe;
-  --panel-2: #ebdcf9;
+     still separate.
+     Both are then pulled 40% of the way to the page itself. On the guide's own
+     swatch the big faces — the testimonial, the contact panel — sit at 0.946
+     lightness, which against a photograph reads as a sheet of bare white; this
+     lands them at 0.924, still 0.032 clear of the page, and the card border
+     carries the rest of the separation. One knob for every card on the page,
+     since they are all `card-surface`: 50% → 0.919 and quieter, 75% → 0.932 and
+     brighter. */
+  --panel: color-mix(in oklch, #f5e7fe 60%, var(--background));
+  --panel-2: color-mix(in oklch, #ebdcf9 60%, var(--background));
 
   --muted-foreground: #59637f;
   --border: color-mix(in oklch, #2e3b5b 16%, transparent);
