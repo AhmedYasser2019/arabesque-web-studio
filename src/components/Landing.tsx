@@ -540,6 +540,13 @@ function PageBackdrop() {
   ];
   if (!shots.length) return null;
   const step = 100 / shots.length;
+  // The phone filmstrip: the running order, over and over, until it outruns the
+  // page. A 16:9 frame is ~56vw tall and the overlap eats 14vw of that, so 64
+  // of them clear 2700vw — a good three times the tallest this page has ever
+  // been. The surplus is clipped by the layer's own overflow and never loads.
+  // ponytail: fixed count, not measured. A page past ~2700vw ends in flat wash;
+  // measure the layer and derive the count if it ever gets that long.
+  const strip = Array.from({ length: 64 }, (_, i) => shots[i % shots.length]);
 
   return (
     // Above the body canvas, below the content — so the page wrapper must not
@@ -556,26 +563,53 @@ function PageBackdrop() {
         className="backdrop-photo absolute inset-0"
         style={{ opacity: "calc(0.42 * var(--backdrop-opacity))" }}
       >
-        {shots.map((src, i) => (
-          <div
-            key={`${src}-${i}`}
-            style={{
-              top: `${i * step}%`,
-              height: `${step * 1.25}%`,
-              backgroundImage: `url("${src}")`,
-            }}
-            /* Two frames, two problems.
-               md+: `cover` fills the slice, so only the leading edge needs a
-               fade — the frame beneath is already at full strength by the time
-               this one's hard edge arrives and hides it.
-               Below md: a phone-shaped slice would zoom `cover` into a sliver
-               of the photograph, so the frame runs at full width in its own
-               aspect (56.25% of it, these are all 16:9) and floats in the
-               middle of the slice. The mask is sized to that band rather than
-               to the slice, so what dissolves is the picture's own edges. */
-            className="absolute inset-x-0 bg-center bg-no-repeat [background-size:100%_auto] [mask-image:linear-gradient(180deg,transparent,#000_26%,#000_74%,transparent)] [mask-position:center] [mask-repeat:no-repeat] [mask-size:100%_56.25vw] md:[background-size:cover] md:[mask-image:linear-gradient(180deg,transparent,#000_20%)] md:[mask-position:top] md:[mask-size:auto]"
-          />
-        ))}
+        {/* md+: one band per photograph, each stretched over its slice of the
+            page. A landscape frame cropped to a landscape band loses very
+            little, so `cover` is free here. */}
+        <div className="hidden md:block">
+          {shots.map((src, i) => (
+            <img
+              key={`${src}-${i}`}
+              src={src}
+              alt=""
+              loading="lazy"
+              style={
+                {
+                  top: `${i * step}%`,
+                  "--band": `${step * 1.25}%`,
+                } as React.CSSProperties
+              }
+              className="absolute inset-x-0 h-[var(--band)] w-full object-cover [mask-image:linear-gradient(180deg,transparent,#000_20%)]"
+            />
+          ))}
+        </div>
+
+        {/* Below md: the same photographs, but a filmstrip rather than bands.
+            A landscape frame stretched over a phone-shaped band is not a crop,
+            it is a 6× zoom into one corner of the picture; laid out whole
+            instead, it is 220-odd pixels tall against a band of 1500 and the
+            page reads as flat wash with strips of photograph marooned in it.
+            So: the picture at its own full width, its own height, and enough
+            copies of the running order stacked to reach the foot of the page.
+            Nothing is cropped, nothing is empty, and a phone screen is short
+            enough that a frame's next turn is two screens away. */}
+        <div className="md:hidden">
+          {strip.map((src, i) => (
+            <img
+              key={i}
+              src={src}
+              alt=""
+              loading="lazy"
+              /* The fade is the leading edge only, and the overlap (a
+                 percentage, so of the container's width) is wider than the
+                 fade is tall for anything from 16:9 to square. Fading both
+                 edges would dissolve two half-transparent frames into each
+                 other and dip to three-quarters coverage at the crossover —
+                 the pale stripe this layer was built to avoid. */
+              className="block w-full -mt-[14%] first:mt-0 [mask-image:linear-gradient(180deg,transparent,#000_12%)]"
+            />
+          ))}
+        </div>
       </div>
       {/* Flat khuzami wash: one tint over the whole layer, so nothing about it
           changes at a section boundary. */}
