@@ -715,9 +715,20 @@ function Methodology() {
     <section id="method" className="relative overflow-hidden py-24">
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={L(sec.kicker)} title={L(sec.title)} subtitle={L(sec.subtitle)} />
-        <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
+        {/* Wrapping flex, not a grid. The panel decides how many cards there
+            are, and a grid leaves the shortfall as an empty track at the end of
+            the row — three services in a row of four sat two-thirds of the way
+            across the page with a hole beside them. Centred, a short row reads
+            as deliberate. The widths are what the grid's tracks worked out to
+            anyway: an Nth of the row, less this card's share of the gaps. */}
+        <div className="mt-14 flex flex-wrap justify-center gap-5">
           {method.map((pillar, i) => (
-            <Reveal key={i} variant="up" delay={i * 110}>
+            <Reveal
+              key={i}
+              variant="up"
+              delay={i * 110}
+              className="w-full sm:w-[calc(50%_-_10px)] lg:w-[calc(20%_-_16px)]"
+            >
               <div className="group h-full rounded-3xl card-surface p-6 transition hover:-translate-y-1 hover:border-lavender/60 hover:shadow-xl hover:shadow-lavender/10">
                 <div className="flex h-11 w-11 items-center justify-center rounded-xl gradient-lavender text-sm font-black text-white on-brand shadow-lg shadow-lavender/40 transition-transform group-hover:scale-110">
                   {String(i + 1).padStart(2, "0")}
@@ -751,11 +762,16 @@ function About() {
             {L(sec.body)}
           </p>
         </Reveal>
-        <div className="mt-14 grid gap-5 md:grid-cols-3">
+        <div className="mt-14 flex flex-wrap justify-center gap-5">
           {about.map((card, i) => {
             const Icon = icon(card.icon);
             return (
-              <Reveal key={i} variant="up" delay={i * 140}>
+              <Reveal
+                key={i}
+                variant="up"
+                delay={i * 140}
+                className="w-full md:w-[calc(33.333%_-_13.333px)]"
+              >
                 <div className="group h-full rounded-3xl card-surface p-8 transition hover:-translate-y-1 hover:border-lavender/60 hover:shadow-xl hover:shadow-lavender/10">
                   <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl gradient-lavender text-white on-brand shadow-lg shadow-lavender/40 transition-transform group-hover:rotate-6 group-hover:scale-110">
                     <Icon className="h-5 w-5" />
@@ -785,11 +801,16 @@ function Services() {
     <section id="services" className="relative overflow-hidden py-24">
       <div className="relative mx-auto max-w-7xl px-5 md:px-8">
         <SectionHead kicker={L(sec.kicker)} title={L(sec.title)} subtitle={L(sec.subtitle)} />
-        <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-14 flex flex-wrap justify-center gap-5">
           {services.map((svc, idx) => {
             const Icon = icon(svc.icon);
             return (
-              <Reveal key={idx} variant="up" delay={idx * 100}>
+              <Reveal
+                key={idx}
+                variant="up"
+                delay={idx * 100}
+                className="w-full md:w-[calc(50%_-_10px)] lg:w-[calc(25%_-_15px)]"
+              >
                 <div className="group relative h-full overflow-hidden rounded-3xl card-surface p-7 transition hover:-translate-y-1 hover:border-lavender/60 hover:shadow-2xl hover:shadow-lavender/10">
                   <div className="absolute -end-16 -top-16 h-40 w-40 rounded-full bg-lavender/15 blur-3xl transition group-hover:bg-lavender/30 animate-ew-float-slow" />
                   <div className="relative">
@@ -1013,9 +1034,14 @@ function Partners() {
             {L(sec.body)}
           </p>
         </Reveal>
-        <div className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="mt-14 flex flex-wrap justify-center gap-4">
           {partners.map((p, i) => (
-            <Reveal key={p.name} variant="zoom" delay={i * 60}>
+            <Reveal
+              key={p.name}
+              variant="zoom"
+              delay={i * 60}
+              className="w-[calc(50%_-_8px)] sm:w-[calc(33.333%_-_10.667px)] lg:w-[calc(16.666%_-_13.333px)]"
+            >
               <div className="group flex h-28 items-center justify-center rounded-2xl card-surface p-6 transition duration-300 hover:-translate-y-1 hover:border-lavender/60 hover:shadow-xl hover:shadow-lavender/10">
                 {p.logo && (
                   <img
