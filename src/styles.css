@@ -118,13 +118,18 @@
      still separate.
      Both are then pulled 40% of the way to the page itself. On the guide's own
      swatch the big faces — the testimonial, the contact panel — sit at 0.946
-     lightness, which against a photograph reads as a sheet of bare white; this
-     lands them at 0.924, still 0.032 clear of the page, and the card border
-     carries the rest of the separation. One knob for every card on the page,
-     since they are all `card-surface`: 50% → 0.919 and quieter, 75% → 0.932 and
-     brighter. */
-  --panel: color-mix(in oklch, #f5e7fe 60%, var(--background));
-  --panel-2: color-mix(in oklch, #ebdcf9 60%, var(--background));
+     lightness, which against a photograph reads as a sheet of bare white; these
+     land them at 0.924, still 0.032 clear of the page, and the card border
+     carries the rest of the separation.
+     Flat hex, not the color-mix that produced them: `card-surface` and `glass`
+     mix this variable again with `transparent`, and a mix of a mix is a newer
+     thing than a mix of a colour — Safari only took it in 16.4. Where it is not
+     understood the whole background declaration drops and the card comes out
+     see-through, which on this page leaves its border drawn across the
+     photograph like a rule. Recomputed by hand if the tone needs to move:
+     these are #F5E7FE and #EBDCF9 mixed 60/40 with the page. */
+  --panel: #ece1f7;
+  --panel-2: #e6daf4;
 
   --muted-foreground: #59637f;
   --border: color-mix(in oklch, #2e3b5b 16%, transparent);

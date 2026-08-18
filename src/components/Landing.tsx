@@ -613,7 +613,10 @@ function PageBackdrop() {
       >
         {/* md+: one band per photograph, each stretched over its slice of the
             page. A landscape frame cropped to a landscape band loses very
-            little, so `cover` is free here. */}
+            little, so `cover` is free here. The mask splits the 20% overlap the
+            same way the filmstrip does — 14% in, 6% out — so a frame that has
+            not loaded yet leaves the one above it fading rather than cut off
+            square. */}
         <div className="hidden md:block">
           {shots.map((src, i) => (
             <img
@@ -627,7 +630,7 @@ function PageBackdrop() {
                   "--band": `${step * 1.25}%`,
                 } as React.CSSProperties
               }
-              className="absolute inset-x-0 h-[var(--band)] w-full object-cover [mask-image:linear-gradient(180deg,transparent,#000_20%)]"
+              className="absolute inset-x-0 h-[var(--band)] w-full object-cover [mask-image:linear-gradient(180deg,transparent,#000_14%,#000_94%,transparent)]"
             />
           ))}
         </div>
@@ -648,13 +651,26 @@ function PageBackdrop() {
               src={src}
               alt=""
               loading="lazy"
-              /* The fade is the leading edge only, and the overlap (a
-                 percentage, so of the container's width) is wider than the
-                 fade is tall for anything from 16:9 to square. Fading both
-                 edges would dissolve two half-transparent frames into each
-                 other and dip to three-quarters coverage at the crossover —
-                 the pale stripe this layer was built to avoid. */
-              className="block w-full -mt-[14%] first:mt-0 [mask-image:linear-gradient(180deg,transparent,#000_12%)]"
+              /* Both numbers are vw, and that is the whole point: the fade has
+                 to finish inside the overlap or the frame beneath comes out
+                 from under it with a hard edge, and a mask stop in per-cent is
+                 per-cent of the picture's own height. That held while the panel
+                 carried 16:9 frames and broke the day it was given 3:4 ones —
+                 12% of a portrait frame is 63px against an overlap of 55, so
+                 every join drew a line across the page. In vw the two are
+                 measured against the same thing and no aspect ratio can put
+                 them out of order.
+                 The trailing 6vw is the rest of the overlap, and the two fades
+                 are deliberately sequential rather than simultaneous: the frame
+                 below reaches full strength 6vw before the frame above starts
+                 to go, so nothing ever dissolves into a half-transparent
+                 neighbour and there is no dip to a pale stripe at the join.
+                 It costs nothing while every frame is on screen — the fade-out
+                 happens underneath an opaque layer — and it is the whole point
+                 when one is not: these load lazily, and a frame that has not
+                 arrived yet used to leave the one above it cut off square
+                 across the page. Now it just ends. */
+              className="block w-full -mt-[14vw] first:mt-0 [mask-image:linear-gradient(180deg,transparent,#000_8vw,#000_calc(100%_-_6vw),transparent)]"
             />
           ))}
         </div>
